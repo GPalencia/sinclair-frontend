@@ -39,7 +39,21 @@ export default function Historial() {
     setExp(true)
     toast('⏳ Generando planilla Excel...', 'info')
     try {
-      const blob = await api.requestBlob(`/exportar/planilla?desde=${desde}&hasta=${hasta}`)
+      const BASE = import.meta.env.VITE_API_URL || '/api'
+      const { token } = { token: localStorage.getItem('sinclair_token') }
+      const res = await fetch(`${BASE}/exportar/planilla?desde=${desde}&hasta=${hasta}`, {
+        headers: { Authorization: `Bearer ${token}` }
+      })
+
+      // Si no es un archivo Excel, leer el JSON de error
+      const contentType = res.headers.get('content-type') || ''
+      if (!res.ok || contentType.includes('application/json')) {
+        const err = await res.json().catch(() => ({}))
+        toast(err.mensaje || 'No hay registros en ese período para exportar', 'info')
+        return
+      }
+
+      const blob = await res.blob()
       const url  = URL.createObjectURL(blob)
       const a    = document.createElement('a')
       a.href     = url
