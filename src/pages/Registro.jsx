@@ -228,17 +228,50 @@ export default function Registro() {
             </div>
           </div>
 
-          {/* Cámara */}
+          {/* Cámara con marco oval guía */}
           <div className="card fade-up" style={{ display: modo === 'facial' ? 'flex' : 'none', flexDirection: 'column', gap: '.75rem' }}>
-            <div style={{ position: 'relative', borderRadius: 10, overflow: 'hidden', background: '#000', aspectRatio: '4/3' }}>
+            <div style={{ position: 'relative', borderRadius: 10, overflow: 'hidden', background: '#000', aspectRatio: '3/4' }}>
               <video ref={videoRef} autoPlay muted playsInline style={{ width: '100%', height: '100%', objectFit: 'cover' }} />
-              <div style={{ position: 'absolute', bottom: '.5rem', left: '.5rem', background: 'rgba(0,0,0,.7)', padding: '.25rem .75rem', borderRadius: 20, fontSize: '.75rem', fontFamily: 'DM Mono, monospace', color: stream ? 'var(--verde)' : 'var(--muted)' }}>
-                {estadoCam}
+
+              {/* Marco oval guía */}
+              {stream && (
+                <svg style={{ position: 'absolute', top: 0, left: 0, width: '100%', height: '100%', pointerEvents: 'none' }}
+                  viewBox="0 0 300 400" preserveAspectRatio="none">
+                  <defs>
+                    <mask id="ovalReg">
+                      <rect width="300" height="400" fill="white" />
+                      <ellipse cx="150" cy="175" rx="105" ry="135" fill="black" />
+                    </mask>
+                  </defs>
+                  <rect width="300" height="400" fill="rgba(0,0,0,0.5)" mask="url(#ovalReg)" />
+                  <ellipse cx="150" cy="175" rx="105" ry="135" fill="none"
+                    stroke={personaDetectada ? '#22c55e' : 'rgba(255,255,255,0.8)'}
+                    strokeWidth="2.5"
+                    strokeDasharray={personaDetectada ? 'none' : '8 4'} />
+                </svg>
+              )}
+
+              {/* Mensaje sin cámara */}
+              {!stream && (
+                <div style={{ position: 'absolute', inset: 0, display: 'flex', flexDirection: 'column',
+                  alignItems: 'center', justifyContent: 'center', gap: '.75rem', color: 'var(--muted)' }}>
+                  <span style={{ fontSize: '3rem' }}>📷</span>
+                  <span style={{ fontSize: '.85rem' }}>Activa la cámara</span>
+                </div>
+              )}
+
+              {/* Estado inferior */}
+              <div style={{ position: 'absolute', bottom: '.5rem', left: '50%', transform: 'translateX(-50%)',
+                background: 'rgba(0,0,0,.75)', padding: '.25rem .9rem', borderRadius: 20,
+                fontSize: '.75rem', fontFamily: 'DM Mono, monospace', whiteSpace: 'nowrap',
+                color: personaDetectada ? '#4ade80' : stream ? 'rgba(255,255,255,.8)' : 'var(--muted)' }}>
+                {personaDetectada ? `✓ ${personaDetectada.nombres} ${personaDetectada.apellidos}` : stream ? 'Centra el rostro en el óvalo' : 'Sin cámara'}
               </div>
             </div>
+
             <div style={{ display: 'flex', gap: '.5rem' }}>
               <button className="btn-secondary" style={{ flex: 1 }} onClick={activarCamara}>🎥 Activar</button>
-              <button className="btn-secondary" style={{ flex: 1 }} onClick={reconocer} disabled={!stream || !modelosCargados}>🔍 Reconocer</button>
+              <button className="btn-primary" style={{ flex: 1, justifyContent: 'center' }} onClick={reconocer} disabled={!stream || !modelosCargados}>🔍 Reconocer</button>
             </div>
             {cargandoModelos && <div style={{ fontSize: '.78rem', color: 'var(--muted)', fontFamily: 'DM Mono, monospace' }}>⟳ Cargando modelos de IA...</div>}
             {modelosCargados && <div style={{ fontSize: '.78rem', color: 'var(--verde)', fontFamily: 'DM Mono, monospace' }}>✅ {descriptoresBD.length} descriptores cargados</div>}
