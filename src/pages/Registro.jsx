@@ -371,7 +371,7 @@ export default function Registro() {
             <div>
               <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '.35rem' }}>
                 <label className="lbl" style={{ margin: 0 }}>
-                  {laborSel.pideDias ? 'Salario (editable)' : 'Monto a pagar (Lps)'} *
+                  {laborSel.pideDias ? 'Salario (Lps)' : 'Monto a pagar (Lps)'} *
                 </label>
                 {laborSel.pideDias && laborSel.valorDiario && (
                   <span style={{ fontSize: '.72rem', color: 'var(--muted)', fontFamily: 'DM Mono, monospace' }}>
