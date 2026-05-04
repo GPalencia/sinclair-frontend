@@ -1,7 +1,7 @@
 // src/pages/NuevoEmpleado.jsx
 import { useState, useRef, useEffect } from 'react'
-import { Camera, ScanFace, Save, ArrowLeft, RotateCcw } from 'lucide-react'
-import { ArrowLeft, Camera, Save, RefreshCw } from 'lucide-react'
+import { ArrowLeft, Camera, RefreshCw, RotateCcw, Save, ScanFace } from 'lucide-react'
+
 import { useNavigate } from 'react-router-dom'
 import { useApi } from '../hooks/useApi'
 import { useToast } from '../hooks/useToast'

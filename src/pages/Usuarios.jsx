@@ -1,7 +1,7 @@
 // src/pages/Usuarios.jsx
 import { useState, useEffect } from 'react'
-import { UserPlus, Pencil, KeyRound, UserX, Save, X } from 'lucide-react'
-import { UserPlus, Pencil, KeyRound, UserX } from 'lucide-react'
+import { KeyRound, Pencil, Save, UserPlus, UserX } from 'lucide-react'
+
 import { useApi } from '../hooks/useApi'
 import { useToast } from '../hooks/useToast'
 import { useAuth } from '../context/AuthContext'

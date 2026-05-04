@@ -1,7 +1,7 @@
 // src/pages/Registro.jsx
 import { useState, useEffect, useRef } from 'react'
-import { Camera, ScanFace, Search, Save, IdCard } from 'lucide-react'
-import { Camera, Search, Save, RefreshCw } from 'lucide-react'
+import { Camera, IdCard, RefreshCw, Save, ScanFace, Search } from 'lucide-react'
+
 import { useApi } from '../hooks/useApi'
 import { useToast } from '../hooks/useToast'
 import { useSearchParams } from 'react-router-dom'

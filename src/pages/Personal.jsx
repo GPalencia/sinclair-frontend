@@ -1,7 +1,7 @@
 // src/pages/Personal.jsx
 import { useState, useEffect } from 'react'
-import { Pencil, UserX, ClipboardList, UserPlus, Search } from 'lucide-react'
-import { Plus, Pencil, UserX, ClipboardList, Search } from 'lucide-react'
+import { ClipboardList, Pencil, Plus, Search, UserPlus, UserX } from 'lucide-react'
+
 import { useApi } from '../hooks/useApi'
 import { useToast } from '../hooks/useToast'
 import { useNavigate } from 'react-router-dom'

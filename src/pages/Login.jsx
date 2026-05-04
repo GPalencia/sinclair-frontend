@@ -1,5 +1,7 @@
 // src/pages/Login.jsx
 import { useState } from 'react'
+import { LogIn } from 'lucide-react'
+
 import LOGO from '../assets/logo'
 import { useNavigate } from 'react-router-dom'
 import { useAuth } from '../context/AuthContext'
@@ -70,7 +72,7 @@ export default function Login() {
       }}>
         {/* Logo + título */}
         <div style={{ textAlign: 'center', marginBottom: '2rem' }}>
-        <img src={LOGO} alt="Sinclair" style={{ height: 90, width: 90, objectFit: 'contain', display: 'block', margin: '0 auto .75rem' }} />
+          <img src={LOGO} alt="Sinclair" style={{ height: 90, width: 90, objectFit: 'contain', marginBottom: '.75rem' }} />
           <div style={{ fontFamily: 'Syne, sans-serif', fontSize: '1.6rem', fontWeight: 800, letterSpacing: '.04em', marginBottom: '.25rem' }}>
             <span style={{ color: 'var(--verde)' }}>SINCLAIR</span>
             <span style={{ color: 'var(--muted)', fontSize: '.95rem', fontWeight: 400 }}>/APP</span>
@@ -121,7 +123,7 @@ export default function Login() {
             disabled={cargando}
             style={{ width: '100%', justifyContent: 'center', marginTop: '.5rem', padding: '.8rem' }}
           >
-            {cargando ? <span className="spinner" /> : '→ Ingresar'}
+            {cargando ? <span className="spinner" /> : <><LogIn size={16} /> Ingresar</>}
           </button>
         </form>
 

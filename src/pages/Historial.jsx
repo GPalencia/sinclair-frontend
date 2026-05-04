@@ -1,7 +1,7 @@
 // src/pages/Historial.jsx
 import { useState } from 'react'
-import { Search, Download, FileSpreadsheet } from 'lucide-react'
-import { Search, Download } from 'lucide-react'
+import { Download, FileSpreadsheet, Search } from 'lucide-react'
+
 import { useApi } from '../hooks/useApi'
 import { useToast } from '../hooks/useToast'
 
