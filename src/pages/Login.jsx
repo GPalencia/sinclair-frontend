@@ -34,7 +34,7 @@ export default function Login() {
       display: 'flex',
       alignItems: 'center',
       justifyContent: 'center',
-      background: 'var(--bg)',
+      background: 'linear-gradient(135deg, #dcfce7 0%, #f0fdf4 50%, #bbf7d0 100%)',
       padding: '1rem',
       position: 'relative',
       overflow: 'hidden',
@@ -44,7 +44,7 @@ export default function Login() {
         position: 'absolute',
         width: 500, height: 500,
         borderRadius: '50%',
-        background: 'radial-gradient(circle, rgba(34,197,94,.06) 0%, transparent 70%)',
+        background: 'radial-gradient(circle, rgba(22,163,74,.15) 0%, transparent 70%)',
         top: -100, left: -100,
         pointerEvents: 'none',
       }} />
@@ -52,7 +52,7 @@ export default function Login() {
         position: 'absolute',
         width: 400, height: 400,
         borderRadius: '50%',
-        background: 'radial-gradient(circle, rgba(59,130,246,.05) 0%, transparent 70%)',
+        background: 'radial-gradient(circle, rgba(22,163,74,.1) 0%, transparent 70%)',
         bottom: -80, right: -80,
         pointerEvents: 'none',
       }} />
@@ -61,15 +61,16 @@ export default function Login() {
       <div className="fade-up" style={{
         width: '100%',
         maxWidth: 400,
-        background: 'var(--card)',
+        background: 'var(--surface)',
         border: '1px solid var(--border)',
         borderRadius: 18,
         padding: '2.5rem',
+        boxShadow: '0 8px 32px rgba(0,0,0,.08)',
         position: 'relative',
       }}>
         {/* Logo + título */}
         <div style={{ textAlign: 'center', marginBottom: '2rem' }}>
-        <img src={LOGO} alt="Sinclair" style={{ height: 90, width: 90, objectFit: 'contain', display: 'block', margin: '0 auto .75rem' }} />
+          <img src={LOGO} alt="Sinclair" style={{ height: 90, width: 90, objectFit: 'contain', marginBottom: '.75rem' }} />
           <div style={{ fontFamily: 'Syne, sans-serif', fontSize: '1.6rem', fontWeight: 800, letterSpacing: '.04em', marginBottom: '.25rem' }}>
             <span style={{ color: 'var(--verde)' }}>SINCLAIR</span>
             <span style={{ color: 'var(--muted)', fontSize: '.95rem', fontWeight: 400 }}>/APP</span>
@@ -127,7 +128,7 @@ export default function Login() {
         <div style={{
           marginTop: '1.5rem',
           padding: '.75rem',
-          background: 'var(--surface)',
+          background: 'var(--bg)',
           borderRadius: 8,
           fontSize: '.78rem',
           color: 'var(--muted)',
