@@ -103,6 +103,26 @@ export default function Layout({ children }) {
             ⎋ Cerrar sesión
           </button>
         </div>
+
+        {/* About */}
+        <div style={{
+          padding: '.85rem 1rem',
+          borderTop: '1px solid #e2e8f0',
+          background: '#f8fafc',
+        }}>
+          <div style={{ fontSize: '.7rem', fontWeight: 600, color: '#16a34a', fontFamily: 'Syne, sans-serif', letterSpacing: '.04em', marginBottom: '.3rem' }}>
+            SINCLAIR/APP v1.0
+          </div>
+          <div style={{ fontSize: '.68rem', color: '#64748b', lineHeight: 1.5 }}>
+            Desarrollado por<br />
+            <span style={{ fontWeight: 600, color: '#334155' }}>Ing. German Palencia</span><br />
+            Coordinador de Sistemas
+          </div>
+          <div style={{ fontSize: '.65rem', color: '#94a3b8', marginTop: '.4rem', borderTop: '1px solid #e2e8f0', paddingTop: '.4rem' }}>
+            © {new Date().getFullYear()} Sinclair Reliable Producers.<br />
+            Todos los derechos reservados.
+          </div>
+        </div>
       </aside>
 
       {/* ── Contenido principal ── */}
