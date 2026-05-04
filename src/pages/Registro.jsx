@@ -245,9 +245,9 @@ export default function Registro() {
                   </defs>
                   <rect width="300" height="400" fill="rgba(0,0,0,0.5)" mask="url(#ovalReg)" />
                   <ellipse cx="150" cy="175" rx="105" ry="135" fill="none"
-                    stroke={personaDetectada ? '#22c55e' : 'rgba(255,255,255,0.8)'}
+                    stroke={personaDetectada != null ? '#22c55e' : 'rgba(255,255,255,0.8)'}
                     strokeWidth="2.5"
-                    strokeDasharray={personaDetectada ? 'none' : '8 4'} />
+                    strokeDasharray={personaDetectada != null ? 'none' : '8 4'} />
                 </svg>
               )}
 
@@ -264,8 +264,8 @@ export default function Registro() {
               <div style={{ position: 'absolute', bottom: '.5rem', left: '50%', transform: 'translateX(-50%)',
                 background: 'rgba(0,0,0,.75)', padding: '.25rem .9rem', borderRadius: 20,
                 fontSize: '.75rem', fontFamily: 'DM Mono, monospace', whiteSpace: 'nowrap',
-                color: personaDetectada ? '#4ade80' : stream ? 'rgba(255,255,255,.8)' : 'var(--muted)' }}>
-                {personaDetectada ? `✓ ${personaDetectada.nombres} ${personaDetectada.apellidos}` : stream ? 'Centra el rostro en el óvalo' : 'Sin cámara'}
+                color: personaDetectada != null ? '#4ade80' : stream ? 'rgba(255,255,255,.8)' : 'var(--muted)' }}>
+                {personaDetectada != null ? `✓ ${personaDetectada.nombres} ${personaDetectada.apellidos}` : stream ? 'Centra el rostro en el óvalo' : 'Sin cámara'}
               </div>
             </div>
 
