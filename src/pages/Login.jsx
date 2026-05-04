@@ -44,7 +44,7 @@ export default function Login() {
         position: 'absolute',
         width: 500, height: 500,
         borderRadius: '50%',
-        background: 'radial-gradient(circle, rgba(22,163,74,.15) 0%, transparent 70%)',
+        background: 'rgba(22,163,74,.04)',
         top: -100, left: -100,
         pointerEvents: 'none',
       }} />
@@ -52,7 +52,7 @@ export default function Login() {
         position: 'absolute',
         width: 400, height: 400,
         borderRadius: '50%',
-        background: 'radial-gradient(circle, rgba(22,163,74,.1) 0%, transparent 70%)',
+        background: 'rgba(22,163,74,.03)',
         bottom: -80, right: -80,
         pointerEvents: 'none',
       }} />

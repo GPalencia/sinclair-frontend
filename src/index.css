@@ -9,20 +9,20 @@
   --verde-mid:   #bbf7d0;
   --azul:        #2563eb;
   --azul-light:  #eff6ff;
-  --bg:          #f0fdf4;
+  --bg:          #ffffff;
   --surface:     #ffffff;
   --card:        #ffffff;
-  --card2:       #f0fdf4;
+  --card2:       #f8fafc;
   --border:      #bbf7d0;
   --border2:     #86efac;
   --text:        #0f172a;
-  --text2:       #166534;
-  --muted:       #4b7c5e;
-  --muted2:      #86efac;
+  --text2:       #334155;
+  --muted:       #64748b;
+  --muted2:      #94a3b8;
   --danger:      #dc2626;
   --warn:        #d97706;
   --sidebar-bg:  #14532d;
-  --sidebar-txt: #86efac;
+  --sidebar-txt: #ffffff;
   --sidebar-act: #4ade80;
 }
 
