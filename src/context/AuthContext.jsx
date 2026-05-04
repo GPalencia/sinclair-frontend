@@ -1,6 +1,7 @@
 // src/context/AuthContext.jsx
 import { createContext, useContext, useState, useEffect } from 'react'
 
+const BASE = import.meta.env.VITE_API_URL || '/api'
 const AuthContext = createContext(null)
 
 export function AuthProvider({ children }) {
@@ -15,7 +16,7 @@ export function AuthProvider({ children }) {
 
   async function verificarToken() {
     try {
-      const res = await fetch('/api/auth/yo', {
+      const res  = await fetch(`${BASE}/auth/yo`, {
         headers: { Authorization: `Bearer ${token}` }
       })
       const data = await res.json()
@@ -29,7 +30,7 @@ export function AuthProvider({ children }) {
   }
 
   async function login(email, password) {
-    const res  = await fetch('/api/auth/login', {
+    const res  = await fetch(`${BASE}/auth/login`, {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify({ email, password })

@@ -1,6 +1,8 @@
 // src/hooks/useApi.js
 import { useAuth } from '../context/AuthContext'
-import { useToast } from './useToast'
+import { useToast } from '../hooks/useToast'
+
+const BASE = import.meta.env.VITE_API_URL || '/api'
 
 export function useApi() {
   const { token, logout } = useAuth()
@@ -13,7 +15,7 @@ export function useApi() {
 
   async function request(url, options = {}) {
     try {
-      const res  = await fetch(`/api${url}`, { ...options, headers: { ...headers(), ...options.headers } })
+      const res  = await fetch(`${BASE}${url}`, { ...options, headers: { ...headers(), ...options.headers } })
       if (res.status === 401) { logout(); return null }
       const data = await res.json()
       return data
@@ -24,18 +26,18 @@ export function useApi() {
   }
 
   async function requestBlob(url) {
-    const res = await fetch(`/api${url}`, { headers: { Authorization: `Bearer ${token}` } })
+    const res = await fetch(`${BASE}${url}`, { headers: { Authorization: `Bearer ${token}` } })
     if (!res.ok) throw new Error('Error al descargar')
     return res.blob()
   }
 
-  const get    = (url)         => request(url)
-  const post   = (url, body)   => request(url, { method: 'POST', body: JSON.stringify(body) })
-  const put    = (url, body)   => request(url, { method: 'PUT',  body: JSON.stringify(body) })
-  const del    = (url)         => request(url, { method: 'DELETE' })
+  const get    = (url)       => request(url)
+  const post   = (url, body) => request(url, { method: 'POST', body: JSON.stringify(body) })
+  const put    = (url, body) => request(url, { method: 'PUT',  body: JSON.stringify(body) })
+  const del    = (url)       => request(url, { method: 'DELETE' })
 
   async function postForm(url, formData) {
-    const res  = await fetch(`/api${url}`, {
+    const res = await fetch(`${BASE}${url}`, {
       method: 'POST',
       headers: { Authorization: `Bearer ${token}` },
       body: formData
