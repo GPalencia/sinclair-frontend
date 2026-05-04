@@ -1,5 +1,7 @@
 // src/pages/Personal.jsx
 import { useState, useEffect } from 'react'
+import { Pencil, UserX, ClipboardList, UserPlus, Search } from 'lucide-react'
+import { Plus, Pencil, UserX, ClipboardList, Search } from 'lucide-react'
 import { useApi } from '../hooks/useApi'
 import { useToast } from '../hooks/useToast'
 import { useNavigate } from 'react-router-dom'
@@ -126,7 +128,7 @@ function ModalEditar({ persona, onCerrar, onGuardado }) {
           <button className="btn-secondary" style={{ flex: 1 }} onClick={onCerrar}>Cancelar</button>
           <button className="btn-primary" style={{ flex: 1, justifyContent: 'center' }}
             onClick={guardar} disabled={guardando}>
-            {guardando ? <span className="spinner" /> : '💾'} Guardar cambios
+            {guardando ? <span className="spinner" /> : null} Guardar cambios
           </button>
         </div>
       </div>
@@ -186,7 +188,7 @@ export default function Personal() {
           <p style={{ color: 'var(--muted)', fontSize: '.88rem' }}>{personal.length} empleados registrados</p>
         </div>
         <button className="btn-primary" onClick={() => navigate('/personal/nuevo')}>
-          + Nuevo Empleado
+          <Plus size={16} /> Nuevo Empleado
         </button>
       </div>
 
@@ -253,28 +255,28 @@ export default function Personal() {
                       <div style={{ display: 'flex', gap: '.4rem' }}>
                         <button
                           className="btn-ghost"
-                          style={{ fontSize: '.8rem' }}
+                          style={{ padding: '.4rem .5rem' }}
                           onClick={() => navigate(`/registro?id=${p._id}&nombre=${p.nombres} ${p.apellidos}&codigo=${p.codigoEmpleado || ''}&cargo=${p.cargo}`)}
                           title="Registrar planilla"
                         >
-                          📋
+                          <ClipboardList size={15} />
                         </button>
                         <button
                           className="btn-ghost"
-                          style={{ fontSize: '.8rem', color: 'var(--azul)' }}
+                          style={{ padding: '.4rem .5rem', color: '#2563eb' }}
                           onClick={() => setEditando(p)}
                           title="Editar empleado"
                         >
-                          ✎
+                          <Pencil size={15} />
                         </button>
                         {p.activo && (
                           <button
                             className="btn-ghost"
-                            style={{ fontSize: '.8rem', color: 'var(--danger)' }}
+                            style={{ padding: '.4rem .5rem', color: 'var(--danger)' }}
                             onClick={() => desactivar(p._id, `${p.nombres} ${p.apellidos}`)}
                             title="Desactivar empleado"
                           >
-                            ✕
+                            <UserX size={15} />
                           </button>
                         )}
                       </div>

@@ -1,5 +1,7 @@
 // src/pages/Usuarios.jsx
 import { useState, useEffect } from 'react'
+import { UserPlus, Pencil, KeyRound, UserX, Save, X } from 'lucide-react'
+import { UserPlus, Pencil, KeyRound, UserX } from 'lucide-react'
 import { useApi } from '../hooks/useApi'
 import { useToast } from '../hooks/useToast'
 import { useAuth } from '../context/AuthContext'
@@ -142,7 +144,7 @@ export default function Usuarios() {
         </div>
         {esAdmin && (
           <button className="btn-primary" onClick={() => setModalNuevo(true)}>
-            + Nuevo Usuario
+            Nuevo Usuario
           </button>
         )}
       </div>
@@ -169,11 +171,11 @@ export default function Usuarios() {
           <div style={{ display: 'flex', gap: '.5rem', flexWrap: 'wrap' }}>
             <button className="btn-secondary" style={{ fontSize: '.82rem' }}
               onClick={() => abrirEditar(usuario)}>
-              ✎ Editar perfil
+              Editar perfil
             </button>
             <button className="btn-secondary" style={{ fontSize: '.82rem' }}
               onClick={() => { setModalPass(usuario); setFormPass({ passwordActual: '', passwordNuevo: '', confirmar: '' }) }}>
-              🔑 Cambiar contraseña
+              Cambiar contraseña
             </button>
           </div>
         </div>
@@ -305,7 +307,7 @@ export default function Usuarios() {
             <div style={{ display: 'flex', gap: '.75rem', marginTop: '.5rem' }}>
               <button className="btn-secondary" style={{ flex: 1 }} onClick={() => setModalNuevo(false)}>Cancelar</button>
               <button className="btn-primary" style={{ flex: 1, justifyContent: 'center' }} onClick={crearUsuario} disabled={guardando}>
-                {guardando ? <span className="spinner" /> : '+'} Crear Usuario
+                {guardando ? <span className="spinner" /> : <UserPlus size={15} />} Crear Usuario
               </button>
             </div>
           </div>
@@ -361,7 +363,7 @@ export default function Usuarios() {
             <div style={{ display: 'flex', gap: '.75rem', marginTop: '.5rem' }}>
               <button className="btn-secondary" style={{ flex: 1 }} onClick={() => setModalEditar(null)}>Cancelar</button>
               <button className="btn-primary" style={{ flex: 1, justifyContent: 'center' }} onClick={actualizarUsuario} disabled={guardando}>
-                {guardando ? <span className="spinner" /> : '💾'} Guardar
+                {guardando ? <span className="spinner" /> : <Pencil size={15} />} Guardar
               </button>
             </div>
           </div>
@@ -406,7 +408,7 @@ export default function Usuarios() {
             <div style={{ display: 'flex', gap: '.75rem', marginTop: '.5rem' }}>
               <button className="btn-secondary" style={{ flex: 1 }} onClick={() => setModalPass(null)}>Cancelar</button>
               <button className="btn-primary" style={{ flex: 1, justifyContent: 'center' }} onClick={cambiarPassword} disabled={guardando}>
-                {guardando ? <span className="spinner" /> : '🔑'} Actualizar
+                {guardando ? <span className="spinner" /> : <KeyRound size={15} />} Actualizar
               </button>
             </div>
           </div>

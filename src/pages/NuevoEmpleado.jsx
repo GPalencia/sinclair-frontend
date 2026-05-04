@@ -1,5 +1,7 @@
 // src/pages/NuevoEmpleado.jsx
 import { useState, useRef, useEffect } from 'react'
+import { Camera, ScanFace, Save, ArrowLeft, RotateCcw } from 'lucide-react'
+import { ArrowLeft, Camera, Save, RefreshCw } from 'lucide-react'
 import { useNavigate } from 'react-router-dom'
 import { useApi } from '../hooks/useApi'
 import { useToast } from '../hooks/useToast'
@@ -93,7 +95,7 @@ export default function NuevoEmpleado() {
   return (
     <div style={{ display: 'flex', flexDirection: 'column', gap: '1.5rem', maxWidth: 680 }}>
       <div className="fade-up" style={{ display: 'flex', alignItems: 'center', gap: '1rem' }}>
-        <button className="btn-ghost" onClick={() => navigate('/personal')}>← Volver</button>
+        <button className="btn-ghost" onClick={() => navigate('/personal')}>Volver</button>
         <div>
           <h1 style={{ fontSize: '1.4rem', fontWeight: 700 }}>Nuevo Empleado</h1>
           <p style={{ color: 'var(--muted)', fontSize: '.88rem' }}>Registrar en el sistema</p>
@@ -226,7 +228,7 @@ export default function NuevoEmpleado() {
         <div style={{ display: 'flex', gap: '.75rem', justifyContent: 'center', flexWrap: 'wrap' }}>
           {!stream ? (
             <button className="btn-primary" onClick={activarCamara} style={{ justifyContent: 'center' }}>
-              🎥 Activar cámara
+              Activar cámara
             </button>
           ) : (
             <button
@@ -236,12 +238,12 @@ export default function NuevoEmpleado() {
               style={{ justifyContent: 'center',
                 background: descriptor ? 'var(--verde-dark)' : 'var(--verde)' }}
             >
-              {capturando ? <span className="spinner" /> : descriptor ? '✓ Capturado' : '📸 Capturar rostro'}
+              {capturando ? <span className="spinner" /> : descriptor ? 'Capturado' : 'Capturar rostro'}
             </button>
           )}
           {descriptor && (
             <button className="btn-secondary" onClick={() => setDescriptor(null)} style={{ fontSize: '.82rem' }}>
-              ↺ Volver a capturar
+              Volver a capturar
             </button>
           )}
         </div>
@@ -260,7 +262,7 @@ export default function NuevoEmpleado() {
       <div style={{ display: 'flex', gap: '1rem' }}>
         <button className="btn-secondary" onClick={() => navigate('/personal')}>Cancelar</button>
         <button className="btn-primary" onClick={guardar} disabled={cargando}>
-          {cargando ? <span className="spinner" /> : '💾'} Registrar Empleado
+          {cargando ? <span className="spinner" /> : <Save size={15} />} Registrar Empleado
         </button>
       </div>
     </div>

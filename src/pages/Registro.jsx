@@ -1,5 +1,7 @@
 // src/pages/Registro.jsx
 import { useState, useEffect, useRef } from 'react'
+import { Camera, ScanFace, Search, Save, IdCard } from 'lucide-react'
+import { Camera, Search, Save, RefreshCw } from 'lucide-react'
 import { useApi } from '../hooks/useApi'
 import { useToast } from '../hooks/useToast'
 import { useSearchParams } from 'react-router-dom'
@@ -270,8 +272,8 @@ export default function Registro() {
             </div>
 
             <div style={{ display: 'flex', gap: '.5rem' }}>
-              <button className="btn-secondary" style={{ flex: 1 }} onClick={activarCamara}>🎥 Activar</button>
-              <button className="btn-primary" style={{ flex: 1, justifyContent: 'center' }} onClick={reconocer} disabled={!stream || !modelosCargados}>🔍 Reconocer</button>
+              <button className="btn-secondary" style={{ flex: 1 }} onClick={activarCamara}>Activar cámara</button>
+              <button className="btn-primary" style={{ flex: 1, justifyContent: 'center' }} onClick={reconocer} disabled={!stream || !modelosCargados}>Reconocer</button>
             </div>
             {cargandoModelos && <div style={{ fontSize: '.78rem', color: 'var(--muted)', fontFamily: 'DM Mono, monospace' }}>⟳ Cargando modelos de IA...</div>}
             {modelosCargados && <div style={{ fontSize: '.78rem', color: 'var(--verde)', fontFamily: 'DM Mono, monospace' }}>✅ {descriptoresBD.length} descriptores cargados</div>}
@@ -285,7 +287,7 @@ export default function Registro() {
                 onChange={e => setInputCodigo(e.target.value.toUpperCase())}
                 onKeyDown={e => e.key === 'Enter' && buscarCodigo()} />
               <button className="btn-primary" style={{ width: '100%', justifyContent: 'center' }} onClick={buscarCodigo}>
-                🔍 Buscar
+                Buscar
               </button>
             </div>
           )}
@@ -303,7 +305,7 @@ export default function Registro() {
                 }}
                 onKeyDown={e => e.key === 'Enter' && buscarIdentidad()} />
               <button className="btn-primary" style={{ width: '100%', justifyContent: 'center' }} onClick={buscarIdentidad}>
-                🔍 Buscar
+                Buscar
               </button>
             </div>
           )}
@@ -416,7 +418,7 @@ export default function Registro() {
             disabled={guardando || !persona}
             style={{ width: '100%', justifyContent: 'center', padding: '.8rem', marginTop: '.5rem' }}
           >
-            {guardando ? <span className="spinner" /> : '💾'} Guardar en Planilla
+            {guardando ? <span className="spinner" /> : <Save size={15} />} Guardar en Planilla
           </button>
 
           {!persona && (

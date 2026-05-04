@@ -1,5 +1,7 @@
 // src/pages/Historial.jsx
 import { useState } from 'react'
+import { Search, Download, FileSpreadsheet } from 'lucide-react'
+import { Search, Download } from 'lucide-react'
 import { useApi } from '../hooks/useApi'
 import { useToast } from '../hooks/useToast'
 
@@ -89,7 +91,7 @@ export default function Historial() {
             <input className="inp" type="date" value={hasta} onChange={e => setHasta(e.target.value)} />
           </div>
           <button className="btn-primary" onClick={buscar} disabled={cargando}>
-            {cargando ? <span className="spinner" /> : '🔍'} Buscar
+            {cargando ? <span className="spinner" /> : <Search size={15} />} Buscar
           </button>
           <button
             className="btn-secondary"
@@ -97,7 +99,7 @@ export default function Historial() {
             disabled={exportando}
             style={{ borderColor: 'var(--verde)', color: 'var(--verde)' }}
           >
-            {exportando ? <span className="spinner" /> : '⬇'} Exportar Excel
+            {exportando ? <span className="spinner" /> : <Download size={15} />} Exportar Excel
           </button>
         </div>
       </div>
