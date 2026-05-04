@@ -37,8 +37,8 @@ export default function Layout({ children }) {
       {/* ── Sidebar ── */}
       <aside style={{
         width: 220,
-        background: 'var(--sidebar-bg)',
-        borderRight: '1px solid rgba(255,255,255,.06)',
+        background: '#ffffff',
+        borderRight: '1px solid #e2e8f0',
         display: 'flex',
         flexDirection: 'column',
         position: 'fixed',
@@ -50,7 +50,7 @@ export default function Layout({ children }) {
         className="md-sidebar"
       >
         {/* Logo */}
-        <div style={{ padding: '1.25rem 1.25rem .75rem', borderBottom: '1px solid var(--border)', display: 'flex', alignItems: 'center', gap: '.75rem' }}>
+        <div style={{ padding: '1.25rem 1.25rem .75rem', borderBottom: '3px solid #16a34a', display: 'flex', alignItems: 'center', gap: '.75rem' }}>
           <img src={LOGO} alt="Sinclair" style={{ height: 42, width: 42, objectFit: 'contain' }} />
           <div>
             <div style={{ fontFamily: 'Syne, sans-serif', fontSize: '.95rem', fontWeight: 800, letterSpacing: '.04em' }}>
@@ -77,9 +77,9 @@ export default function Layout({ children }) {
                 fontFamily: 'Syne, sans-serif',
                 fontSize: '.85rem',
                 fontWeight: isActive ? 600 : 400,
-                color: isActive ? 'var(--sidebar-act)' : 'var(--sidebar-txt)',
-                background: isActive ? 'rgba(74,222,128,.1)' : 'transparent',
-                border: isActive ? '1px solid rgba(74,222,128,.15)' : '1px solid transparent',
+                color: isActive ? '#16a34a' : '#475569',
+                background: isActive ? '#f0fdf4' : 'transparent',
+                border: isActive ? '1px solid #bbf7d0' : '1px solid transparent',
                 textDecoration: 'none',
                 transition: 'all .18s',
               })}
@@ -91,14 +91,14 @@ export default function Layout({ children }) {
         </nav>
 
         {/* Usuario */}
-        <div style={{ padding: '1rem', borderTop: '1px solid rgba(255,255,255,.08)' }}>
-          <div style={{ fontSize: '.78rem', color: 'rgba(255,255,255,.35)', marginBottom: '.5rem', fontFamily: 'DM Mono, monospace' }}>
+        <div style={{ padding: '1rem', borderTop: '1px solid #e2e8f0' }}>
+          <div style={{ fontSize: '.78rem', color: '#94a3b8', marginBottom: '.5rem', fontFamily: 'DM Mono, monospace' }}>
             {usuario?.email}
           </div>
           <button
             onClick={handleLogout}
             className="btn-ghost"
-            style={{ width: '100%', justifyContent: 'center', fontSize: '.82rem', color: 'var(--danger)' }}
+            style={{ width: '100%', justifyContent: 'center', fontSize: '.82rem', color: '#dc2626' }}
           >
             ⎋ Cerrar sesión
           </button>
@@ -115,7 +115,7 @@ export default function Layout({ children }) {
           justifyContent: 'space-between',
           padding: '.9rem 1.25rem',
           background: 'var(--surface)',
-          borderBottom: '1px solid var(--border)',
+          borderBottom: '3px solid #16a34a',
           boxShadow: '0 1px 3px rgba(0,0,0,.06)',
           position: 'sticky',
           top: 0,
