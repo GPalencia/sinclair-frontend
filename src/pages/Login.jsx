@@ -72,7 +72,7 @@ export default function Login() {
       }}>
         {/* Logo + título */}
         <div style={{ textAlign: 'center', marginBottom: '2rem' }}>
-          <img src={LOGO} alt="Sinclair" style={{ height: 90, width: 90, objectFit: 'contain', marginBottom: '.75rem' }} />
+          <img src={LOGO} alt="Sinclair" style={{ height: 90, width: 90, objectFit: 'contain', display: 'block', margin: '0 auto .75rem' }} />
           <div style={{ fontFamily: 'Syne, sans-serif', fontSize: '1.6rem', fontWeight: 800, letterSpacing: '.04em', marginBottom: '.25rem' }}>
             <span style={{ color: 'var(--verde)' }}>SINCLAIR</span>
             <span style={{ color: 'var(--muted)', fontSize: '.95rem', fontWeight: 400 }}>/APP</span>

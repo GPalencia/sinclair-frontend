@@ -100,9 +100,9 @@ export default function Layout({ children }) {
           <button
             onClick={handleLogout}
             className="btn-ghost"
-            style={{ width: '100%', justifyContent: 'center', fontSize: '.82rem', color: '#dc2626' }}
+            style={{ width: '100%', justifyContent: 'center', alignItems: 'center', flexDirection: 'row', fontSize: '.82rem', color: '#dc2626', display: 'flex', gap: '.4rem' }}
           >
-            <LogOut size={14} /> Cerrar sesión
+            <span style={{ display: "inline-flex", alignItems: "center", gap: ".4rem", justifyContent: "center" }}><LogOut size={14} /> Cerrar sesión</span>
           </button>
         </div>
 
