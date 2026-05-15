@@ -77,7 +77,7 @@ export default function Login() {
             <span style={{ color: 'var(--verde)' }}>SINCLAIR</span>
             <span style={{ color: 'var(--muted)', fontSize: '.95rem', fontWeight: 400 }}>/APP</span>
           </div>
-          <p style={{ fontSize: '.85rem', color: 'var(--muted)' }}>Sistema de Registro de Planilla</p>
+          <p style={{ fontSize: '.85rem', color: 'var(--muted)' }}>Sistema de Operaciones de Fincas</p>
         </div>
 
         <form onSubmit={handleSubmit} style={{ display: 'flex', flexDirection: 'column', gap: '1rem' }}>
