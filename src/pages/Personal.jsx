@@ -1,12 +1,12 @@
 // src/pages/Personal.jsx
-import { useState, useEffect } from 'react'
-import { ClipboardList, Pencil, Plus, Search, UserPlus, UserX } from 'lucide-react'
+import { useState, useEffect, useRef } from 'react'
+import { ClipboardList, Pencil, Plus, ScanFace, UserX } from 'lucide-react'
 
 import { useApi } from '../hooks/useApi'
 import { useToast } from '../hooks/useToast'
 import { useNavigate } from 'react-router-dom'
 
-// ── Modal de edición ──────────────────────────────────
+// ── Modal de edición de datos ─────────────────────────
 function ModalEditar({ persona, onCerrar, onGuardado }) {
   const api       = useApi()
   const { toast } = useToast()
@@ -61,7 +61,6 @@ function ModalEditar({ persona, onCerrar, onGuardado }) {
         padding: '1.75rem', width: '100%', maxWidth: 520, animation: 'fadeUp .25s ease',
         maxHeight: '90vh', overflowY: 'auto' }}>
 
-        {/* Header */}
         <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '1.25rem' }}>
           <h3 style={{ fontFamily: 'Syne, sans-serif', fontSize: '1rem', fontWeight: 700 }}>
             Editar — {persona.nombres} {persona.apellidos}
@@ -69,7 +68,6 @@ function ModalEditar({ persona, onCerrar, onGuardado }) {
           <button className="btn-ghost" onClick={onCerrar} style={{ fontSize: '1.1rem' }}>✕</button>
         </div>
 
-        {/* Formulario */}
         <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '1rem' }}>
           <div>
             <label className="lbl">Nombres *</label>
@@ -107,7 +105,6 @@ function ModalEditar({ persona, onCerrar, onGuardado }) {
           </div>
         </div>
 
-        {/* Estado activo/inactivo */}
         <div style={{ marginTop: '1rem', display: 'flex', alignItems: 'center', gap: '1rem' }}>
           <label className="lbl" style={{ margin: 0 }}>Estado:</label>
           <button
@@ -123,12 +120,196 @@ function ModalEditar({ persona, onCerrar, onGuardado }) {
           </span>
         </div>
 
-        {/* Botones */}
         <div style={{ display: 'flex', gap: '.75rem', marginTop: '1.5rem' }}>
           <button className="btn-secondary" style={{ flex: 1 }} onClick={onCerrar}>Cancelar</button>
           <button className="btn-primary" style={{ flex: 1, justifyContent: 'center' }}
             onClick={guardar} disabled={guardando}>
             {guardando ? <span className="spinner" /> : null} Guardar cambios
+          </button>
+        </div>
+      </div>
+    </div>
+  )
+}
+
+// ── Modal para asignar Face ID ────────────────────────
+function ModalFaceId({ persona, onCerrar, onGuardado }) {
+  const { toast } = useToast()
+  const videoRef  = useRef(null)
+  const [stream, setStream]           = useState(null)
+  const [descriptor, setDescriptor]   = useState(null)
+  const [modelosCargados, setModelos] = useState(false)
+  const [capturando, setCapturando]   = useState(false)
+  const [guardando, setGuardando]     = useState(false)
+
+  useEffect(() => { cargarModelos() }, [])
+  useEffect(() => () => { stream?.getTracks().forEach(t => t.stop()) }, [stream])
+
+  async function cargarModelos() {
+    try {
+      if (!window.faceapi) return
+      await Promise.all([
+        faceapi.nets.tinyFaceDetector.loadFromUri('/modelos'),
+        faceapi.nets.faceLandmark68Net.loadFromUri('/modelos'),
+        faceapi.nets.faceRecognitionNet.loadFromUri('/modelos'),
+      ])
+      setModelos(true)
+    } catch {}
+  }
+
+  async function activarCamara() {
+    try {
+      const s = await navigator.mediaDevices.getUserMedia({ video: { facingMode: 'user' } })
+      setStream(s)
+      if (videoRef.current) videoRef.current.srcObject = s
+    } catch { toast('No se pudo acceder a la cámara', 'error') }
+  }
+
+  async function capturarDescriptor() {
+    if (!modelosCargados) return toast('Modelos de IA cargando...', 'info')
+    if (!videoRef.current) return
+    setCapturando(true)
+    try {
+      const det = await faceapi
+        .detectSingleFace(videoRef.current, new faceapi.TinyFaceDetectorOptions())
+        .withFaceLandmarks().withFaceDescriptor()
+      if (!det) { toast('No se detectó rostro, ajusta la posición', 'warn'); return }
+      setDescriptor(Array.from(det.descriptor))
+      toast('✅ Descriptor facial capturado', 'ok')
+    } catch { toast('Error al capturar', 'error') }
+    finally { setCapturando(false) }
+  }
+
+  async function guardar() {
+    if (!descriptor) return toast('Primero captura el rostro', 'error')
+    setGuardando(true)
+    try {
+      const res = await fetch(
+        `${import.meta.env.VITE_API_URL || '/api'}/personal/${persona._id}/face-descriptor`,
+        {
+          method: 'PUT',
+          headers: {
+            'Content-Type': 'application/json',
+            Authorization: `Bearer ${localStorage.getItem('sinclair_token')}`
+          },
+          body: JSON.stringify({ descriptor })
+        }
+      ).then(r => r.json())
+
+      if (!res?.ok) return toast(res?.mensaje || 'Error al guardar Face ID', 'error')
+      toast('✅ Face ID asignado correctamente', 'ok')
+      onGuardado()
+    } finally { setGuardando(false) }
+  }
+
+  return (
+    <div
+      onClick={e => e.target === e.currentTarget && onCerrar()}
+      style={{ position: 'fixed', inset: 0, background: 'rgba(0,0,0,.55)', zIndex: 100,
+        display: 'flex', alignItems: 'center', justifyContent: 'center', padding: '1rem' }}
+    >
+      <div style={{ background: 'var(--card)', border: '1px solid var(--border)', borderRadius: 14,
+        padding: '1.75rem', width: '100%', maxWidth: 400, animation: 'fadeUp .25s ease',
+        maxHeight: '95vh', overflowY: 'auto' }}>
+
+        {/* Header */}
+        <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '1rem' }}>
+          <div>
+            <h3 style={{ fontFamily: 'Syne, sans-serif', fontSize: '1rem', fontWeight: 700 }}>
+              Asignar Face ID
+            </h3>
+            <p style={{ fontSize: '.82rem', color: 'var(--muted)' }}>
+              {persona.nombres} {persona.apellidos}
+              {persona.codigoEmpleado && (
+                <span style={{ fontFamily: 'DM Mono, monospace', color: 'var(--verde)', marginLeft: '.5rem' }}>
+                  {persona.codigoEmpleado}
+                </span>
+              )}
+            </p>
+          </div>
+          <button className="btn-ghost" onClick={onCerrar} style={{ fontSize: '1.1rem' }}>✕</button>
+        </div>
+
+        {/* Badge si ya tiene Face ID */}
+        {persona.faceDescriptor && (
+          <div style={{ marginBottom: '1rem', padding: '.6rem .9rem', background: 'rgba(34,197,94,.1)',
+            border: '1px solid rgba(34,197,94,.3)', borderRadius: 8, fontSize: '.8rem', color: '#16a34a' }}>
+            ✓ Este empleado ya tiene Face ID registrado. Puedes reemplazarlo capturando uno nuevo.
+          </div>
+        )}
+
+        {/* Cámara */}
+        <div style={{ position: 'relative', borderRadius: 12, overflow: 'hidden',
+          background: '#000', aspectRatio: '3/4', maxWidth: 280, margin: '0 auto 1rem' }}>
+          <video
+            ref={videoRef}
+            autoPlay muted playsInline
+            style={{ width: '100%', height: '100%', objectFit: 'cover', display: 'block',
+              filter: stream ? 'none' : 'brightness(0.3)' }}
+          />
+
+          {stream && (
+            <svg style={{ position: 'absolute', top: 0, left: 0, width: '100%', height: '100%', pointerEvents: 'none' }}
+              viewBox="0 0 280 373" preserveAspectRatio="none">
+              <defs>
+                <mask id="ovalMaskFace">
+                  <rect width="280" height="373" fill="white" />
+                  <ellipse cx="140" cy="165" rx="95" ry="125" fill="black" />
+                </mask>
+              </defs>
+              <rect width="280" height="373" fill="rgba(0,0,0,0.55)" mask="url(#ovalMaskFace)" />
+              <ellipse cx="140" cy="165" rx="95" ry="125"
+                fill="none"
+                stroke={descriptor ? '#22c55e' : capturando ? '#fbbf24' : 'rgba(255,255,255,0.8)'}
+                strokeWidth="3"
+                strokeDasharray={descriptor ? 'none' : '8 4'} />
+            </svg>
+          )}
+
+          {!stream && (
+            <div style={{ position: 'absolute', inset: 0, display: 'flex', flexDirection: 'column',
+              alignItems: 'center', justifyContent: 'center', gap: '.75rem', color: 'var(--muted)' }}>
+              <span style={{ fontSize: '2.5rem' }}>📷</span>
+              <span style={{ fontSize: '.82rem' }}>Activa la cámara</span>
+            </div>
+          )}
+
+          {stream && (
+            <div style={{ position: 'absolute', bottom: '.6rem', left: '50%', transform: 'translateX(-50%)',
+              background: 'rgba(0,0,0,.75)', padding: '.25rem .9rem', borderRadius: 20,
+              fontSize: '.75rem', fontFamily: 'DM Mono, monospace', whiteSpace: 'nowrap',
+              color: descriptor ? '#4ade80' : capturando ? '#fbbf24' : 'rgba(255,255,255,.8)' }}>
+              {descriptor ? '✓ Descriptor capturado' : capturando ? '⟳ Procesando...' : 'Centra tu rostro'}
+            </div>
+          )}
+        </div>
+
+        {/* Botones cámara */}
+        <div style={{ display: 'flex', gap: '.6rem', justifyContent: 'center', flexWrap: 'wrap', marginBottom: '1rem' }}>
+          {!stream ? (
+            <button className="btn-primary" onClick={activarCamara} style={{ justifyContent: 'center' }}>
+              Activar cámara
+            </button>
+          ) : (
+            <button className="btn-primary" onClick={capturarDescriptor}
+              disabled={capturando || !!descriptor}
+              style={{ justifyContent: 'center', background: descriptor ? 'var(--verde-dark)' : 'var(--verde)' }}>
+              {capturando ? <span className="spinner" /> : descriptor ? 'Capturado ✓' : 'Capturar rostro'}
+            </button>
+          )}
+          {descriptor && (
+            <button className="btn-secondary" onClick={() => setDescriptor(null)} style={{ fontSize: '.82rem' }}>
+              Volver a capturar
+            </button>
+          )}
+        </div>
+
+        {/* Acciones finales */}
+        <div style={{ display: 'flex', gap: '.75rem' }}>
+          <button className="btn-secondary" style={{ flex: 1 }} onClick={onCerrar}>Cancelar</button>
+          <button className="btn-primary" style={{ flex: 1, justifyContent: 'center' }}
+            onClick={guardar} disabled={!descriptor || guardando}>
+            {guardando ? <span className="spinner" /> : <ScanFace size={15} />} Guardar Face ID
           </button>
         </div>
       </div>
@@ -145,7 +326,8 @@ export default function Personal() {
   const [filtrado, setFiltrado]     = useState([])
   const [buscar, setBuscar]         = useState('')
   const [cargando, setCargando]     = useState(true)
-  const [editando, setEditando]     = useState(null) // persona que se está editando
+  const [editando, setEditando]     = useState(null)   // modal editar datos
+  const [asignandoFace, setAsignandoFace] = useState(null) // modal face id
 
   useEffect(() => { cargar() }, [])
   useEffect(() => {
@@ -172,12 +354,21 @@ export default function Personal() {
   return (
     <div style={{ display: 'flex', flexDirection: 'column', gap: '1.5rem' }}>
 
-      {/* Modal editar */}
+      {/* Modal editar datos */}
       {editando && (
         <ModalEditar
           persona={editando}
           onCerrar={() => setEditando(null)}
           onGuardado={() => { setEditando(null); cargar() }}
+        />
+      )}
+
+      {/* Modal asignar Face ID */}
+      {asignandoFace && (
+        <ModalFaceId
+          persona={asignandoFace}
+          onCerrar={() => setAsignandoFace(null)}
+          onGuardado={() => { setAsignandoFace(null); cargar() }}
         />
       )}
 
@@ -268,6 +459,18 @@ export default function Personal() {
                           title="Editar empleado"
                         >
                           <Pencil size={15} />
+                        </button>
+                        {/* Botón Face ID — verde si ya tiene, amarillo si falta */}
+                        <button
+                          className="btn-ghost"
+                          style={{
+                            padding: '.4rem .5rem',
+                            color: p.faceDescriptor ? '#16a34a' : '#d97706'
+                          }}
+                          onClick={() => setAsignandoFace(p)}
+                          title={p.faceDescriptor ? 'Actualizar Face ID' : 'Asignar Face ID'}
+                        >
+                          <ScanFace size={15} />
                         </button>
                         {p.activo && (
                           <button
