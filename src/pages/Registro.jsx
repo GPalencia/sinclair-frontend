@@ -32,9 +32,14 @@ export default function Registro() {
   const [obs, setObs]               = useState('')
   const [laborSel, setLaborSel]     = useState(null)
 
-  // Búsqueda
+  // Búsqueda empleado
   const [inputCodigo, setInputCodigo] = useState('')
   const [inputId, setInputId]         = useState('')
+
+  // Búsqueda labor (autocomplete)
+  const [laborQuery, setLaborQuery]   = useState('')
+  const [laborOpen, setLaborOpen]     = useState(false)
+  const laborRef                      = useRef(null)
 
   // Cámara
   const [stream, setStream]           = useState(null)
@@ -71,6 +76,29 @@ export default function Registro() {
     }
     setValor('')
   }, [laborId])
+
+  // Cerrar dropdown de labor al hacer click fuera
+  useEffect(() => {
+    function handleClickOutside(e) {
+      if (laborRef.current && !laborRef.current.contains(e.target)) {
+        setLaborOpen(false)
+      }
+    }
+    document.addEventListener('mousedown', handleClickOutside)
+    return () => document.removeEventListener('mousedown', handleClickOutside)
+  }, [])
+
+  // Labores filtradas por búsqueda
+  const laboresFiltradas = labores.filter(l => {
+    const q = laborQuery.toLowerCase()
+    return !q || l.codigo?.toLowerCase().includes(q) || l.nombre?.toLowerCase().includes(q)
+  })
+
+  function seleccionarLabor(l) {
+    setLabor(l._id)
+    setLaborQuery(`${l.codigo} — ${l.nombre}`)
+    setLaborOpen(false)
+  }
 
   async function cargarCatalogos() {
     const [resL, resC] = await Promise.all([
@@ -179,7 +207,7 @@ export default function Registro() {
       toast(`✅ Guardado — L ${salario.toFixed(2)}`, 'ok')
       setPersona(null)
       setCentro(''); setLabor(''); setDias(1); setValor(''); setObs(''); setFecha(hoy())
-      setInputCodigo(''); setInputId('')
+      setInputCodigo(''); setInputId(''); setLaborQuery('')
     } finally { setGuardando(false) }
   }
 
@@ -206,12 +234,20 @@ export default function Registro() {
           {/* Tabs de modo */}
           <div className="card fade-up" style={{ padding: '.75rem' }}>
             <div style={{ display: 'flex', gap: '.5rem' }}>
-              {[['facial','👤 Facial'],['codigo','🪪 Código'],['identidad','🔢 Identidad']].map(([m, label]) => (
+              {[
+                ['facial',    <ScanFace size={14} />,  'Facial'],
+                ['codigo',    <IdCard   size={14} />,  'Código'],
+                ['identidad', <Search   size={14} />,  'Identidad'],
+              ].map(([m, icon, label]) => (
                 <button
                   key={m}
                   onClick={() => setModo(m)}
                   style={{
                     flex: 1,
+                    display: 'flex',
+                    alignItems: 'center',
+                    justifyContent: 'center',
+                    gap: '.35rem',
                     padding: '.5rem .25rem',
                     borderRadius: 8,
                     border: modo === m ? '1px solid rgba(34,197,94,.3)' : '1px solid var(--border)',
@@ -224,7 +260,7 @@ export default function Registro() {
                     transition: 'all .18s',
                   }}
                 >
-                  {label}
+                  {icon}{label}
                 </button>
               ))}
             </div>
@@ -257,7 +293,7 @@ export default function Registro() {
               {!stream && (
                 <div style={{ position: 'absolute', inset: 0, display: 'flex', flexDirection: 'column',
                   alignItems: 'center', justifyContent: 'center', gap: '.75rem', color: 'var(--muted)' }}>
-                  <span style={{ fontSize: '3rem' }}>📷</span>
+                  <Camera size={40} strokeWidth={1.2} />
                   <span style={{ fontSize: '.85rem' }}>Activa la cámara</span>
                 </div>
               )}
@@ -350,14 +386,68 @@ export default function Registro() {
 
           <div>
             <label className="lbl">Labor / Transacción *</label>
-            <select className="inp" value={laborId} onChange={e => setLabor(e.target.value)}>
-              <option value="">— Selecciona —</option>
-              {labores.map(l => (
-                <option key={l._id} value={l._id}>
-                  {l.codigo} — {l.nombre}{l.valorDiario ? ` (L${l.valorDiario}/día)` : ' (valor libre)'}
-                </option>
-              ))}
-            </select>
+            <div ref={laborRef} style={{ position: 'relative' }}>
+              <div style={{ position: 'relative' }}>
+                <input
+                  className="inp"
+                  placeholder="Buscar por código o nombre..."
+                  value={laborQuery}
+                  onChange={e => {
+                    setLaborQuery(e.target.value)
+                    setLabor('')
+                    setLaborOpen(true)
+                  }}
+                  onFocus={() => setLaborOpen(true)}
+                  style={{ paddingRight: '2.2rem' }}
+                />
+                <Search
+                  size={14}
+                  style={{
+                    position: 'absolute', right: '.75rem', top: '50%',
+                    transform: 'translateY(-50%)', color: 'var(--muted)', pointerEvents: 'none'
+                  }}
+                />
+              </div>
+
+              {laborOpen && (
+                <div style={{
+                  position: 'absolute', top: 'calc(100% + 4px)', left: 0, right: 0,
+                  background: 'var(--card)', border: '1px solid var(--border)',
+                  borderRadius: 8, zIndex: 50, maxHeight: 220, overflowY: 'auto',
+                  boxShadow: '0 8px 24px rgba(0,0,0,.15)'
+                }}>
+                  {laboresFiltradas.length === 0 ? (
+                    <div style={{ padding: '.75rem 1rem', fontSize: '.82rem', color: 'var(--muted)' }}>
+                      Sin resultados
+                    </div>
+                  ) : laboresFiltradas.map(l => (
+                    <div
+                      key={l._id}
+                      onMouseDown={() => seleccionarLabor(l)}
+                      style={{
+                        padding: '.6rem 1rem',
+                        cursor: 'pointer',
+                        borderBottom: '1px solid var(--border)',
+                        background: laborId === l._id ? 'rgba(34,197,94,.08)' : 'transparent',
+                        transition: 'background .12s',
+                      }}
+                      onMouseEnter={e => e.currentTarget.style.background = 'rgba(255,255,255,.05)'}
+                      onMouseLeave={e => e.currentTarget.style.background = laborId === l._id ? 'rgba(34,197,94,.08)' : 'transparent'}
+                    >
+                      <span style={{ fontFamily: 'DM Mono, monospace', fontSize: '.75rem', color: 'var(--verde)' }}>
+                        {l.codigo}
+                      </span>
+                      <span style={{ margin: '0 .4rem', color: 'var(--muted)' }}>—</span>
+                      <span style={{ fontSize: '.85rem' }}>{l.nombre}</span>
+                      {l.valorDiario
+                        ? <span style={{ float: 'right', fontSize: '.75rem', color: 'var(--muted)', fontFamily: 'DM Mono, monospace' }}>L{l.valorDiario}/día</span>
+                        : <span style={{ float: 'right', fontSize: '.75rem', color: 'var(--muted)' }}>valor libre</span>
+                      }
+                    </div>
+                  ))}
+                </div>
+              )}
+            </div>
           </div>
 
           {/* Días (valor fijo) */}
