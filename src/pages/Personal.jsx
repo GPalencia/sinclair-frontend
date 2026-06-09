@@ -98,7 +98,7 @@ function ModalEditar({ persona, onCerrar, onGuardado }) {
           <div>
             <label className="lbl">Cargo</label>
             <select className="inp" value={form.cargo} onChange={e => set('cargo', e.target.value)}>
-              {['operario','tecnico','supervisor','coordinador','otro'].map(c => (
+              {['operario','tecnico','supervisor','coordinador','otro', 'empaque'].map(c => (
                 <option key={c} value={c}>{c.charAt(0).toUpperCase() + c.slice(1)}</option>
               ))}
             </select>
