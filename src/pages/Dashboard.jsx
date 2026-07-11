@@ -1,4 +1,4 @@
-// src/pages/Dashboard.jsx
+/// src/pages/Dashboard.jsx
 import { useState, useEffect } from 'react'
 import { useApi } from '../hooks/useApi'
 import {
@@ -45,6 +45,7 @@ export default function Dashboard() {
   const [stats, setStats]       = useState(null)
   const [historial, setHist]    = useState([])
   const [porCentro, setPorCC]   = useState([])
+  const [alertas, setAlertas]   = useState([])
   const [cargando, setCargando] = useState(true)
 
   useEffect(() => { cargarDatos() }, [])
@@ -63,12 +64,13 @@ export default function Dashboard() {
 
       const resHist = await api.get(`/registros?desde=${desde}&hasta=${hasta}&limite=500`)
       const resPersonal = await api.get('/personal')
+      const resAlertas  = await api.get('/contratos/proximos-vencer?dias=7')
 
       if (resHoy?.ok)    setStats(resHoy.data)
       if (resPersonal?.ok) {
-        // Para la stat de empleados activos
         setStats(prev => ({ ...prev, totalEmpleados: resPersonal.total }))
       }
+      if (resAlertas?.ok) setAlertas(resAlertas.data)
 
       // Agrupar por fecha para gráfica
       if (resHist?.data) {
@@ -226,6 +228,41 @@ export default function Dashboard() {
           </div>
         )}
       </div>
+
+
+      {/* Panel alertas contratos */}
+      {alertas.length > 0 && (
+        <div className="card fade-up" style={{ border: '1px solid rgba(239,68,68,.25)', background: 'rgba(239,68,68,.03)' }}>
+          <h3 style={{ fontSize: '.9rem', fontWeight: 600, marginBottom: '1rem', color: '#ef4444' }}>
+            ⚠ CONTRATOS POR VENCER — PRÓXIMOS 7 DÍAS ({alertas.length})
+          </h3>
+          <div style={{ display: 'flex', flexDirection: 'column', gap: '.5rem' }}>
+            {alertas.map(c => (
+              <div key={c._id} style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center',
+                padding: '.6rem .85rem', background: 'var(--surface)', borderRadius: 8,
+                borderLeft: `3px solid ${c.diasRestantes <= 2 ? '#ef4444' : c.diasRestantes <= 5 ? '#f59e0b' : '#3b82f6'}` }}>
+                <div>
+                  <span style={{ fontWeight: 500, fontSize: '.88rem' }}>
+                    {c.personal?.nombres} {c.personal?.apellidos}
+                  </span>
+                  <span style={{ fontFamily: 'DM Mono, monospace', fontSize: '.75rem',
+                    color: 'var(--verde)', marginLeft: '.6rem' }}>
+                    {c.personal?.codigoEmpleado || ''}
+                  </span>
+                </div>
+                <div style={{ display: 'flex', alignItems: 'center', gap: '.75rem' }}>
+                  <span style={{ fontFamily: 'DM Mono, monospace', fontSize: '.78rem', color: 'var(--muted)' }}>
+                    Vence: {new Date(c.fechaFin).toLocaleDateString('es-HN')}
+                  </span>
+                  <span className={`badge ${c.diasRestantes <= 5 ? 'badge-red' : 'badge-gray'}`}>
+                    {c.diasRestantes === 0 ? 'HOY' : `${c.diasRestantes}d`}
+                  </span>
+                </div>
+              </div>
+            ))}
+          </div>
+        </div>
+      )}
 
       {/* Últimos registros del día */}
       {stats?.registros?.length > 0 && (

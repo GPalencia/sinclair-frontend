@@ -1,10 +1,200 @@
 // src/pages/Personal.jsx
 import { useState, useEffect, useRef } from 'react'
-import { ClipboardList, Pencil, Plus, ScanFace, UserX } from 'lucide-react'
+import { ClipboardList, FileText, Pencil, Plus, ScanFace, UserX } from 'lucide-react'
 
 import { useApi } from '../hooks/useApi'
 import { useToast } from '../hooks/useToast'
 import { useNavigate } from 'react-router-dom'
+
+
+// ── Modal de Contrato ─────────────────────────
+function ModalContrato({ persona, onCerrar, onGuardado }) {
+  const api       = useApi()
+  const { toast } = useToast()
+
+  const hoy = new Date().toISOString().split('T')[0]
+
+  const [form, setForm] = useState({
+    fechaInicio:  hoy,
+    diasContrato: 50,
+    observaciones: ''
+  })
+  const [historial, setHistorial] = useState([])
+  const [tab, setTab]             = useState('nuevo')   // 'nuevo' | 'historial'
+  const [guardando, setGuardando] = useState(false)
+  const [cargando, setCargando]   = useState(false)
+
+  useEffect(() => { cargarHistorial() }, [])
+
+  async function cargarHistorial() {
+    setCargando(true)
+    const res = await api.get(`/contratos/empleado/${persona._id}`)
+    if (res?.ok) setHistorial(res.data)
+    setCargando(false)
+  }
+
+  function set(k, v) { setForm(p => ({ ...p, [k]: v })) }
+
+  // Calcular fecha fin preview
+  const fechaFinPreview = (() => {
+    if (!form.fechaInicio) return '—'
+    const d = new Date(form.fechaInicio)
+    d.setDate(d.getDate() + Number(form.diasContrato))
+    return d.toLocaleDateString('es-HN', { day: '2-digit', month: '2-digit', year: 'numeric' })
+  })()
+
+  async function guardar() {
+    if (!form.fechaInicio) return toast('La fecha de inicio es obligatoria', 'error')
+    setGuardando(true)
+    try {
+      const res = await api.post('/contratos', {
+        personalId:    persona._id,
+        fechaInicio:   form.fechaInicio,
+        diasContrato:  Number(form.diasContrato),
+        observaciones: form.observaciones
+      })
+      if (!res?.ok) return toast(res?.mensaje || 'Error al guardar', 'error')
+      toast('✅ Contrato registrado', 'ok')
+      setTab('historial')
+      cargarHistorial()
+      onGuardado()
+    } finally { setGuardando(false) }
+  }
+
+  const badgeEstado = (estado, dias) => {
+    if (estado === 'activo' && dias <= 5)  return { cls: 'badge-red',  label: `⚠ ${dias}d restantes` }
+    if (estado === 'activo' && dias <= 10) return { cls: 'badge-red',  label: `${dias}d restantes` }
+    if (estado === 'activo')               return { cls: 'badge-green', label: `${dias}d restantes` }
+    if (estado === 'renovado')             return { cls: 'badge-gray',  label: 'Renovado' }
+    return                                        { cls: 'badge-red',   label: 'Vencido' }
+  }
+
+  return (
+    <div
+      onClick={e => e.target === e.currentTarget && onCerrar()}
+      style={{ position: 'fixed', inset: 0, background: 'rgba(0,0,0,.45)', zIndex: 100,
+        display: 'flex', alignItems: 'center', justifyContent: 'center', padding: '1rem' }}
+    >
+      <div style={{ background: 'var(--card)', border: '1px solid var(--border)', borderRadius: 14,
+        padding: '1.75rem', width: '100%', maxWidth: 500, animation: 'fadeUp .25s ease',
+        maxHeight: '90vh', overflowY: 'auto' }}>
+
+        {/* Header */}
+        <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '1.25rem' }}>
+          <div>
+            <h3 style={{ fontFamily: 'Syne, sans-serif', fontSize: '1rem', fontWeight: 700 }}>
+              Contrato — {persona.nombres} {persona.apellidos}
+            </h3>
+            <span style={{ fontFamily: 'DM Mono, monospace', fontSize: '.75rem', color: 'var(--verde)' }}>
+              {persona.codigoEmpleado || 'Sin código'}
+            </span>
+          </div>
+          <button className="btn-ghost" onClick={onCerrar} style={{ fontSize: '1.1rem' }}>✕</button>
+        </div>
+
+        {/* Tabs */}
+        <div style={{ display: 'flex', gap: '.5rem', marginBottom: '1.25rem' }}>
+          {[['nuevo', 'Nuevo Contrato'], ['historial', `Historial (${historial.length})`]].map(([t, label]) => (
+            <button key={t} onClick={() => setTab(t)} style={{
+              flex: 1, padding: '.45rem', borderRadius: 8, cursor: 'pointer',
+              border: tab === t ? '1px solid rgba(34,197,94,.3)' : '1px solid var(--border)',
+              background: tab === t ? 'rgba(34,197,94,.08)' : 'transparent',
+              color: tab === t ? 'var(--verde)' : 'var(--muted)',
+              fontFamily: 'Syne, sans-serif', fontSize: '.8rem', fontWeight: tab === t ? 600 : 400
+            }}>{label}</button>
+          ))}
+        </div>
+
+        {/* Tab: Nuevo contrato */}
+        {tab === 'nuevo' && (
+          <div style={{ display: 'flex', flexDirection: 'column', gap: '1rem' }}>
+            <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '1rem' }}>
+              <div>
+                <label className="lbl">Fecha de inicio *</label>
+                <input className="inp" type="date" value={form.fechaInicio}
+                  onChange={e => set('fechaInicio', e.target.value)} />
+              </div>
+              <div>
+                <label className="lbl">Días de contrato</label>
+                <input className="inp" type="number" min={1} max={365} value={form.diasContrato}
+                  onChange={e => set('diasContrato', e.target.value)} />
+              </div>
+            </div>
+
+            {/* Preview fecha fin */}
+            <div style={{ padding: '.65rem 1rem', background: 'var(--surface)',
+              borderRadius: 8, display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+              <span style={{ fontSize: '.82rem', color: 'var(--muted)' }}>Fecha de vencimiento</span>
+              <span style={{ fontFamily: 'DM Mono, monospace', fontSize: '.9rem',
+                fontWeight: 600, color: 'var(--verde)' }}>{fechaFinPreview}</span>
+            </div>
+
+            <div>
+              <label className="lbl">Observaciones</label>
+              <input className="inp" placeholder="Contrato temporal, renovación, etc."
+                value={form.observaciones} onChange={e => set('observaciones', e.target.value)} />
+            </div>
+
+            {historial.some(c => c.estado === 'activo') && (
+              <div style={{ padding: '.65rem 1rem', background: 'rgba(234,179,8,.06)',
+                border: '1px solid rgba(234,179,8,.25)', borderRadius: 8,
+                fontSize: '.8rem', color: '#ca8a04' }}>
+                ⚠ Este empleado ya tiene un contrato activo. Al guardar, el contrato anterior
+                quedará marcado como <strong>Renovado</strong>.
+              </div>
+            )}
+
+            <div style={{ display: 'flex', gap: '.75rem', marginTop: '.5rem' }}>
+              <button className="btn-secondary" style={{ flex: 1 }} onClick={onCerrar}>Cancelar</button>
+              <button className="btn-primary" style={{ flex: 1, justifyContent: 'center' }}
+                onClick={guardar} disabled={guardando}>
+                {guardando ? <span className="spinner" /> : null} Registrar Contrato
+              </button>
+            </div>
+          </div>
+        )}
+
+        {/* Tab: Historial */}
+        {tab === 'historial' && (
+          <div style={{ display: 'flex', flexDirection: 'column', gap: '.65rem' }}>
+            {cargando ? (
+              <div style={{ textAlign: 'center', padding: '2rem' }}><span className="spinner" /></div>
+            ) : historial.length === 0 ? (
+              <div style={{ textAlign: 'center', padding: '2rem', color: 'var(--muted)', fontSize: '.85rem' }}>
+                Sin contratos registrados
+              </div>
+            ) : historial.map((c, i) => {
+              const { cls, label } = badgeEstado(c.estado, c.diasRestantes)
+              return (
+                <div key={c._id} style={{ padding: '.85rem 1rem', background: 'var(--surface)',
+                  borderRadius: 10, border: '1px solid var(--border)',
+                  borderLeft: i === 0 && c.estado === 'activo' ? '3px solid var(--verde)' : '3px solid transparent' }}>
+                  <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '.3rem' }}>
+                    <span style={{ fontWeight: 600, fontSize: '.88rem' }}>
+                      Contrato #{historial.length - i}
+                    </span>
+                    <span className={`badge ${cls}`}>{label}</span>
+                  </div>
+                  <div style={{ fontFamily: 'DM Mono, monospace', fontSize: '.76rem', color: 'var(--muted)', lineHeight: 1.8 }}>
+                    <span>Inicio: {new Date(c.fechaInicio).toLocaleDateString('es-HN')}</span>
+                    <span style={{ margin: '0 .6rem' }}>→</span>
+                    <span>Fin: {new Date(c.fechaFin).toLocaleDateString('es-HN')}</span>
+                    <span style={{ marginLeft: '.6rem' }}>({c.diasContrato}d)</span>
+                  </div>
+                  {c.observaciones && (
+                    <div style={{ fontSize: '.78rem', color: 'var(--muted)', marginTop: '.3rem' }}>
+                      {c.observaciones}
+                    </div>
+                  )}
+                </div>
+              )
+            })}
+          </div>
+        )}
+      </div>
+    </div>
+  )
+}
 
 // ── Modal de edición de datos ─────────────────────────
 function ModalEditar({ persona, onCerrar, onGuardado }) {
@@ -338,8 +528,9 @@ export default function Personal() {
   const [filtrado, setFiltrado]     = useState([])
   const [buscar, setBuscar]         = useState('')
   const [cargando, setCargando]     = useState(true)
-  const [editando, setEditando]     = useState(null)   // modal editar datos
+  const [editando, setEditando]         = useState(null)   // modal editar datos
   const [asignandoFace, setAsignandoFace] = useState(null) // modal face id
+  const [contratando, setContratando]    = useState(null)   // modal contrato
 
   useEffect(() => { cargar() }, [])
   useEffect(() => {
@@ -372,6 +563,15 @@ export default function Personal() {
           persona={editando}
           onCerrar={() => setEditando(null)}
           onGuardado={() => { setEditando(null); cargar() }}
+        />
+      )}
+
+      {/* Modal contrato */}
+      {contratando && (
+        <ModalContrato
+          persona={contratando}
+          onCerrar={() => setContratando(null)}
+          onGuardado={() => setContratando(null)}
         />
       )}
 
@@ -477,6 +677,14 @@ export default function Personal() {
                           title="Editar empleado"
                         >
                           <Pencil size={15} />
+                        </button>
+                        <button
+                          className="btn-ghost"
+                          style={{ padding: '.4rem .5rem', color: '#7c3aed' }}
+                          onClick={() => setContratando(p)}
+                          title="Gestionar contrato"
+                        >
+                          <FileText size={15} />
                         </button>
                         {/* Botón Face ID — verde si ya tiene, amarillo si falta */}
                         <button

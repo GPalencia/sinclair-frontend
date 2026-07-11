@@ -37,14 +37,34 @@ export function useApi() {
   const del    = (url)       => request(url, { method: 'DELETE' })
 
   async function postForm(url, formData) {
-    const res = await fetch(`${BASE}${url}`, {
-      method: 'POST',
-      headers: { Authorization: `Bearer ${token}` },
-      body: formData
-    })
-    if (res.status === 401) { logout(); return null }
-    return res.json()
+    try {
+      const res = await fetch(`${BASE}${url}`, {
+        method: 'POST',
+        headers: { Authorization: `Bearer ${token}` },
+        body: formData
+      })
+      if (res.status === 401) { logout(); return null }
+      return res.json()
+    } catch (e) {
+      toast('Error de conexión con el servidor', 'error')
+      return null
+    }
   }
 
-  return { get, post, put, del, postForm, requestBlob }
+  async function putForm(url, formData) {
+    try {
+      const res = await fetch(`${BASE}${url}`, {
+        method: 'PUT',
+        headers: { Authorization: `Bearer ${token}` },
+        body: formData
+      })
+      if (res.status === 401) { logout(); return null }
+      return res.json()
+    } catch (e) {
+      toast('Error de conexión con el servidor', 'error')
+      return null
+    }
+  }
+
+  return { get, post, put, del, postForm, putForm, requestBlob }
 }
