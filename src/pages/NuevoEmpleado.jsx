@@ -10,7 +10,7 @@ export default function NuevoEmpleado() {
   const { toast } = useToast()
   const navigate  = useNavigate()
 
-  const [form, setForm] = useState({ nombres: '', apellidos: '', codigoEmpleado: '' })
+  const [form, setForm] = useState({ nombres: '', apellidos: '', codigoEmpleado: '', FechaIngreso: '' })
   const [cargando, setCargando] = useState(false)
 
   function set(campo, valor) {
@@ -30,10 +30,8 @@ export default function NuevoEmpleado() {
       fd.append('nombres', form.nombres.trim())
       fd.append('apellidos', form.apellidos.trim())
       fd.append('codigoEmpleado', form.codigoEmpleado.trim().toUpperCase())
-      // Campos requeridos por el modelo — valores mínimos por defecto
       fd.append('cargo', 'operario')
-      // numeroIdentidad ya no es required; si el modelo lo exige haremos patch en backend
-      // por ahora lo enviamos vacío y el modelo lo acepta con sparse
+      if (form.FechaIngreso) fd.append('FechaIngreso', form.FechaIngreso)
 
       const res = await api.postForm('/personal', fd)
       if (!res?.ok) return toast(res?.mensaje || 'Error al guardar', 'error')
@@ -93,6 +91,15 @@ export default function NuevoEmpleado() {
               value={form.codigoEmpleado}
               onChange={e => set('codigoEmpleado', e.target.value.toUpperCase())}
               style={{ fontFamily: 'DM Mono, monospace', letterSpacing: '.05em' }}
+            />
+          </div>
+          <div>
+            <label className="lbl">Fecha de Ingreso</label>
+            <input
+              className="inp"
+              type="date"
+              value={form.FechaIngreso}
+              onChange={e => set('FechaIngreso', e.target.value)}
             />
           </div>
         </div>

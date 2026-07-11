@@ -11,13 +11,16 @@ function ModalEditar({ persona, onCerrar, onGuardado }) {
   const api       = useApi()
   const { toast } = useToast()
   const [form, setForm] = useState({
-    nombres:         persona.nombres        || '',
-    apellidos:       persona.apellidos      || '',
-    codigoEmpleado:  persona.codigoEmpleado || '',
-    numeroIdentidad: persona.numeroIdentidad|| '',
-    telefono:        persona.telefono       || '',
-    cargo:           persona.cargo          || 'operario',
+    nombres:         persona.nombres         || '',
+    apellidos:       persona.apellidos       || '',
+    codigoEmpleado:  persona.codigoEmpleado  || '',
+    numeroIdentidad: persona.numeroIdentidad || '',
+    telefono:        persona.telefono        || '',
+    cargo:           persona.cargo           || 'operario',
     activo:          persona.activo !== false,
+    FechaIngreso:    persona.FechaIngreso
+                       ? new Date(persona.FechaIngreso).toISOString().split('T')[0]
+                       : '',
   })
   const [guardando, setGuardando] = useState(false)
 
@@ -36,7 +39,7 @@ function ModalEditar({ persona, onCerrar, onGuardado }) {
     try {
       const fd = new FormData()
       Object.entries(form).forEach(([k, v]) => {
-        if (v !== null && v !== undefined)
+        if (v !== null && v !== undefined && v !== '')
           fd.append(k, k === 'codigoEmpleado' ? String(v).toUpperCase() : v)
       })
       const res = await fetch(`${import.meta.env.VITE_API_URL || '/api'}/personal/${persona._id}`, {
@@ -98,10 +101,19 @@ function ModalEditar({ persona, onCerrar, onGuardado }) {
           <div>
             <label className="lbl">Cargo</label>
             <select className="inp" value={form.cargo} onChange={e => set('cargo', e.target.value)}>
-              {['operario','tecnico','supervisor','coordinador','otro', 'empaque'].map(c => (
+              {['operario','tecnico','supervisor','coordinador','otro','empaque'].map(c => (
                 <option key={c} value={c}>{c.charAt(0).toUpperCase() + c.slice(1)}</option>
               ))}
             </select>
+          </div>
+          <div style={{ gridColumn: '1 / -1' }}>
+            <label className="lbl">Fecha de Ingreso</label>
+            <input
+              className="inp"
+              type="date"
+              value={form.FechaIngreso}
+              onChange={e => set('FechaIngreso', e.target.value)}
+            />
           </div>
         </div>
 
@@ -406,6 +418,7 @@ export default function Personal() {
                   <th>Nombre</th>
                   <th>Identidad</th>
                   <th>Cargo</th>
+                  <th>Ingreso</th>
                   <th>Estado</th>
                   <th>Face ID</th>
                   <th>Acciones</th>
@@ -414,7 +427,7 @@ export default function Personal() {
               <tbody>
                 {filtrado.length === 0 ? (
                   <tr>
-                    <td colSpan={7} style={{ textAlign: 'center', color: 'var(--muted)', padding: '2rem' }}>
+                    <td colSpan={8} style={{ textAlign: 'center', color: 'var(--muted)', padding: '2rem' }}>
                       {buscar ? 'Sin resultados para esa búsqueda' : 'Sin personal registrado'}
                     </td>
                   </tr>
@@ -431,6 +444,11 @@ export default function Personal() {
                     </td>
                     <td>
                       <span className="badge badge-gray">{p.cargo}</span>
+                    </td>
+                    <td style={{ fontFamily: 'DM Mono, monospace', fontSize: '.8rem', color: 'var(--muted)' }}>
+                      {p.FechaIngreso
+                        ? new Date(p.FechaIngreso).toLocaleDateString('es-HN', { day: '2-digit', month: '2-digit', year: 'numeric' })
+                        : '—'}
                     </td>
                     <td>
                       <span className={`badge ${p.activo ? 'badge-green' : 'badge-red'}`}>
