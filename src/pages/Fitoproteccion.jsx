@@ -1,8 +1,10 @@
 // src/pages/Fitoproteccion.jsx
 import { useState, useEffect } from 'react'
-import { Bug, ClipboardList, Save, Search } from 'lucide-react'
+import { BarChart2, Bug, ClipboardList, Layers, Save, Search } from 'lucide-react'
 import { useApi } from '../hooks/useApi'
 import { useToast } from '../hooks/useToast'
+import CatalogosFito from '../components/CatalogosFito'
+import AnalisisPlagas from '../components/AnalisisPlagas'
 
 function hoy() { return new Date().toISOString().split('T')[0] }
 
@@ -108,7 +110,7 @@ export default function Fitoproteccion() {
 
       {/* Tabs */}
       <div className="fade-up" style={{ display: 'flex', gap: '.5rem', borderBottom: '1px solid var(--border)' }}>
-        {[['registrar', 'Registrar Monitoreo', ClipboardList], ['historial', 'Historial', Search]].map(([key, label, Icon]) => (
+        {[['registrar', 'Registrar Monitoreo', ClipboardList], ['historial', 'Historial', Search], ['analisis', 'Análisis de Plagas', BarChart2], ['catalogos', 'Catálogos', Layers]].map(([key, label, Icon]) => (
           <button key={key} type="button" onClick={() => setTab(key)}
             style={{
               display: 'flex', alignItems: 'center', gap: '.4rem',
@@ -276,6 +278,16 @@ export default function Fitoproteccion() {
             </div>
           )}
         </>
+      )}
+
+      {/* ── Análisis de Plagas ── */}
+      {tab === 'analisis' && (
+        <AnalisisPlagas />
+      )}
+
+      {/* ── Catálogos ── */}
+      {tab === 'catalogos' && (
+        <CatalogosFito onCambio={cargarCatalogos} />
       )}
     </div>
   )
