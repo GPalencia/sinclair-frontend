@@ -17,7 +17,7 @@ import ProduccionFinca    from './pages/ProduccionFinca'
 import EstacionSinclair   from './pages/EstacionSinclair'
 import { puedeVerModulo } from './config/modulos'
 
-function RutaProtegida({ children, modulo }) {
+function RutaProtegida({ children, modulo, soloAdmin }) {
   const { usuario, cargando } = useAuth()
   if (cargando) return (
     <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', height: '100vh', gap: '1rem', color: 'var(--muted)', fontFamily: 'DM Mono, monospace', fontSize: '.9rem' }}>
@@ -25,6 +25,8 @@ function RutaProtegida({ children, modulo }) {
     </div>
   )
   if (!usuario) return <Navigate to="/login" replace />
+  // Rutas exclusivas de admin (ej. Usuarios): cualquier otro rol va al dashboard.
+  if (soloAdmin && usuario.rol !== 'admin') return <Navigate to="/dashboard" replace />
   // Rutas de un módulo restringido (Fitoprotección, Labores Culturales, etc.):
   // si el usuario no tiene ese módulo asignado (y no es admin), lo mandamos al dashboard.
   if (modulo && !puedeVerModulo(usuario, modulo)) return <Navigate to="/dashboard" replace />
@@ -49,7 +51,7 @@ export default function App() {
             <Route path="/labores-culturales"  element={<RutaProtegida modulo="laboresCulturales"><LaboresCulturales /></RutaProtegida>} />
             <Route path="/produccion-finca"    element={<RutaProtegida modulo="produccionFinca"><ProduccionFinca /></RutaProtegida>} />
             <Route path="/estacion-sinclair"   element={<RutaProtegida modulo="estacionSinclair"><EstacionSinclair /></RutaProtegida>} />
-            <Route path="/usuarios"  element={<RutaProtegida><Usuarios /></RutaProtegida>} />
+            <Route path="/usuarios"  element={<RutaProtegida soloAdmin><Usuarios /></RutaProtegida>} />
             <Route path="*" element={<Navigate to="/dashboard" replace />} />
           </Routes>
         </ToastProvider>
