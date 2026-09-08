@@ -1,6 +1,6 @@
 // src/pages/ProduccionFinca.jsx
 import { useState, useEffect } from 'react'
-import { ClipboardList, Layers, Save, Search, Warehouse } from 'lucide-react'
+import { ClipboardList, Layers, Pencil, Save, Search, Warehouse } from 'lucide-react'
 import { useApi } from '../hooks/useApi'
 import { useToast } from '../hooks/useToast'
 import CatalogoLotesCosecha from '../components/CatalogoLotesCosecha'
@@ -17,6 +17,24 @@ const COLOR_ESTADO = {
   'Ascenso':            'badge-blue',
   'Pico de Producción': 'badge-green',
   'Declive':            'badge-red',
+}
+
+// ── Modal genérico ─────────────────────────────────────
+function Modal({ titulo, onClose, children }) {
+  return (
+    <div
+      onClick={e => e.target === e.currentTarget && onClose()}
+      style={{ position: 'fixed', inset: 0, background: 'rgba(0,0,0,.75)', zIndex: 100, display: 'flex', alignItems: 'center', justifyContent: 'center', padding: '1rem' }}
+    >
+      <div style={{ background: 'var(--card)', border: '1px solid var(--border)', borderRadius: 14, padding: '1.75rem', width: '100%', maxWidth: 460, animation: 'fadeUp .25s ease' }}>
+        <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '1.25rem' }}>
+          <h3 style={{ fontFamily: 'Syne, sans-serif', fontSize: '1rem', fontWeight: 700 }}>{titulo}</h3>
+          <button className="btn-ghost" onClick={onClose} style={{ fontSize: '1.1rem', padding: '.3rem .6rem' }}>✕</button>
+        </div>
+        {children}
+      </div>
+    </div>
+  )
 }
 
 export default function ProduccionFinca() {
@@ -41,6 +59,11 @@ export default function ProduccionFinca() {
   const [cargandoHist, setCH]       = useState(false)
   const [buscado, setBuscado]       = useState(false)
 
+  // Modal de edición (para completar Cestas/Kilos/Rendimiento después)
+  const [modalEditar, setModalEditar] = useState(null)
+  const [formEditar, setFormEditar]   = useState(null)
+  const [guardandoEditar, setGE]      = useState(false)
+
   useEffect(() => { cargarLotes() }, [])
   useEffect(() => { if (tab === 'historial' && !buscado) buscarHistorial() }, [tab])
 
@@ -61,8 +84,6 @@ export default function ProduccionFinca() {
   async function guardar() {
     if (!form.loteCosecha)            return toast('Selecciona el lote', 'error')
     if (form.jornales === '')         return toast('Los jornales son obligatorios', 'error')
-    if (form.cestas === '')           return toast('Las cestas son obligatorias', 'error')
-    if (form.totalKilos === '')       return toast('El total de kilos es obligatorio', 'error')
     setGuardando(true)
     try {
       const res = await api.post('/produccion-finca/registros', {
@@ -70,9 +91,9 @@ export default function ProduccionFinca() {
         fecha: form.fecha,
         jornales: Number(form.jornales),
         caporales: Number(form.caporales || 0),
-        cestas: Number(form.cestas),
-        totalKilos: Number(form.totalKilos),
-        rendAproximado: Number(form.rendAproximado || 0),
+        cestas: form.cestas === '' ? null : Number(form.cestas),
+        totalKilos: form.totalKilos === '' ? null : Number(form.totalKilos),
+        rendAproximado: form.rendAproximado === '' ? null : Number(form.rendAproximado),
       })
       if (!res?.ok) return toast(res?.mensaje || 'Error al guardar', 'error')
       toast('✅ Cosecha registrada', 'ok')
@@ -80,6 +101,33 @@ export default function ProduccionFinca() {
       setBuscado(false)
     } finally {
       setGuardando(false)
+    }
+  }
+
+  function abrirEditar(r) {
+    setFormEditar({
+      cestas: r.cestas ?? '', totalKilos: r.totalKilos ?? '', rendAproximado: r.rendAproximado ?? '',
+      jornales: r.jornales ?? '', caporales: r.caporales ?? '',
+    })
+    setModalEditar(r)
+  }
+
+  async function guardarEdicion() {
+    setGE(true)
+    try {
+      const res = await api.put(`/produccion-finca/registros/${modalEditar._id}`, {
+        jornales: Number(formEditar.jornales),
+        caporales: Number(formEditar.caporales || 0),
+        cestas: formEditar.cestas === '' ? null : Number(formEditar.cestas),
+        totalKilos: formEditar.totalKilos === '' ? null : Number(formEditar.totalKilos),
+        rendAproximado: formEditar.rendAproximado === '' ? null : Number(formEditar.rendAproximado),
+      })
+      if (!res?.ok) return toast(res?.mensaje || 'Error al actualizar', 'error')
+      toast('✅ Registro actualizado', 'ok')
+      setModalEditar(null)
+      buscarHistorial()
+    } finally {
+      setGE(false)
     }
   }
 
@@ -160,11 +208,11 @@ export default function ProduccionFinca() {
 
               <div style={{ display: 'flex', gap: '1rem', flexWrap: 'wrap' }}>
                 <div style={{ flex: 1, minWidth: 140 }}>
-                  <label className="lbl">Cestas *</label>
+                  <label className="lbl">Cestas</label>
                   <input className="inp" type="number" min="0" value={form.cestas} onChange={e => set('cestas', e.target.value)} />
                 </div>
                 <div style={{ flex: 1, minWidth: 140 }}>
-                  <label className="lbl">Total Kilos *</label>
+                  <label className="lbl">Total Kilos</label>
                   <input className="inp" type="number" step="0.01" min="0" value={form.totalKilos} onChange={e => set('totalKilos', e.target.value)} />
                 </div>
                 <div style={{ flex: 1, minWidth: 140 }}>
@@ -196,7 +244,7 @@ export default function ProduccionFinca() {
                 <input className="inp" type="date" value={hasta} onChange={e => setHasta(e.target.value)} />
               </div>
               <div style={{ flex: 1, minWidth: 180 }}>
-                <label className="lbl">Lote (opcional)</label>
+                <label className="lbl">Lote</label>
                 <select className="inp" value={loteFiltro} onChange={e => setLoteFiltro(e.target.value)}>
                   <option value="">Todos</option>
                   {lotes.map(l => (
@@ -221,7 +269,7 @@ export default function ProduccionFinca() {
                     <tr>
                       <th>Fecha</th><th>Finca / Lote</th><th>Jornales</th><th>Caporales</th>
                       <th>Cestas</th><th>Kilos</th><th>Rend.</th><th>ParametroCesta</th>
-                      <th>Cestas/Jornal</th><th>Personal Proy.</th><th>Días Cosecha</th><th>Estado</th>
+                      <th>Cestas/Jornal</th><th>Personal Proy.</th><th>Días Cosecha</th><th>Estado</th><th></th>
                     </tr>
                   </thead>
                   <tbody>
@@ -235,19 +283,28 @@ export default function ProduccionFinca() {
                         </td>
                         <td style={{ textAlign: 'center' }}>{r.jornales}</td>
                         <td style={{ textAlign: 'center' }}>{r.caporales}</td>
-                        <td style={{ textAlign: 'center' }}>{r.cestas}</td>
-                        <td style={{ fontFamily: 'DM Mono, monospace', fontSize: '.82rem' }}>{r.totalKilos}</td>
-                        <td style={{ fontFamily: 'DM Mono, monospace', fontSize: '.82rem' }}>{r.rendAproximado}</td>
+                        <td style={{ textAlign: 'center' }}>{r.cestas ?? '—'}</td>
+                        <td style={{ fontFamily: 'DM Mono, monospace', fontSize: '.82rem' }}>{r.totalKilos ?? '—'}</td>
+                        <td style={{ fontFamily: 'DM Mono, monospace', fontSize: '.82rem' }}>{r.rendAproximado ?? '—'}</td>
                         <td style={{ fontFamily: 'DM Mono, monospace', fontSize: '.82rem', color: 'var(--verde)', fontWeight: 600 }}>
-                          {r.calculado?.parametroCesta}
+                          {r.calculado?.parametroCesta ?? '—'}
                         </td>
-                        <td style={{ fontFamily: 'DM Mono, monospace', fontSize: '.82rem' }}>{r.calculado?.cestasXJornal}</td>
-                        <td style={{ fontFamily: 'DM Mono, monospace', fontSize: '.82rem' }}>{r.calculado?.personalProyectado}</td>
+                        <td style={{ fontFamily: 'DM Mono, monospace', fontSize: '.82rem' }}>{r.calculado?.cestasXJornal ?? '—'}</td>
+                        <td style={{ fontFamily: 'DM Mono, monospace', fontSize: '.82rem' }}>{r.calculado?.personalProyectado ?? '—'}</td>
                         <td style={{ textAlign: 'center', fontFamily: 'DM Mono, monospace', fontSize: '.82rem' }}>{r.calculado?.diasCosecha ?? '—'}</td>
                         <td>
-                          <span className={`badge ${COLOR_ESTADO[r.calculado?.estadoLote] || 'badge-gray'}`}>
-                            {r.calculado?.estadoLote || '—'}
-                          </span>
+                          {r.calculado?.pendiente ? (
+                            <span className="badge badge-gray">Pendiente</span>
+                          ) : (
+                            <span className={`badge ${COLOR_ESTADO[r.calculado?.estadoLote] || 'badge-gray'}`}>
+                              {r.calculado?.estadoLote || '—'}
+                            </span>
+                          )}
+                        </td>
+                        <td>
+                          <button className="btn-ghost" style={{ padding: '.35rem .6rem' }} onClick={() => abrirEditar(r)} title="Editar registro">
+                            <Pencil size={14} />
+                          </button>
                         </td>
                       </tr>
                     ))}
@@ -262,6 +319,53 @@ export default function ProduccionFinca() {
       {/* ── Catálogos ── */}
       {tab === 'catalogos' && (
         <CatalogoLotesCosecha onCambio={cargarLotes} />
+      )}
+
+      {/* ── Modal: editar registro ── */}
+      {modalEditar && formEditar && (
+        <Modal
+          titulo={`Editar cosecha — ${modalEditar.loteCosecha?.finca} Lote ${modalEditar.loteCosecha?.lote}`}
+          onClose={() => setModalEditar(null)}
+        >
+          <div style={{ display: 'flex', flexDirection: 'column', gap: '1rem' }}>
+            <div style={{ fontSize: '.8rem', color: 'var(--muted)' }}>
+              {new Date(modalEditar.fecha).toLocaleDateString('es-HN')}
+            </div>
+            <div style={{ display: 'flex', gap: '1rem' }}>
+              <div style={{ flex: 1 }}>
+                <label className="lbl">Jornales</label>
+                <input className="inp" type="number" min="0" value={formEditar.jornales}
+                  onChange={e => setFormEditar(p => ({ ...p, jornales: e.target.value }))} />
+              </div>
+              <div style={{ flex: 1 }}>
+                <label className="lbl">Caporales</label>
+                <input className="inp" type="number" min="0" value={formEditar.caporales}
+                  onChange={e => setFormEditar(p => ({ ...p, caporales: e.target.value }))} />
+              </div>
+            </div>
+            <div>
+              <label className="lbl">Cestas</label>
+              <input className="inp" type="number" min="0" value={formEditar.cestas}
+                onChange={e => setFormEditar(p => ({ ...p, cestas: e.target.value }))} />
+            </div>
+            <div>
+              <label className="lbl">Total Kilos</label>
+              <input className="inp" type="number" step="0.01" min="0" value={formEditar.totalKilos}
+                onChange={e => setFormEditar(p => ({ ...p, totalKilos: e.target.value }))} />
+            </div>
+            <div>
+              <label className="lbl">Rend. Aproximado</label>
+              <input className="inp" type="number" step="0.01" min="0" value={formEditar.rendAproximado}
+                onChange={e => setFormEditar(p => ({ ...p, rendAproximado: e.target.value }))} />
+            </div>
+            <div style={{ display: 'flex', gap: '.75rem', marginTop: '.5rem' }}>
+              <button className="btn-secondary" style={{ flex: 1 }} onClick={() => setModalEditar(null)}>Cancelar</button>
+              <button className="btn-primary" style={{ flex: 1, justifyContent: 'center' }} onClick={guardarEdicion} disabled={guardandoEditar}>
+                {guardandoEditar ? <span className="spinner" /> : <Save size={15} />} Guardar
+              </button>
+            </div>
+          </div>
+        </Modal>
       )}
     </div>
   )

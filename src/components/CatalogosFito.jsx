@@ -69,7 +69,7 @@ function PanelPlagas({ onCambio }) {
               onChange={e => setForm(p => ({ ...p, nombre: e.target.value }))} />
           </div>
           <div style={{ flex: 1, minWidth: 180 }}>
-            <label className="lbl">Descripción (opcional)</label>
+            <label className="lbl">Descripción</label>
             <input className="inp" value={form.descripcion}
               onChange={e => setForm(p => ({ ...p, descripcion: e.target.value }))} />
           </div>
@@ -216,7 +216,6 @@ function PanelLotesSembrados({ onCambio }) {
       <div className="card" style={{ padding: 0, overflow: 'hidden' }}>
         <div style={{ padding: '1rem 1.5rem', borderBottom: '1px solid var(--border)', fontFamily: 'Syne, sans-serif', fontSize: '.85rem', fontWeight: 600 }}>
           Catálogo de lotes sembrados
-          <span style={{ color: 'var(--muted)', fontWeight: 400 }}> — solo los "Activo" aparecen para elegir al registrar un monitoreo</span>
         </div>
         {cargando ? (
           <div style={{ padding: '2rem', textAlign: 'center' }}><span className="spinner" /></div>

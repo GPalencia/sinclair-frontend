@@ -123,7 +123,7 @@ export default function AnalisisPlagas() {
               </select>
             </div>
             <div style={{ flex: 1, minWidth: 220 }}>
-              <label className="lbl">Plaga / Enfermedad (opcional)</label>
+              <label className="lbl">Plaga / Enfermedad</label>
               <select className="inp" value={plagaSel} onChange={e => setPlagaSel(e.target.value)} disabled={cargandoCatalogos}>
                 <option value="">Todas las detectadas en el lote</option>
                 <optgroup label="Plagas">
@@ -160,13 +160,9 @@ export default function AnalisisPlagas() {
       {/* Gráfico — modo comparación: todas las plagas del lote */}
       {buscado && modo === 'comparacion' && (
         <div className="card fade-up">
-          <h3 style={{ fontSize: '.9rem', fontWeight: 600, marginBottom: '.35rem', color: 'var(--muted)', display: 'flex', alignItems: 'center', gap: '.5rem' }}>
+          <h3 style={{ fontSize: '.9rem', fontWeight: 600, marginBottom: '1.25rem', color: 'var(--muted)', display: 'flex', alignItems: 'center', gap: '.5rem' }}>
             <BarChart2 size={16} /> PLAGAS / ENFERMEDADES DETECTADAS EN {nombreLote?.toUpperCase()}
           </h3>
-          <p style={{ fontSize: '.78rem', color: 'var(--muted)', marginBottom: '1.25rem' }}>
-            Comparación entre todas las plagas y enfermedades registradas en este lote. Entre más bajo el valor, más controlada.
-            Selecciona una plaga específica arriba para ver su tendencia en el tiempo.
-          </p>
           {data.length > 0 ? (
             <ResponsiveContainer width="100%" height={Math.max(220, data.length * 40)}>
               <BarChart data={data} layout="vertical" margin={{ left: 10, right: 20 }}>
@@ -191,12 +187,9 @@ export default function AnalisisPlagas() {
       {/* Gráfico — modo tendencia: una plaga específica en el tiempo */}
       {buscado && modo === 'tendencia' && (
         <div className="card fade-up">
-          <h3 style={{ fontSize: '.9rem', fontWeight: 600, marginBottom: '.35rem', color: 'var(--muted)', display: 'flex', alignItems: 'center', gap: '.5rem' }}>
+          <h3 style={{ fontSize: '.9rem', fontWeight: 600, marginBottom: '1.25rem', color: 'var(--muted)', display: 'flex', alignItems: 'center', gap: '.5rem' }}>
             <TrendingUp size={16} /> TENDENCIA DE {nombrePlaga?.toUpperCase()} EN {nombreLote?.toUpperCase()}
           </h3>
-          <p style={{ fontSize: '.78rem', color: 'var(--muted)', marginBottom: '1.25rem' }}>
-            Evolución del nivel/frecuencia en el tiempo. Si la línea baja, se está controlando; si sube, se está propagando.
-          </p>
           {data.length > 0 ? (
             <ResponsiveContainer width="100%" height={280}>
               <LineChart data={data.map(d => ({ ...d, fechaLabel: fechaCorta(d.fecha) }))}>

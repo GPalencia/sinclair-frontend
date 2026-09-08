@@ -96,7 +96,6 @@ export default function CatalogoLotesCosecha({ onCambio }) {
       <div className="card" style={{ padding: 0, overflow: 'hidden' }}>
         <div style={{ padding: '1rem 1.5rem', borderBottom: '1px solid var(--border)', fontFamily: 'Syne, sans-serif', fontSize: '.85rem', fontWeight: 600 }}>
           Catálogo de lotes de cosecha
-          <span style={{ color: 'var(--muted)', fontWeight: 400 }}> — solo los "Activo" aparecen para elegir al registrar una cosecha</span>
         </div>
         {cargando ? (
           <div style={{ padding: '2rem', textAlign: 'center' }}><span className="spinner" /></div>

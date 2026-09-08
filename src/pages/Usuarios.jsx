@@ -349,9 +349,6 @@ export default function Usuarios() {
             {formNuevo.rol === 'supervisor' && (
               <div>
                 <label className="lbl">Módulos permitidos</label>
-                <p style={{ fontSize: '.73rem', color: 'var(--muted)', marginBottom: '.5rem' }}>
-                  Elige a qué submenús del Dashboard tendrá acceso este usuario.
-                </p>
                 <SelectorModulos
                   seleccionados={formNuevo.modulos}
                   onChange={mods => setFormNuevo(p => ({ ...p, modulos: mods }))}
@@ -415,9 +412,6 @@ export default function Usuarios() {
                 {formEditar.rol === 'supervisor' && (
                   <div>
                     <label className="lbl">Módulos permitidos</label>
-                    <p style={{ fontSize: '.73rem', color: 'var(--muted)', marginBottom: '.5rem' }}>
-                      Elige a qué submenús del Dashboard tendrá acceso este usuario.
-                    </p>
                     <SelectorModulos
                       seleccionados={formEditar.modulos}
                       onChange={mods => setFormEditar(p => ({ ...p, modulos: mods }))}
