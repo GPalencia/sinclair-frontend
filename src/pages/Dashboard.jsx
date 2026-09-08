@@ -46,6 +46,7 @@ export default function Dashboard() {
   const [historial, setHist]    = useState([])
   const [porCentro, setPorCC]   = useState([])
   const [alertas, setAlertas]   = useState([])
+  const [general, setGeneral]   = useState(null)
   const [cargando, setCargando] = useState(true)
 
   useEffect(() => { cargarDatos() }, [])
@@ -65,12 +66,14 @@ export default function Dashboard() {
       const resHist = await api.get(`/registros?desde=${desde}&hasta=${hasta}&limite=500`)
       const resPersonal = await api.get('/personal')
       const resAlertas  = await api.get('/contratos/proximos-vencer?dias=7')
+      const resGeneral  = await api.get('/fitoproteccion/resumen')
 
       if (resHoy?.ok)    setStats(resHoy.data)
       if (resPersonal?.ok) {
         setStats(prev => ({ ...prev, totalEmpleados: resPersonal.total }))
       }
       if (resAlertas?.ok) setAlertas(resAlertas.data)
+      if (resGeneral?.ok) setGeneral(resGeneral.data)
 
       // Agrupar por fecha para gráfica
       if (resHist?.data) {
@@ -115,6 +118,38 @@ export default function Dashboard() {
           {new Date().toLocaleDateString('es-HN', { weekday: 'long', day: 'numeric', month: 'long', year: 'numeric' })}
         </p>
       </div>
+
+      {/* Datos generales — resumen entre todos los módulos de campo */}
+      {general && (
+        <div className="fade-up">
+          <h3 style={{ fontSize: '.78rem', color: 'var(--muted)', fontFamily: 'Syne, sans-serif', letterSpacing: '.06em', textTransform: 'uppercase', marginBottom: '.6rem' }}>
+            Datos Generales
+          </h3>
+          <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(180px, 1fr))', gap: '1rem' }}>
+            <StatCard
+              label="Lotes en producción"
+              valor={general.lotesEnProduccion}
+              sub={`${general.manzanasEnProduccion.toLocaleString('es-HN')} manzanas`}
+              icono="🌱"
+              color="var(--verde)"
+            />
+            <StatCard
+              label="Lotes en siembra"
+              valor={general.lotesEnSiembra}
+              sub={`${general.manzanasEnSiembra.toLocaleString('es-HN')} manzanas sembradas`}
+              icono="🌾"
+              color="#f59e0b"
+            />
+            <StatCard
+              label="Monitoreos de plagas"
+              valor={general.totalMonitoreos}
+              sub="registros en Fitoprotección"
+              icono="🐛"
+              color="#60a5fa"
+            />
+          </div>
+        </div>
+      )}
 
       {/* Stats cards */}
       <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(180px, 1fr))', gap: '1rem' }}>
