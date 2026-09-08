@@ -5,6 +5,39 @@ import { KeyRound, Pencil, Save, UserPlus, UserX } from 'lucide-react'
 import { useApi } from '../hooks/useApi'
 import { useToast } from '../hooks/useToast'
 import { useAuth } from '../context/AuthContext'
+import { MODULOS } from '../config/modulos'
+
+// ── Selector de módulos (permisos por usuario) ──────────
+function SelectorModulos({ seleccionados = [], onChange }) {
+  function toggle(key) {
+    onChange(
+      seleccionados.includes(key)
+        ? seleccionados.filter(k => k !== key)
+        : [...seleccionados, key]
+    )
+  }
+  return (
+    <div style={{ display: 'flex', flexDirection: 'column', gap: '.4rem' }}>
+      {MODULOS.map(({ key, label }) => (
+        <label key={key} style={{
+          display: 'flex', alignItems: 'center', gap: '.6rem',
+          padding: '.55rem .75rem', borderRadius: 8, cursor: 'pointer',
+          border: seleccionados.includes(key) ? '1px solid rgba(34,197,94,.4)' : '1px solid var(--border)',
+          background: seleccionados.includes(key) ? 'rgba(34,197,94,.06)' : 'transparent',
+          transition: 'all .15s',
+        }}>
+          <input
+            type="checkbox"
+            checked={seleccionados.includes(key)}
+            onChange={() => toggle(key)}
+            style={{ accentColor: 'var(--verde)', width: 16, height: 16 }}
+          />
+          <span style={{ fontSize: '.85rem', color: 'var(--text2)' }}>{label}</span>
+        </label>
+      ))}
+    </div>
+  )
+}
 
 // ── Modal reutilizable ─────────────────────────────────
 function Modal({ titulo, onClose, children }) {
@@ -50,7 +83,7 @@ export default function Usuarios() {
   const [modalPerfil, setModalPerfil]     = useState(false) // mi perfil
 
   // Forms
-  const [formNuevo, setFormNuevo] = useState({ nombre: '', email: '', password: '', rol: 'supervisor' })
+  const [formNuevo, setFormNuevo] = useState({ nombre: '', email: '', password: '', rol: 'supervisor', modulos: [] })
   const [formEditar, setFormEditar] = useState({})
   const [formPass, setFormPass]   = useState({ passwordActual: '', passwordNuevo: '', confirmar: '' })
 
@@ -71,16 +104,16 @@ export default function Usuarios() {
 
   // ── Crear usuario ──────────────────────────────────
   async function crearUsuario() {
-    const { nombre, email, password, rol } = formNuevo
+    const { nombre, email, password, rol, modulos } = formNuevo
     if (!nombre || !email || !password) return toast('Todos los campos son obligatorios', 'error')
     if (password.length < 6) return toast('La contraseña debe tener al menos 6 caracteres', 'error')
     setGuardando(true)
     try {
-      const res = await api.post('/usuarios', { nombre, email, password, rol })
+      const res = await api.post('/usuarios', { nombre, email, password, rol, modulos })
       if (!res?.ok) return toast(res?.mensaje || 'Error al crear', 'error')
       toast('✅ Usuario creado correctamente', 'ok')
       setModalNuevo(false)
-      setFormNuevo({ nombre: '', email: '', password: '', rol: 'supervisor' })
+      setFormNuevo({ nombre: '', email: '', password: '', rol: 'supervisor', modulos: [] })
       cargar()
     } finally { setGuardando(false) }
   }
@@ -127,7 +160,7 @@ export default function Usuarios() {
 
   // ── Abrir editar ───────────────────────────────────
   function abrirEditar(u) {
-    setFormEditar({ nombre: u.nombre, email: u.email, rol: u.rol, activo: u.activo })
+    setFormEditar({ nombre: u.nombre, email: u.email, rol: u.rol, activo: u.activo, modulos: u.modulos || [] })
     setModalEditar(u)
   }
 
@@ -229,7 +262,16 @@ export default function Usuarios() {
                       <td style={{ color: 'var(--muted)', fontSize: '.85rem', fontFamily: 'DM Mono, monospace' }}>
                         {u.email}
                       </td>
-                      <td><BadgeRol rol={u.rol} /></td>
+                      <td>
+                        <div style={{ display: 'flex', flexDirection: 'column', gap: '.3rem' }}>
+                          <BadgeRol rol={u.rol} />
+                          {u.rol === 'supervisor' && (
+                            <span className="badge badge-gray" style={{ fontSize: '.68rem' }}>
+                              {(u.modulos?.length || 0)} módulo{u.modulos?.length === 1 ? '' : 's'}
+                            </span>
+                          )}
+                        </div>
+                      </td>
                       <td>
                         <span className={`badge ${u.activo ? 'badge-green' : 'badge-red'}`}>
                           {u.activo ? '● Activo' : '○ Inactivo'}
@@ -304,6 +346,18 @@ export default function Usuarios() {
                 Supervisor puede registrar planilla. Admin puede crear usuarios y gestionar catálogos.
               </p>
             </div>
+            {formNuevo.rol === 'supervisor' && (
+              <div>
+                <label className="lbl">Módulos permitidos</label>
+                <p style={{ fontSize: '.73rem', color: 'var(--muted)', marginBottom: '.5rem' }}>
+                  Elige a qué submenús del Dashboard tendrá acceso este usuario.
+                </p>
+                <SelectorModulos
+                  seleccionados={formNuevo.modulos}
+                  onChange={mods => setFormNuevo(p => ({ ...p, modulos: mods }))}
+                />
+              </div>
+            )}
             <div style={{ display: 'flex', gap: '.75rem', marginTop: '.5rem' }}>
               <button className="btn-secondary" style={{ flex: 1 }} onClick={() => setModalNuevo(false)}>Cancelar</button>
               <button className="btn-primary" style={{ flex: 1, justifyContent: 'center' }} onClick={crearUsuario} disabled={guardando}>
@@ -358,6 +412,18 @@ export default function Usuarios() {
                     {formEditar.activo ? '● Activo' : '○ Inactivo'}
                   </button>
                 </div>
+                {formEditar.rol === 'supervisor' && (
+                  <div>
+                    <label className="lbl">Módulos permitidos</label>
+                    <p style={{ fontSize: '.73rem', color: 'var(--muted)', marginBottom: '.5rem' }}>
+                      Elige a qué submenús del Dashboard tendrá acceso este usuario.
+                    </p>
+                    <SelectorModulos
+                      seleccionados={formEditar.modulos}
+                      onChange={mods => setFormEditar(p => ({ ...p, modulos: mods }))}
+                    />
+                  </div>
+                )}
               </>
             )}
             <div style={{ display: 'flex', gap: '.75rem', marginTop: '.5rem' }}>
