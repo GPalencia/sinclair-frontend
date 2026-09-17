@@ -103,7 +103,7 @@ function FormCentro({ inicial, onGuardar, onCerrar, cargando }) {
   const [form, setForm] = useState(inicial || { nombre: '', finca: '', activo: true })
   function set(k, v) { setForm(p => ({ ...p, [k]: v })) }
 
-  const fincas = ['Finca Guasaule','Finca San Juan','Finca Ojo De Agua','General']
+  const fincas = ['Finca Guasaule','Finca San Juan','Finca Ojo De Agua','Finca El Vado', 'Finca La Lujosa','General']
 
   return (
     <div style={{ display: 'flex', flexDirection: 'column', gap: '1rem' }}>
