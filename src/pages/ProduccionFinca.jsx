@@ -1,9 +1,10 @@
 // src/pages/ProduccionFinca.jsx
 import { useState, useEffect } from 'react'
-import { ClipboardList, Layers, Pencil, Save, Search, Warehouse } from 'lucide-react'
+import { ClipboardList, FileDown, Layers, Pencil, Save, Search, Warehouse } from 'lucide-react'
 import { useApi } from '../hooks/useApi'
 import { useToast } from '../hooks/useToast'
 import CatalogoLotesCosecha from '../components/CatalogoLotesCosecha'
+import { exportarExcel } from '../utils/exportExcel'
 
 function hoy() { return new Date().toISOString().split('T')[0] }
 
@@ -147,6 +148,23 @@ export default function ProduccionFinca() {
     }
   }
 
+  function exportarHistorial() {
+    const filas = registros.map(r => ({
+      Fecha: new Date(r.fecha).toLocaleDateString('es-HN'),
+      Finca: r.loteCosecha?.finca ?? '',
+      Lote: r.loteCosecha?.lote ?? '',
+      'Personal Laborado': r.calculado?.totalPersonal ?? '',
+      Cestas: r.cestas ?? '',
+      Kilos: r.totalKilos ?? '',
+      'Rend. Aproximado': r.rendAproximado ?? '',
+      'Cestas/Jornal': r.calculado?.cestasXJornal ?? '',
+      'Personal Proyectado': r.calculado?.personalProyectado ?? '',
+      'Días Cosecha': r.calculado?.diasCosecha ?? '',
+      Estado: r.calculado?.pendiente ? 'Pendiente' : (r.calculado?.estadoLote ?? ''),
+    }))
+    exportarExcel(filas, `Historial_Cosecha_${desde}_a_${hasta}`)
+  }
+
   return (
     <div style={{ display: 'flex', flexDirection: 'column', gap: '1.5rem' }}>
 
@@ -260,15 +278,20 @@ export default function ProduccionFinca() {
 
           {buscado && (
             <div className="card fade-up" style={{ padding: 0, overflow: 'hidden' }}>
-              <div style={{ padding: '1rem 1.5rem', borderBottom: '1px solid var(--border)', fontFamily: 'Inter, sans-serif', fontSize: '.85rem', fontWeight: 600 }}>
-                {registros.length} registros encontrados
+              <div style={{ padding: '1rem 1.5rem', borderBottom: '1px solid var(--border)', display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+                <span style={{ fontFamily: 'Inter, sans-serif', fontSize: '.85rem', fontWeight: 600 }}>
+                  {registros.length} registros encontrados
+                </span>
+                <button className="btn-secondary" onClick={exportarHistorial} disabled={!registros.length}>
+                  <FileDown size={15} /> Exportar Excel
+                </button>
               </div>
               <div style={{ overflowX: 'auto' }}>
                 <table className="tbl">
                   <thead>
                     <tr>
-                      <th>Fecha</th><th>Finca / Lote</th><th>Jornales</th><th>Caporales</th>
-                      <th>Cestas</th><th>Kilos</th><th>Rend.</th><th>ParametroCesta</th>
+                      <th>Fecha</th><th>Finca / Lote</th><th>Personal Laborado</th>
+                      <th>Cestas</th><th>Kilos</th><th>Rend.</th>
                       <th>Cestas/Jornal</th><th>Personal Proy.</th><th>Días Cosecha</th><th>Estado</th><th></th>
                     </tr>
                   </thead>
@@ -281,14 +304,10 @@ export default function ProduccionFinca() {
                         <td style={{ fontWeight: 500, whiteSpace: 'nowrap' }}>
                           {r.loteCosecha?.finca} — {r.loteCosecha?.lote}
                         </td>
-                        <td style={{ textAlign: 'center' }}>{r.jornales}</td>
-                        <td style={{ textAlign: 'center' }}>{r.caporales}</td>
+                        <td style={{ textAlign: 'center' }}>{r.calculado?.totalPersonal ?? '—'}</td>
                         <td style={{ textAlign: 'center' }}>{r.cestas ?? '—'}</td>
                         <td style={{ fontFamily: 'DM Mono, monospace', fontSize: '.82rem' }}>{r.totalKilos ?? '—'}</td>
                         <td style={{ fontFamily: 'DM Mono, monospace', fontSize: '.82rem' }}>{r.rendAproximado ?? '—'}</td>
-                        <td style={{ fontFamily: 'DM Mono, monospace', fontSize: '.82rem', color: 'var(--verde)', fontWeight: 600 }}>
-                          {r.calculado?.parametroCesta ?? '—'}
-                        </td>
                         <td style={{ fontFamily: 'DM Mono, monospace', fontSize: '.82rem' }}>{r.calculado?.cestasXJornal ?? '—'}</td>
                         <td style={{ fontFamily: 'DM Mono, monospace', fontSize: '.82rem' }}>{r.calculado?.personalProyectado ?? '—'}</td>
                         <td style={{ textAlign: 'center', fontFamily: 'DM Mono, monospace', fontSize: '.82rem' }}>{r.calculado?.diasCosecha ?? '—'}</td>

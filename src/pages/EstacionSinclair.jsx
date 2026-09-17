@@ -1,10 +1,11 @@
 // src/pages/EstacionSinclair.jsx
 import { useState, useEffect } from 'react'
-import { ClipboardList, Fuel, Layers, Save, Search, Truck } from 'lucide-react'
+import { ClipboardList, FileDown, Fuel, Layers, Save, Search, Truck } from 'lucide-react'
 import { useApi } from '../hooks/useApi'
 import { useToast } from '../hooks/useToast'
 import CatalogoMaquinaria from '../components/CatalogoMaquinaria'
 import EntradasDiesel from '../components/EntradasDiesel'
+import { exportarExcel } from '../utils/exportExcel'
 
 function hoy() { return new Date().toISOString().split('T')[0] }
 
@@ -104,6 +105,21 @@ export default function EstacionSinclair() {
     } finally {
       setCH(false)
     }
+  }
+
+  function exportarHistorial() {
+    const filas = despachos.map(d => ({
+      Fecha: new Date(d.fecha).toLocaleDateString('es-HN'),
+      Máquina: `${d.maquinaria?.codigo ?? ''} — ${d.maquinaria?.unidadDestino ?? ''}`,
+      Galones: d.cantidadDieselGalones ?? '',
+      'Precio/Gal': d.calculado?.precioGalon ?? '',
+      Total: d.calculado?.total ?? '',
+      Lectura: d.lecturaActual ?? '',
+      Recorrido: d.calculado?.recorrido ?? '',
+      Rendimiento: d.calculado?.rendimiento ?? '',
+      Alerta: d.calculado?.alerta ?? '',
+    }))
+    exportarExcel(filas, `Historial_Diesel_${desde}_a_${hasta}`)
   }
 
   return (
@@ -242,8 +258,13 @@ export default function EstacionSinclair() {
 
           {buscado && (
             <div className="card fade-up" style={{ padding: 0, overflow: 'hidden' }}>
-              <div style={{ padding: '1rem 1.5rem', borderBottom: '1px solid var(--border)', fontFamily: 'Inter, sans-serif', fontSize: '.85rem', fontWeight: 600 }}>
-                {despachos.length} despachos encontrados
+              <div style={{ padding: '1rem 1.5rem', borderBottom: '1px solid var(--border)', display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+                <span style={{ fontFamily: 'Inter, sans-serif', fontSize: '.85rem', fontWeight: 600 }}>
+                  {despachos.length} despachos encontrados
+                </span>
+                <button className="btn-secondary" onClick={exportarHistorial} disabled={!despachos.length}>
+                  <FileDown size={15} /> Exportar Excel
+                </button>
               </div>
               <div style={{ overflowX: 'auto' }}>
                 <table className="tbl">
