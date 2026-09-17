@@ -5,6 +5,7 @@ import { useApi } from '../hooks/useApi'
 import { useToast } from '../hooks/useToast'
 import CatalogosEstacion from '../components/CatalogosEstacion'
 import EntradasDiesel from '../components/EntradasDiesel'
+import ComboboxBuscable from '../components/ComboboxBuscable'
 import { exportarExcel } from '../utils/exportExcel'
 
 function hoy() { return new Date().toISOString().split('T')[0] }
@@ -72,6 +73,7 @@ export default function EstacionSinclair() {
 
   const maquinaSel = maquinas.find(m => m._id === form.maquinaria)
   const requiereLectura = maquinaSel && !SIN_MEDIDOR.includes(maquinaSel.tipoMedidor)
+  const opcionesMaquinas = maquinas.map(m => ({ value: m._id, label: `${m.codigo} — ${m.unidadDestino}`, sublabel: m.tipo }))
 
   async function guardar() {
     if (!form.maquinaria)                return toast('Selecciona la máquina', 'error')
@@ -181,12 +183,12 @@ export default function EstacionSinclair() {
             <div style={{ display: 'flex', flexDirection: 'column', gap: '1rem', maxWidth: 560 }}>
               <div>
                 <label className="lbl">Máquina *</label>
-                <select className="inp" value={form.maquinaria} onChange={e => set('maquinaria', e.target.value)}>
-                  <option value="">Selecciona...</option>
-                  {maquinas.map(m => (
-                    <option key={m._id} value={m._id}>{m.codigo} — {m.unidadDestino}</option>
-                  ))}
-                </select>
+                <ComboboxBuscable
+                  options={opcionesMaquinas}
+                  value={form.maquinaria}
+                  onChange={v => set('maquinaria', v)}
+                  placeholder="Busca por código o nombre..."
+                />
               </div>
 
               <div style={{ display: 'flex', gap: '1rem', flexWrap: 'wrap' }}>
@@ -254,12 +256,12 @@ export default function EstacionSinclair() {
               </div>
               <div style={{ flex: 1, minWidth: 180 }}>
                 <label className="lbl">Máquina</label>
-                <select className="inp" value={maquinaFiltro} onChange={e => setMaquinaFiltro(e.target.value)}>
-                  <option value="">Todas</option>
-                  {maquinas.map(m => (
-                    <option key={m._id} value={m._id}>{m.codigo} — {m.unidadDestino}</option>
-                  ))}
-                </select>
+                <ComboboxBuscable
+                  options={[{ value: '', label: 'Todas' }, ...opcionesMaquinas]}
+                  value={maquinaFiltro}
+                  onChange={setMaquinaFiltro}
+                  placeholder="Busca por código o nombre..."
+                />
               </div>
               <button className="btn-primary" onClick={buscarHistorial} disabled={cargandoHist}>
                 {cargandoHist ? <span className="spinner" /> : <Search size={15} />} Buscar
