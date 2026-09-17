@@ -1,12 +1,12 @@
 // src/components/Layout.jsx
 import { useState } from 'react'
 import {
-  ChevronDown, ClipboardList, LayoutDashboard, LogOut,
-  Menu, Radio, Shovel, Sprout, UserCog, Warehouse, X
+  ChevronDown, ClipboardList, Fuel, LayoutDashboard, LogOut,
+  Menu, Shovel, Sprout, UserCog, Warehouse, X
 } from 'lucide-react'
 import { MODULOS, puedeVerModulo } from '../config/modulos'
 
-const ICONOS = { ClipboardList, Sprout, Shovel, Warehouse, Radio }
+const ICONOS = { ClipboardList, Sprout, Shovel, Warehouse, Fuel }
 
 const estiloItem = (isActive) => ({
   display: 'flex',

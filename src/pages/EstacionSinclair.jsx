@@ -1,9 +1,9 @@
 // src/pages/EstacionSinclair.jsx
 import { useState, useEffect } from 'react'
-import { ClipboardList, FileDown, Fuel, Layers, Save, Search, Truck } from 'lucide-react'
+import { ClipboardList, FileDown, Fuel, Layers, Save, Search } from 'lucide-react'
 import { useApi } from '../hooks/useApi'
 import { useToast } from '../hooks/useToast'
-import CatalogoMaquinaria from '../components/CatalogoMaquinaria'
+import CatalogosEstacion from '../components/CatalogosEstacion'
 import EntradasDiesel from '../components/EntradasDiesel'
 import { exportarExcel } from '../utils/exportExcel'
 
@@ -30,6 +30,7 @@ export default function EstacionSinclair() {
 
   const [maquinas, setMaquinas]       = useState([])
   const [cargandoMaq, setCM]          = useState(true)
+  const [rutas, setRutas]             = useState([])
   const [inventario, setInventario]   = useState(null)
 
   const [form, setForm]               = useState(FORM_VACIO)
@@ -42,7 +43,7 @@ export default function EstacionSinclair() {
   const [cargandoHist, setCH]         = useState(false)
   const [buscado, setBuscado]         = useState(false)
 
-  useEffect(() => { cargarMaquinas(); cargarInventario() }, [])
+  useEffect(() => { cargarMaquinas(); cargarRutas(); cargarInventario() }, [])
   useEffect(() => { if (tab === 'historial' && !buscado) buscarHistorial() }, [tab])
 
   async function cargarMaquinas() {
@@ -53,6 +54,11 @@ export default function EstacionSinclair() {
     } finally {
       setCM(false)
     }
+  }
+
+  async function cargarRutas() {
+    const res = await api.get('/estacion-sinclair/rutas')
+    if (res?.ok) setRutas(res.data)
   }
 
   async function cargarInventario() {
@@ -151,7 +157,7 @@ export default function EstacionSinclair() {
 
       {/* Tabs */}
       <div className="fade-up" style={{ display: 'flex', gap: '.5rem', borderBottom: '1px solid var(--border)' }}>
-        {[['registrar', 'Registrar Despacho', ClipboardList], ['historial', 'Historial', Search], ['entradas', 'Entradas', Fuel], ['maquinaria', 'Maquinaria', Truck]].map(([key, label, Icon]) => (
+        {[['registrar', 'Registrar Despacho', ClipboardList], ['historial', 'Historial', Search], ['entradas', 'Entradas', Fuel], ['catalogos', 'Catálogos', Layers]].map(([key, label, Icon]) => (
           <button key={key} type="button" onClick={() => setTab(key)}
             style={{
               display: 'flex', alignItems: 'center', gap: '.4rem',
@@ -216,7 +222,12 @@ export default function EstacionSinclair() {
 
               <div>
                 <label className="lbl">Ruta</label>
-                <input className="inp" value={form.ruta} onChange={e => set('ruta', e.target.value)} />
+                <select className="inp" value={form.ruta} onChange={e => set('ruta', e.target.value)}>
+                  <option value="">Selecciona...</option>
+                  {rutas.map(r => (
+                    <option key={r._id} value={r.nombre}>{r.nombre}</option>
+                  ))}
+                </select>
               </div>
 
               <button className="btn-primary" style={{ justifyContent: 'center', marginTop: '.5rem' }}
@@ -258,7 +269,7 @@ export default function EstacionSinclair() {
 
           {buscado && (
             <div className="card fade-up" style={{ padding: 0, overflow: 'hidden' }}>
-              <div style={{ padding: '1rem 1.5rem', borderBottom: '1px solid var(--border)', display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+              <div style={{ padding: '1rem 1.5rem', borderBottom: '1px solid var(--border)', display: 'flex', justifyContent: 'space-between', alignItems: 'center', flexWrap: 'wrap', gap: '.75rem' }}>
                 <span style={{ fontFamily: 'Inter, sans-serif', fontSize: '.85rem', fontWeight: 600 }}>
                   {despachos.length} despachos encontrados
                 </span>
@@ -310,8 +321,8 @@ export default function EstacionSinclair() {
       )}
 
       {/* ── Maquinaria ── */}
-      {tab === 'maquinaria' && (
-        <CatalogoMaquinaria onCambio={cargarMaquinas} />
+      {tab === 'catalogos' && (
+        <CatalogosEstacion onCambioMaquinaria={cargarMaquinas} onCambioRutas={cargarRutas} />
       )}
     </div>
   )

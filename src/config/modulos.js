@@ -43,7 +43,7 @@ export const MODULOS = [
   {
     key: 'estacionSinclair',
     label: 'Estación Sinclair',
-    icon: 'Radio',
+    icon: 'Fuel',
     to: '/estacion-sinclair',
   },
 ]

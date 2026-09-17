@@ -220,3 +220,27 @@ select option { background: var(--surface); color: var(--text); }
 .toast-error { background: #fef2f2; border: 1px solid #fca5a5; color: #dc2626; }
 .toast-info  { background: #eff6ff; border: 1px solid #93c5fd; color: #1d4ed8; }
 .toast-warn  { background: #fffbeb; border: 1px solid #fcd34d; color: #b45309; }
+
+/* ── Responsive (móvil) ──────────────────────────────────── */
+@media (max-width: 640px) {
+  main {
+    padding: 1rem !important;
+  }
+  .card {
+    padding: 1rem !important;
+    border-radius: 10px !important;
+  }
+  /* Inputs a 16px en móvil: evita que iOS haga zoom automático al enfocar */
+  .inp, select, textarea {
+    font-size: 16px !important;
+  }
+  /* Modales ocupan casi todo el ancho, sin desbordarse */
+  .toast-container {
+    left: 1rem;
+    right: 1rem;
+    bottom: 1rem;
+  }
+  .toast {
+    max-width: none;
+  }
+}

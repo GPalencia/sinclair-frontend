@@ -116,7 +116,7 @@ export default function NuevoEmpleado() {
       </div>
 
       {/* Botones */}
-      <div style={{ display: 'flex', gap: '1rem' }}>
+      <div style={{ display: 'flex', gap: '1rem', flexWrap: 'wrap' }}>
         <button className="btn-secondary" onClick={() => navigate('/personal')}>Cancelar</button>
         <button className="btn-primary" onClick={guardar} disabled={cargando}>
           {cargando ? <span className="spinner" /> : <Save size={15} />} Registrar Empleado

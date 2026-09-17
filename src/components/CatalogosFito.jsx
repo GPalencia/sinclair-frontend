@@ -259,7 +259,7 @@ export default function CatalogosFito({ onCambio }) {
 
   return (
     <div style={{ display: 'flex', flexDirection: 'column', gap: '1.25rem' }}>
-      <div style={{ display: 'flex', gap: '.5rem' }}>
+      <div style={{ display: 'flex', gap: '.5rem', flexWrap: 'wrap' }}>
         {[['plagas', 'Plagas / Enfermedades'], ['lotesSembrados', 'Lotes Sembrados']].map(([key, label]) => (
           <button key={key} type="button" onClick={() => setSub(key)} className={sub === key ? 'btn-primary' : 'btn-secondary'}
             style={{ fontSize: '.8rem', padding: '.5rem .9rem' }}>

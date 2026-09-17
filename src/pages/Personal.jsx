@@ -80,7 +80,7 @@ function ModalContrato({ persona, onCerrar, onGuardado }) {
         maxHeight: '90vh', overflowY: 'auto' }}>
 
         {/* Header */}
-        <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '1.25rem' }}>
+        <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', flexWrap: 'wrap', gap: '.75rem', marginBottom: '1.25rem' }}>
           <div>
             <h3 style={{ fontFamily: 'Inter, sans-serif', fontSize: '1rem', fontWeight: 700 }}>
               Contrato — {persona.nombres} {persona.apellidos}
@@ -254,7 +254,7 @@ function ModalEditar({ persona, onCerrar, onGuardado }) {
         padding: '1.75rem', width: '100%', maxWidth: 520, animation: 'fadeUp .25s ease',
         maxHeight: '90vh', overflowY: 'auto' }}>
 
-        <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '1.25rem' }}>
+        <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', flexWrap: 'wrap', gap: '.75rem', marginBottom: '1.25rem' }}>
           <h3 style={{ fontFamily: 'Inter, sans-serif', fontSize: '1rem', fontWeight: 700 }}>
             Editar — {persona.nombres} {persona.apellidos}
           </h3>
@@ -415,7 +415,7 @@ function ModalFaceId({ persona, onCerrar, onGuardado }) {
         maxHeight: '95vh', overflowY: 'auto' }}>
 
         {/* Header */}
-        <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '1rem' }}>
+        <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', flexWrap: 'wrap', gap: '.75rem', marginBottom: '1rem' }}>
           <div>
             <h3 style={{ fontFamily: 'Inter, sans-serif', fontSize: '1rem', fontWeight: 700 }}>
               Asignar Face ID

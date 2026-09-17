@@ -9,7 +9,7 @@ function Modal({ titulo, onClose, children }) {
     <div style={{ position: 'fixed', inset: 0, background: 'rgba(0,0,0,.7)', zIndex: 100, display: 'flex', alignItems: 'center', justifyContent: 'center', padding: '1rem' }}
       onClick={e => e.target === e.currentTarget && onClose()}>
       <div style={{ background: 'var(--card)', border: '1px solid var(--border)', borderRadius: 14, padding: '1.75rem', width: '100%', maxWidth: 480, animation: 'fadeUp .25s ease' }}>
-        <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '1.25rem' }}>
+        <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', flexWrap: 'wrap', gap: '.75rem', marginBottom: '1.25rem' }}>
           <h3 style={{ fontFamily: 'Inter, sans-serif', fontSize: '1rem', fontWeight: 700 }}>{titulo}</h3>
           <button className="btn-ghost" onClick={onClose} style={{ fontSize: '1.1rem', padding: '.3rem .6rem' }}>✕</button>
         </div>
@@ -103,7 +103,7 @@ function FormCentro({ inicial, onGuardar, onCerrar, cargando }) {
   const [form, setForm] = useState(inicial || { nombre: '', finca: '', activo: true })
   function set(k, v) { setForm(p => ({ ...p, [k]: v })) }
 
-  const fincas = ['Finca Guasaule','Finca San Juan','Finca Ojo De Agua','Finca El Vado', 'Finca La Lujosa','General']
+  const fincas = ['Finca Guasaule','Finca San Juan','Finca Ojo De Agua','General']
 
   return (
     <div style={{ display: 'flex', flexDirection: 'column', gap: '1rem' }}>
