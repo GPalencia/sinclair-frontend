@@ -14,7 +14,7 @@ const estiloItem = (isActive) => ({
   gap: '.75rem',
   padding: '.65rem .9rem',
   borderRadius: 9,
-  fontFamily: 'Syne, sans-serif',
+  fontFamily: 'Inter, sans-serif',
   fontSize: '.85rem',
   fontWeight: isActive ? 600 : 400,
   color: isActive ? '#16a34a' : '#475569',
@@ -77,7 +77,7 @@ export default function Layout({ children }) {
         <div style={{ padding: '1.25rem 1.25rem .75rem', borderBottom: '3px solid #16a34a', display: 'flex', alignItems: 'center', gap: '.75rem' }}>
           <img src={LOGO} alt="Sinclair" style={{ height: 42, width: 42, objectFit: 'contain' }} />
           <div>
-            <div style={{ fontFamily: 'Syne, sans-serif', fontSize: '.95rem', fontWeight: 800, letterSpacing: '.04em' }}>
+            <div style={{ fontFamily: 'Inter, sans-serif', fontSize: '.95rem', fontWeight: 800, letterSpacing: '.04em' }}>
               <span style={{ color: 'var(--verde)' }}>SINCLAIR</span>
               <span style={{ color: 'var(--muted)', fontSize: '.7rem', fontWeight: 400 }}> /APP</span>
             </div>
@@ -123,7 +123,7 @@ export default function Layout({ children }) {
                       style={({ isActive }) => ({
                         padding: '.5rem .75rem',
                         borderRadius: 7,
-                        fontFamily: 'Syne, sans-serif',
+                        fontFamily: 'Inter, sans-serif',
                         fontSize: '.8rem',
                         fontWeight: isActive ? 600 : 400,
                         color: isActive ? '#16a34a' : '#64748b',
@@ -180,7 +180,7 @@ export default function Layout({ children }) {
           borderTop: '1px solid #e2e8f0',
           background: '#f8fafc',
         }}>
-          <div style={{ fontSize: '.7rem', fontWeight: 600, color: '#16a34a', fontFamily: 'Syne, sans-serif', letterSpacing: '.04em', marginBottom: '.3rem' }}>
+          <div style={{ fontSize: '.7rem', fontWeight: 600, color: '#16a34a', fontFamily: 'Inter, sans-serif', letterSpacing: '.04em', marginBottom: '.3rem' }}>
             SINCLAIR/APP v1.0
           </div>
           <div style={{ fontSize: '.68rem', color: '#64748b', lineHeight: 1.5 }}>
@@ -220,7 +220,7 @@ export default function Layout({ children }) {
           </button>
           <div style={{ display: 'flex', alignItems: 'center', gap: '.5rem' }}>
             <img src={LOGO} alt="Sinclair" style={{ height: 28, width: 28, objectFit: 'contain' }} />
-            <span style={{ fontFamily: 'Syne, sans-serif', fontWeight: 700, fontSize: '.9rem', color: 'var(--verde)' }}>SINCLAIR/APP</span>
+            <span style={{ fontFamily: 'Inter, sans-serif', fontWeight: 700, fontSize: '.9rem', color: 'var(--verde)' }}>SINCLAIR/APP</span>
           </div>
           <div style={{ fontSize: '.8rem', color: 'var(--muted)', fontFamily: 'DM Mono, monospace', fontWeight: 500 }}>
             {usuario?.nombre?.split(' ')[0]}

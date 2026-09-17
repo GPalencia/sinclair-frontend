@@ -113,7 +113,7 @@ export default function Historial() {
             { label: 'Total Planilla', valor: `L ${stats.salarios.toLocaleString('es-HN', { minimumFractionDigits: 2 })}`, color: '#f59e0b' },
           ].map(s => (
             <div key={s.label} className="card" style={{ textAlign: 'center' }}>
-              <div style={{ fontFamily: 'Syne, sans-serif', fontSize: '1.4rem', fontWeight: 700, color: s.color }}>{s.valor}</div>
+              <div style={{ fontFamily: 'Inter, sans-serif', fontSize: '1.4rem', fontWeight: 700, color: s.color }}>{s.valor}</div>
               <div style={{ fontSize: '.78rem', color: 'var(--muted)', marginTop: '.25rem' }}>{s.label}</div>
             </div>
           ))}
@@ -123,7 +123,7 @@ export default function Historial() {
       {/* Tabla */}
       {buscado && (
         <div className="card fade-up" style={{ padding: 0, overflow: 'hidden' }}>
-          <div style={{ padding: '1rem 1.5rem', borderBottom: '1px solid var(--border)', fontFamily: 'Syne, sans-serif', fontSize: '.85rem', fontWeight: 600 }}>
+          <div style={{ padding: '1rem 1.5rem', borderBottom: '1px solid var(--border)', fontFamily: 'Inter, sans-serif', fontSize: '.85rem', fontWeight: 600 }}>
             {registros.length} registros encontrados
           </div>
           <div style={{ overflowX: 'auto' }}>

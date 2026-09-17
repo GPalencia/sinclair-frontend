@@ -59,7 +59,7 @@ export default function NuevoEmpleado() {
 
       {/* Formulario */}
       <div className="card fade-up">
-        <h3 style={{ fontFamily: 'Syne, sans-serif', fontSize: '.9rem', color: 'var(--muted)',
+        <h3 style={{ fontFamily: 'Inter, sans-serif', fontSize: '.9rem', color: 'var(--muted)',
           marginBottom: '1.25rem', letterSpacing: '.08em', textTransform: 'uppercase' }}>
           Datos del Empleado
         </h3>

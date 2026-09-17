@@ -253,7 +253,7 @@ export default function Registro() {
                     border: modo === m ? '1px solid rgba(34,197,94,.3)' : '1px solid var(--border)',
                     background: modo === m ? 'rgba(34,197,94,.08)' : 'transparent',
                     color: modo === m ? 'var(--verde)' : 'var(--muted)',
-                    fontFamily: 'Syne, sans-serif',
+                    fontFamily: 'Inter, sans-serif',
                     fontSize: '.78rem',
                     fontWeight: modo === m ? 600 : 400,
                     cursor: 'pointer',
@@ -372,7 +372,7 @@ export default function Registro() {
 
         {/* ── Columna derecha: planilla ── */}
         <div className="card fade-up" style={{ display: 'flex', flexDirection: 'column', gap: '1rem' }}>
-          <h3 style={{ fontFamily: 'Syne, sans-serif', fontSize: '.85rem', color: 'var(--muted)', letterSpacing: '.08em', textTransform: 'uppercase' }}>
+          <h3 style={{ fontFamily: 'Inter, sans-serif', fontSize: '.85rem', color: 'var(--muted)', letterSpacing: '.08em', textTransform: 'uppercase' }}>
             Datos de Planilla
           </h3>
 

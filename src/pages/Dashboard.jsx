@@ -13,12 +13,12 @@ function StatCard({ label, valor, sub, color = 'var(--verde)', icono }) {
   return (
     <div className="card fade-up" style={{ display: 'flex', flexDirection: 'column', gap: '.5rem' }}>
       <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start' }}>
-        <span style={{ fontSize: '.78rem', color: 'var(--muted)', fontFamily: 'Syne, sans-serif', letterSpacing: '.06em', textTransform: 'uppercase' }}>
+        <span style={{ fontSize: '.78rem', color: 'var(--muted)', fontFamily: 'Inter, sans-serif', letterSpacing: '.06em', textTransform: 'uppercase' }}>
           {label}
         </span>
         <span style={{ fontSize: '1.3rem' }}>{icono}</span>
       </div>
-      <div style={{ fontFamily: 'Syne, sans-serif', fontWeight: 700, fontSize: '1.6rem', color }}>
+      <div style={{ fontFamily: 'Inter, sans-serif', fontWeight: 700, fontSize: '1.6rem', color }}>
         {valor}
       </div>
       {sub && <div style={{ fontSize: '.78rem', color: 'var(--muted)' }}>{sub}</div>}
@@ -122,7 +122,7 @@ export default function Dashboard() {
       {/* Datos generales — resumen entre todos los módulos de campo */}
       {general && (
         <div className="fade-up">
-          <h3 style={{ fontSize: '.78rem', color: 'var(--muted)', fontFamily: 'Syne, sans-serif', letterSpacing: '.06em', textTransform: 'uppercase', marginBottom: '.6rem' }}>
+          <h3 style={{ fontSize: '.78rem', color: 'var(--muted)', fontFamily: 'Inter, sans-serif', letterSpacing: '.06em', textTransform: 'uppercase', marginBottom: '.6rem' }}>
             Datos Generales
           </h3>
           <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(180px, 1fr))', gap: '1rem' }}>

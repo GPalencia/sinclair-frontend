@@ -28,7 +28,7 @@ function Modal({ titulo, onClose, children }) {
     >
       <div style={{ background: 'var(--card)', border: '1px solid var(--border)', borderRadius: 14, padding: '1.75rem', width: '100%', maxWidth: 460, animation: 'fadeUp .25s ease' }}>
         <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '1.25rem' }}>
-          <h3 style={{ fontFamily: 'Syne, sans-serif', fontSize: '1rem', fontWeight: 700 }}>{titulo}</h3>
+          <h3 style={{ fontFamily: 'Inter, sans-serif', fontSize: '1rem', fontWeight: 700 }}>{titulo}</h3>
           <button className="btn-ghost" onClick={onClose} style={{ fontSize: '1.1rem', padding: '.3rem .6rem' }}>✕</button>
         </div>
         {children}
@@ -163,7 +163,7 @@ export default function ProduccionFinca() {
             style={{
               display: 'flex', alignItems: 'center', gap: '.4rem',
               padding: '.65rem 1rem', border: 'none', background: 'none', cursor: 'pointer',
-              fontFamily: 'Syne, sans-serif', fontSize: '.85rem', fontWeight: tab === key ? 700 : 400,
+              fontFamily: 'Inter, sans-serif', fontSize: '.85rem', fontWeight: tab === key ? 700 : 400,
               color: tab === key ? 'var(--verde)' : 'var(--muted)',
               borderBottom: tab === key ? '2px solid var(--verde)' : '2px solid transparent',
               marginBottom: '-1px', transition: 'all .15s',
@@ -260,7 +260,7 @@ export default function ProduccionFinca() {
 
           {buscado && (
             <div className="card fade-up" style={{ padding: 0, overflow: 'hidden' }}>
-              <div style={{ padding: '1rem 1.5rem', borderBottom: '1px solid var(--border)', fontFamily: 'Syne, sans-serif', fontSize: '.85rem', fontWeight: 600 }}>
+              <div style={{ padding: '1rem 1.5rem', borderBottom: '1px solid var(--border)', fontFamily: 'Inter, sans-serif', fontSize: '.85rem', fontWeight: 600 }}>
                 {registros.length} registros encontrados
               </div>
               <div style={{ overflowX: 'auto' }}>

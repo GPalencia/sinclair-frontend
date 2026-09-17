@@ -82,7 +82,7 @@ function ModalContrato({ persona, onCerrar, onGuardado }) {
         {/* Header */}
         <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '1.25rem' }}>
           <div>
-            <h3 style={{ fontFamily: 'Syne, sans-serif', fontSize: '1rem', fontWeight: 700 }}>
+            <h3 style={{ fontFamily: 'Inter, sans-serif', fontSize: '1rem', fontWeight: 700 }}>
               Contrato — {persona.nombres} {persona.apellidos}
             </h3>
             <span style={{ fontFamily: 'DM Mono, monospace', fontSize: '.75rem', color: 'var(--verde)' }}>
@@ -100,7 +100,7 @@ function ModalContrato({ persona, onCerrar, onGuardado }) {
               border: tab === t ? '1px solid rgba(34,197,94,.3)' : '1px solid var(--border)',
               background: tab === t ? 'rgba(34,197,94,.08)' : 'transparent',
               color: tab === t ? 'var(--verde)' : 'var(--muted)',
-              fontFamily: 'Syne, sans-serif', fontSize: '.8rem', fontWeight: tab === t ? 600 : 400
+              fontFamily: 'Inter, sans-serif', fontSize: '.8rem', fontWeight: tab === t ? 600 : 400
             }}>{label}</button>
           ))}
         </div>
@@ -255,7 +255,7 @@ function ModalEditar({ persona, onCerrar, onGuardado }) {
         maxHeight: '90vh', overflowY: 'auto' }}>
 
         <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '1.25rem' }}>
-          <h3 style={{ fontFamily: 'Syne, sans-serif', fontSize: '1rem', fontWeight: 700 }}>
+          <h3 style={{ fontFamily: 'Inter, sans-serif', fontSize: '1rem', fontWeight: 700 }}>
             Editar — {persona.nombres} {persona.apellidos}
           </h3>
           <button className="btn-ghost" onClick={onCerrar} style={{ fontSize: '1.1rem' }}>✕</button>
@@ -417,7 +417,7 @@ function ModalFaceId({ persona, onCerrar, onGuardado }) {
         {/* Header */}
         <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '1rem' }}>
           <div>
-            <h3 style={{ fontFamily: 'Syne, sans-serif', fontSize: '1rem', fontWeight: 700 }}>
+            <h3 style={{ fontFamily: 'Inter, sans-serif', fontSize: '1rem', fontWeight: 700 }}>
               Asignar Face ID
             </h3>
             <p style={{ fontSize: '.82rem', color: 'var(--muted)' }}>

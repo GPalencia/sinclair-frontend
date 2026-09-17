@@ -23,7 +23,7 @@ export default function ModuloEnConstruccion({ icon: Icon, titulo, descripcion }
           <Icon size={28} color="var(--verde)" />
         </div>
         <div>
-          <div style={{ fontFamily: 'Syne, sans-serif', fontWeight: 700, fontSize: '1rem', marginBottom: '.35rem' }}>
+          <div style={{ fontFamily: 'Inter, sans-serif', fontWeight: 700, fontSize: '1rem', marginBottom: '.35rem' }}>
             Módulo en construcción
           </div>
           <p style={{ color: 'var(--muted)', fontSize: '.85rem', maxWidth: 420 }}>

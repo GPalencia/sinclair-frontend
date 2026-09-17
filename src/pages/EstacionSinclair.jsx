@@ -119,15 +119,15 @@ export default function EstacionSinclair() {
       {inventario && (
         <div className="fade-up" style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(160px, 1fr))', gap: '1rem' }}>
           <div className="card">
-            <div style={{ fontSize: '.75rem', color: 'var(--muted)', fontFamily: 'Syne, sans-serif', textTransform: 'uppercase', letterSpacing: '.05em' }}>Entradas totales</div>
+            <div style={{ fontSize: '.75rem', color: 'var(--muted)', fontFamily: 'Inter, sans-serif', textTransform: 'uppercase', letterSpacing: '.05em' }}>Entradas totales</div>
             <div style={{ fontSize: '1.3rem', fontWeight: 700, fontFamily: 'DM Mono, monospace', marginTop: '.3rem' }}>{inventario.totalEntradasGalones} gal</div>
           </div>
           <div className="card">
-            <div style={{ fontSize: '.75rem', color: 'var(--muted)', fontFamily: 'Syne, sans-serif', textTransform: 'uppercase', letterSpacing: '.05em' }}>Despachos totales</div>
+            <div style={{ fontSize: '.75rem', color: 'var(--muted)', fontFamily: 'Inter, sans-serif', textTransform: 'uppercase', letterSpacing: '.05em' }}>Despachos totales</div>
             <div style={{ fontSize: '1.3rem', fontWeight: 700, fontFamily: 'DM Mono, monospace', marginTop: '.3rem' }}>{inventario.totalDespachosGalones} gal</div>
           </div>
           <div className="card">
-            <div style={{ fontSize: '.75rem', color: 'var(--muted)', fontFamily: 'Syne, sans-serif', textTransform: 'uppercase', letterSpacing: '.05em' }}>Existencia actual</div>
+            <div style={{ fontSize: '.75rem', color: 'var(--muted)', fontFamily: 'Inter, sans-serif', textTransform: 'uppercase', letterSpacing: '.05em' }}>Existencia actual</div>
             <div style={{ fontSize: '1.3rem', fontWeight: 700, fontFamily: 'DM Mono, monospace', marginTop: '.3rem', color: 'var(--verde)' }}>{inventario.existenciaActualGalones} gal</div>
           </div>
         </div>
@@ -140,7 +140,7 @@ export default function EstacionSinclair() {
             style={{
               display: 'flex', alignItems: 'center', gap: '.4rem',
               padding: '.65rem 1rem', border: 'none', background: 'none', cursor: 'pointer',
-              fontFamily: 'Syne, sans-serif', fontSize: '.85rem', fontWeight: tab === key ? 700 : 400,
+              fontFamily: 'Inter, sans-serif', fontSize: '.85rem', fontWeight: tab === key ? 700 : 400,
               color: tab === key ? 'var(--verde)' : 'var(--muted)',
               borderBottom: tab === key ? '2px solid var(--verde)' : '2px solid transparent',
               marginBottom: '-1px', transition: 'all .15s',
@@ -242,7 +242,7 @@ export default function EstacionSinclair() {
 
           {buscado && (
             <div className="card fade-up" style={{ padding: 0, overflow: 'hidden' }}>
-              <div style={{ padding: '1rem 1.5rem', borderBottom: '1px solid var(--border)', fontFamily: 'Syne, sans-serif', fontSize: '.85rem', fontWeight: 600 }}>
+              <div style={{ padding: '1rem 1.5rem', borderBottom: '1px solid var(--border)', fontFamily: 'Inter, sans-serif', fontSize: '.85rem', fontWeight: 600 }}>
                 {despachos.length} despachos encontrados
               </div>
               <div style={{ overflowX: 'auto' }}>

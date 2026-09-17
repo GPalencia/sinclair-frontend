@@ -1,6 +1,6 @@
 @import "tailwindcss";
 
-@import url('https://fonts.googleapis.com/css2?family=Syne:wght@400;500;600;700;800&family=DM+Sans:wght@300;400;500;600&family=DM+Mono:wght@400;500&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=DM+Mono:wght@400;500&display=swap');
 
 :root {
   --verde:       #16a34a;
@@ -29,14 +29,14 @@
 * { box-sizing: border-box; margin: 0; padding: 0; }
 
 body {
-  font-family: 'DM Sans', sans-serif;
+  font-family: 'Inter', sans-serif;
   background: var(--bg);
   color: var(--text);
   min-height: 100vh;
   -webkit-font-smoothing: antialiased;
 }
 
-h1, h2, h3, h4 { font-family: 'Syne', sans-serif; color: var(--text); }
+h1, h2, h3, h4 { font-family: 'Inter', sans-serif; color: var(--text); }
 
 /* Scrollbar */
 ::-webkit-scrollbar { width: 5px; height: 5px; }
@@ -71,7 +71,7 @@ select option { background: var(--surface); color: var(--text); }
 .tbl th {
   padding: .65rem 1rem;
   text-align: left;
-  font-family: 'Syne', sans-serif;
+  font-family: 'Inter', sans-serif;
   font-size: .72rem;
   letter-spacing: .06em;
   text-transform: uppercase;
@@ -98,7 +98,7 @@ select option { background: var(--surface); color: var(--text); }
   padding: .6rem .9rem;
   border-radius: 8px;
   font-size: .9rem;
-  font-family: 'DM Sans', sans-serif;
+  font-family: 'Inter', sans-serif;
   transition: border-color .2s, box-shadow .2s;
   outline: none;
 }
@@ -112,7 +112,7 @@ select option { background: var(--surface); color: var(--text); }
 .lbl {
   display: block;
   font-size: .74rem;
-  font-family: 'Syne', sans-serif;
+  font-family: 'Inter', sans-serif;
   letter-spacing: .05em;
   text-transform: uppercase;
   color: var(--muted);
@@ -129,7 +129,7 @@ select option { background: var(--surface); color: var(--text); }
   border-radius: 8px;
   font-weight: 600;
   font-size: .9rem;
-  font-family: 'Syne', sans-serif;
+  font-family: 'Inter', sans-serif;
   cursor: pointer;
   transition: all .2s;
   display: inline-flex;
@@ -147,7 +147,7 @@ select option { background: var(--surface); color: var(--text); }
   padding: .6rem 1.2rem;
   border-radius: 8px;
   font-size: .88rem;
-  font-family: 'DM Sans', sans-serif;
+  font-family: 'Inter', sans-serif;
   cursor: pointer;
   transition: all .2s;
   display: inline-flex;

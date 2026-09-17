@@ -10,7 +10,7 @@ function Modal({ titulo, onClose, children }) {
       onClick={e => e.target === e.currentTarget && onClose()}>
       <div style={{ background: 'var(--card)', border: '1px solid var(--border)', borderRadius: 14, padding: '1.75rem', width: '100%', maxWidth: 480, animation: 'fadeUp .25s ease' }}>
         <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '1.25rem' }}>
-          <h3 style={{ fontFamily: 'Syne, sans-serif', fontSize: '1rem', fontWeight: 700 }}>{titulo}</h3>
+          <h3 style={{ fontFamily: 'Inter, sans-serif', fontSize: '1rem', fontWeight: 700 }}>{titulo}</h3>
           <button className="btn-ghost" onClick={onClose} style={{ fontSize: '1.1rem', padding: '.3rem .6rem' }}>✕</button>
         </div>
         {children}
@@ -59,7 +59,7 @@ function FormLabor({ inicial, onGuardar, onCerrar, cargando }) {
                 border: (t === 'dias' ? form.pideDias : form.pideValor) ? '1px solid rgba(34,197,94,.4)' : '1px solid var(--border)',
                 background: (t === 'dias' ? form.pideDias : form.pideValor) ? 'rgba(34,197,94,.08)' : 'transparent',
                 color: (t === 'dias' ? form.pideDias : form.pideValor) ? 'var(--verde)' : 'var(--muted)',
-                fontFamily: 'Syne, sans-serif', fontSize: '.8rem', cursor: 'pointer', transition: 'all .18s'
+                fontFamily: 'Inter, sans-serif', fontSize: '.8rem', cursor: 'pointer', transition: 'all .18s'
               }}>
               {label}
             </button>
@@ -255,7 +255,7 @@ export default function Catalogos() {
             border: tab === t ? '1px solid rgba(34,197,94,.3)' : '1px solid var(--border)',
             background: tab === t ? 'rgba(34,197,94,.08)' : 'transparent',
             color: tab === t ? 'var(--verde)' : 'var(--muted)',
-            fontFamily: 'Syne, sans-serif', fontSize: '.85rem',
+            fontFamily: 'Inter, sans-serif', fontSize: '.85rem',
             fontWeight: tab === t ? 600 : 400, cursor: 'pointer', transition: 'all .18s',
           }}>{label}</button>
         ))}
