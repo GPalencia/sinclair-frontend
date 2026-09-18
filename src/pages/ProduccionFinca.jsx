@@ -181,7 +181,7 @@ export default function ProduccionFinca() {
   }
 
   const registrosFiltrados = fincaFiltro
-    ? registros.filter(r => r.loteCosecha?.finca === fincaFiltro)
+    ? registros.filter(r => r.loteCosecha?.finca?.trim().toLowerCase() === fincaFiltro.trim().toLowerCase())
     : registros
 
   return (
