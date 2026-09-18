@@ -21,6 +21,8 @@ const COLOR_ESTADO = {
   'Declive':            'badge-red',
 }
 
+const FINCAS = ['7 de Mayo', 'San Juan', 'La Canoa', 'Ojo de Agua', 'El Vado', 'Palmerola']
+
 // ── Modal genérico ─────────────────────────────────────
 function Modal({ titulo, onClose, children }) {
   return (
@@ -58,6 +60,7 @@ export default function ProduccionFinca() {
   const [desde, setDesde]           = useState(hoy())
   const [hasta, setHasta]           = useState(hoy())
   const [loteFiltro, setLoteFiltro] = useState('')
+  const [fincaFiltro, setFincaFiltro] = useState('')
   const [registros, setReg]         = useState([])
   const [cargandoHist, setCH]       = useState(false)
   const [buscado, setBuscado]       = useState(false)
@@ -161,7 +164,7 @@ export default function ProduccionFinca() {
   }
 
   function exportarHistorial() {
-    const filas = registros.map(r => ({
+    const filas = registrosFiltrados.map(r => ({
       Fecha: new Date(r.fecha).toLocaleDateString('es-HN'),
       Finca: r.loteCosecha?.finca ?? '',
       Lote: r.loteCosecha?.lote ?? '',
@@ -176,6 +179,10 @@ export default function ProduccionFinca() {
     }))
     exportarExcel(filas, `Historial_Cosecha_${desde}_a_${hasta}`)
   }
+
+  const registrosFiltrados = fincaFiltro
+    ? registros.filter(r => r.loteCosecha?.finca === fincaFiltro)
+    : registros
 
   return (
     <div style={{ display: 'flex', flexDirection: 'column', gap: '1.5rem' }}>
@@ -273,6 +280,15 @@ export default function ProduccionFinca() {
                 <label className="lbl">Hasta</label>
                 <input className="inp" type="date" value={hasta} onChange={e => setHasta(e.target.value)} />
               </div>
+              <div style={{ flex: 1, minWidth: 160 }}>
+                <label className="lbl">Finca</label>
+                <select className="inp" value={fincaFiltro} onChange={e => setFincaFiltro(e.target.value)}>
+                  <option value="">Todas</option>
+                  {FINCAS.map(f => (
+                    <option key={f} value={f}>{f}</option>
+                  ))}
+                </select>
+              </div>
               <div style={{ flex: 1, minWidth: 180 }}>
                 <label className="lbl">Lote</label>
                 <select className="inp" value={loteFiltro} onChange={e => setLoteFiltro(e.target.value)}>
@@ -292,9 +308,9 @@ export default function ProduccionFinca() {
             <div className="card fade-up" style={{ padding: 0, overflow: 'hidden' }}>
               <div style={{ padding: '1rem 1.5rem', borderBottom: '1px solid var(--border)', display: 'flex', justifyContent: 'space-between', alignItems: 'center', flexWrap: 'wrap', gap: '.75rem' }}>
                 <span style={{ fontFamily: 'Inter, sans-serif', fontSize: '.85rem', fontWeight: 600 }}>
-                  {registros.length} registros encontrados
+                  {registrosFiltrados.length} registros encontrados
                 </span>
-                <button className="btn-secondary" onClick={exportarHistorial} disabled={!registros.length}>
+                <button className="btn-secondary" onClick={exportarHistorial} disabled={!registrosFiltrados.length}>
                   <FileDown size={15} /> Exportar Excel
                 </button>
               </div>
@@ -304,11 +320,12 @@ export default function ProduccionFinca() {
                     <tr>
                       <th>Fecha</th><th>Finca / Lote</th><th>Personal Laborado</th>
                       <th>Cestas</th><th>Kilos</th><th>Rend.</th>
-                      <th>Cestas/Jornal</th><th>Personal Proy.</th><th>Días Cosecha</th><th>Estado</th><th></th>
+                      <th>Cestas/Jornal</th><th>Personal Proy.</th><th>Días Cosecha</th><th>Estado</th>
+                      <th style={{ position: 'sticky', right: 0, background: 'var(--card2)', boxShadow: '-4px 0 6px -4px rgba(0,0,0,.15)' }}></th>
                     </tr>
                   </thead>
                   <tbody>
-                    {registros.map(r => (
+                    {registrosFiltrados.map(r => (
                       <tr key={r._id}>
                         <td style={{ fontFamily: 'DM Mono, monospace', fontSize: '.8rem', color: 'var(--muted)', whiteSpace: 'nowrap' }}>
                           {new Date(r.fecha).toLocaleDateString('es-HN')}
@@ -332,7 +349,7 @@ export default function ProduccionFinca() {
                             </span>
                           )}
                         </td>
-                        <td>
+                        <td style={{ position: 'sticky', right: 0, background: 'var(--card)', boxShadow: '-4px 0 6px -4px rgba(0,0,0,.15)' }}>
                           <div style={{ display: 'flex', gap: '.25rem' }}>
                             <button className="btn-ghost" style={{ padding: '.35rem .6rem' }} onClick={() => abrirEditar(r)} title="Editar registro">
                               <Pencil size={14} />
