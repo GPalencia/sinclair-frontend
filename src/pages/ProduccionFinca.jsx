@@ -1,8 +1,9 @@
 // src/pages/ProduccionFinca.jsx
 import { useState, useEffect } from 'react'
-import { ClipboardList, FileDown, Layers, Pencil, Save, Search, Warehouse } from 'lucide-react'
+import { ClipboardList, FileDown, Layers, Pencil, Save, Search, Trash2, Warehouse } from 'lucide-react'
 import { useApi } from '../hooks/useApi'
 import { useToast } from '../hooks/useToast'
+import { useAuth } from '../context/AuthContext'
 import CatalogoLotesCosecha from '../components/CatalogoLotesCosecha'
 import { exportarExcel } from '../utils/exportExcel'
 
@@ -41,6 +42,7 @@ function Modal({ titulo, onClose, children }) {
 export default function ProduccionFinca() {
   const api        = useApi()
   const { toast }  = useToast()
+  const { usuario } = useAuth()
 
   const [tab, setTab] = useState('registrar') // 'registrar' | 'historial' | 'catalogos'
 
@@ -130,6 +132,16 @@ export default function ProduccionFinca() {
     } finally {
       setGE(false)
     }
+  }
+
+  async function eliminarRegistro(r) {
+    const nombreLote = `${r.loteCosecha?.finca} Lote ${r.loteCosecha?.lote}`
+    const fechaTxt = new Date(r.fecha).toLocaleDateString('es-HN')
+    if (!window.confirm(`¿Eliminar el registro de ${nombreLote} del ${fechaTxt}? Esta acción no se puede deshacer.`)) return
+    const res = await api.del(`/produccion-finca/registros/${r._id}`)
+    if (!res?.ok) return toast(res?.mensaje || 'Error al eliminar', 'error')
+    toast('✅ Registro eliminado', 'ok')
+    buscarHistorial()
   }
 
   async function buscarHistorial() {
@@ -321,9 +333,16 @@ export default function ProduccionFinca() {
                           )}
                         </td>
                         <td>
-                          <button className="btn-ghost" style={{ padding: '.35rem .6rem' }} onClick={() => abrirEditar(r)} title="Editar registro">
-                            <Pencil size={14} />
-                          </button>
+                          <div style={{ display: 'flex', gap: '.25rem' }}>
+                            <button className="btn-ghost" style={{ padding: '.35rem .6rem' }} onClick={() => abrirEditar(r)} title="Editar registro">
+                              <Pencil size={14} />
+                            </button>
+                            {usuario?.rol === 'admin' && (
+                              <button className="btn-ghost" style={{ padding: '.35rem .6rem', color: 'var(--danger)' }} onClick={() => eliminarRegistro(r)} title="Eliminar registro">
+                                <Trash2 size={14} />
+                              </button>
+                            )}
+                          </div>
                         </td>
                       </tr>
                     ))}
