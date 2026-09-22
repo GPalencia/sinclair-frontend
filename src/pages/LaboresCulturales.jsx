@@ -1,18 +1,19 @@
 // src/pages/LaboresCulturales.jsx
 import { useState, useEffect } from 'react'
-import { ClipboardList, FileDown, Layers, Pencil, Save, Search, Sprout, Trash2 } from 'lucide-react'
+import { ClipboardList, FileDown, Layers, MapPin, Pencil, Save, Search, Sprout, Trash2 } from 'lucide-react'
 import { useApi } from '../hooks/useApi'
 import { useToast } from '../hooks/useToast'
 import { useAuth } from '../context/AuthContext'
 import CatalogosLabores from '../components/CatalogosLabores'
 import ComboboxBuscable from '../components/ComboboxBuscable'
+import MedidorAreaGPS from '../components/MedidorAreaGPS'
 import { exportarExcel } from '../utils/exportExcel'
 
 function hoy() { return new Date().toISOString().split('T')[0] }
 
 const FORM_VACIO = {
   lote: '', tipoLabor: '', fecha: hoy(), personal: '', avanceMz: '',
-  variedad: '', librasSemilla: '', observaciones: '',
+  variedad: '', librasSemilla: '', observaciones: '', coordenadas: null,
 }
 
 const COLOR_ESTADO = { 'Completado': 'badge-green', 'En proceso': 'badge-yellow' }
@@ -50,6 +51,7 @@ export default function LaboresCulturales() {
   // Formulario de registro
   const [form, setForm]           = useState(FORM_VACIO)
   const [guardando, setGuardando] = useState(false)
+  const [modalGPS, setModalGPS]   = useState(false)
 
   // Historial
   const [desde, setDesde]           = useState(hoy())
@@ -110,6 +112,7 @@ export default function LaboresCulturales() {
         variedad: form.variedad,
         librasSemilla: form.librasSemilla === '' ? null : Number(form.librasSemilla),
         observaciones: form.observaciones,
+        coordenadas: form.coordenadas || undefined,
       })
       if (!res?.ok) return toast(res?.mensaje || 'Error al guardar', 'error')
       toast('✅ Labor registrada', 'ok')
@@ -271,7 +274,18 @@ export default function LaboresCulturales() {
                 </div>
                 <div style={{ flex: 1, minWidth: 140 }}>
                   <label className="lbl">Avance (Mz) *</label>
-                  <input className="inp" type="number" step="0.01" min="0" value={form.avanceMz} onChange={e => set('avanceMz', e.target.value)} />
+                  <div style={{ display: 'flex', gap: '.5rem' }}>
+                    <input className="inp" type="number" step="0.01" min="0" value={form.avanceMz} onChange={e => set('avanceMz', e.target.value)} />
+                    <button type="button" className="btn-secondary" style={{ padding: '.6rem .75rem', flexShrink: 0 }}
+                      onClick={() => setModalGPS(true)} title="Marcar área con GPS">
+                      <MapPin size={16} />
+                    </button>
+                  </div>
+                  {form.coordenadas && (
+                    <p style={{ fontSize: '.72rem', color: 'var(--verde)', marginTop: '.3rem' }}>
+                      📍 Área marcada con GPS ({form.coordenadas.length} puntos)
+                    </p>
+                  )}
                 </div>
               </div>
 
@@ -488,6 +502,18 @@ export default function LaboresCulturales() {
             </div>
           </div>
         </Modal>
+      )}
+
+      {/* ── Modal: GPS ── */}
+      {modalGPS && (
+        <MedidorAreaGPS
+          onCerrar={() => setModalGPS(false)}
+          onGuardar={({ areaMz, coordenadas }) => {
+            setForm(prev => ({ ...prev, avanceMz: String(areaMz), coordenadas }))
+            setModalGPS(false)
+            toast(`✅ Área marcada: ${areaMz} Mz`, 'ok')
+          }}
+        />
       )}
     </div>
   )
