@@ -17,9 +17,9 @@ const estiloItem = (isActive) => ({
   fontFamily: 'Inter, sans-serif',
   fontSize: '.85rem',
   fontWeight: isActive ? 600 : 400,
-  color: isActive ? '#16a34a' : '#475569',
-  background: isActive ? '#f0fdf4' : 'transparent',
-  border: isActive ? '1px solid #bbf7d0' : '1px solid transparent',
+  color: isActive ? 'var(--verde-dark)' : 'rgba(255,255,255,.9)',
+  background: isActive ? '#ffffff' : 'transparent',
+  border: 'none',
   textDecoration: 'none',
   transition: 'all .18s',
 })
@@ -61,8 +61,8 @@ export default function Layout({ children }) {
       {/* ── Sidebar ── */}
       <aside style={{
         width: 220,
-        background: '#ffffff',
-        borderRight: '1px solid #e2e8f0',
+        background: 'var(--verde)',
+        borderRight: 'none',
         display: 'flex',
         flexDirection: 'column',
         position: 'fixed',
@@ -74,14 +74,14 @@ export default function Layout({ children }) {
         className="md-sidebar"
       >
         {/* Logo */}
-        <div style={{ padding: '1.25rem 1.25rem .75rem', borderBottom: '3px solid #16a34a', display: 'flex', alignItems: 'center', gap: '.75rem' }}>
+        <div style={{ padding: '1.25rem 1.25rem .75rem', borderBottom: '1px solid rgba(255,255,255,.2)', display: 'flex', alignItems: 'center', gap: '.75rem' }}>
           <img src={LOGO} alt="Sinclair" style={{ height: 42, width: 42, objectFit: 'contain' }} />
           <div>
             <div style={{ fontFamily: 'Inter, sans-serif', fontSize: '.95rem', fontWeight: 800, letterSpacing: '.04em' }}>
-              <span style={{ color: 'var(--verde)' }}>SINCLAIR</span>
-              <span style={{ color: 'var(--muted)', fontSize: '.7rem', fontWeight: 400 }}> /APP</span>
+              <span style={{ color: '#ffffff' }}>SINCLAIR</span>
+              <span style={{ color: 'rgba(255,255,255,.75)', fontSize: '.7rem', fontWeight: 400 }}> /APP</span>
             </div>
-            <div style={{ fontSize: '.68rem', color: 'var(--muted)' }}>Reliable Producers</div>
+            <div style={{ fontSize: '.68rem', color: 'rgba(255,255,255,.75)' }}>Reliable Producers</div>
           </div>
         </div>
 
@@ -105,8 +105,8 @@ export default function Layout({ children }) {
                 onClick={() => setPlanillasAbierto(v => !v)}
                 style={{
                   ...estiloItem(enPlanillas),
-                  width: '100%', border: enPlanillas ? '1px solid #bbf7d0' : '1px solid transparent',
-                  background: enPlanillas ? '#f0fdf4' : 'transparent', cursor: 'pointer',
+                  width: '100%', border: 'none',
+                  background: enPlanillas ? '#ffffff' : 'transparent', cursor: 'pointer',
                 }}
               >
                 <ClipboardList size={16} style={{ flexShrink: 0 }} />
@@ -126,8 +126,8 @@ export default function Layout({ children }) {
                         fontFamily: 'Inter, sans-serif',
                         fontSize: '.8rem',
                         fontWeight: isActive ? 600 : 400,
-                        color: isActive ? '#16a34a' : '#64748b',
-                        background: isActive ? '#f0fdf4' : 'transparent',
+                        color: isActive ? 'var(--verde-dark)' : 'rgba(255,255,255,.8)',
+                        background: isActive ? '#ffffff' : 'transparent',
                         textDecoration: 'none',
                         transition: 'all .18s',
                       })}
@@ -161,14 +161,13 @@ export default function Layout({ children }) {
         </nav>
 
         {/* Usuario */}
-        <div style={{ padding: '1rem', borderTop: '1px solid #e2e8f0' }}>
-          <div style={{ fontSize: '.78rem', color: '#94a3b8', marginBottom: '.5rem', fontFamily: 'DM Mono, monospace' }}>
+        <div style={{ padding: '1rem', borderTop: '1px solid rgba(255,255,255,.2)' }}>
+          <div style={{ fontSize: '.78rem', color: 'rgba(255,255,255,.75)', marginBottom: '.5rem', fontFamily: 'DM Mono, monospace' }}>
             {usuario?.email}
           </div>
           <button
             onClick={handleLogout}
-            className="btn-ghost"
-            style={{ width: '100%', justifyContent: 'center', alignItems: 'center', flexDirection: 'row', fontSize: '.82rem', color: '#dc2626', display: 'flex', gap: '.4rem' }}
+            style={{ width: '100%', justifyContent: 'center', alignItems: 'center', flexDirection: 'row', fontSize: '.82rem', color: '#ffffff', background: 'rgba(255,255,255,.12)', border: 'none', borderRadius: 6, padding: '.5rem .75rem', cursor: 'pointer', display: 'flex', gap: '.4rem' }}
           >
             <span style={{ display: "inline-flex", alignItems: "center", gap: ".4rem", justifyContent: "center" }}><LogOut size={14} /> Cerrar sesión</span>
           </button>
@@ -177,18 +176,18 @@ export default function Layout({ children }) {
         {/* About */}
         <div style={{
           padding: '.85rem 1rem',
-          borderTop: '1px solid #e2e8f0',
-          background: '#f8fafc',
+          borderTop: '1px solid rgba(255,255,255,.2)',
+          background: 'rgba(0,0,0,.1)',
         }}>
-          <div style={{ fontSize: '.7rem', fontWeight: 600, color: '#16a34a', fontFamily: 'Inter, sans-serif', letterSpacing: '.04em', marginBottom: '.3rem' }}>
+          <div style={{ fontSize: '.7rem', fontWeight: 600, color: '#ffffff', fontFamily: 'Inter, sans-serif', letterSpacing: '.04em', marginBottom: '.3rem' }}>
             SINCLAIR/APP v1.0
           </div>
-          <div style={{ fontSize: '.68rem', color: '#64748b', lineHeight: 1.5 }}>
+          <div style={{ fontSize: '.68rem', color: 'rgba(255,255,255,.75)', lineHeight: 1.5 }}>
             Desarrollado por<br />
-            <span style={{ fontWeight: 600, color: '#334155' }}>Ing. German Palencia</span><br />
+            <span style={{ fontWeight: 600, color: '#ffffff' }}>Ing. German Palencia</span><br />
             Coordinador de Sistemas
           </div>
-          <div style={{ fontSize: '.65rem', color: '#94a3b8', marginTop: '.4rem', borderTop: '1px solid #e2e8f0', paddingTop: '.4rem' }}>
+          <div style={{ fontSize: '.65rem', color: 'rgba(255,255,255,.6)', marginTop: '.4rem', borderTop: '1px solid rgba(255,255,255,.15)', paddingTop: '.4rem' }}>
             © {new Date().getFullYear()} Sinclair Reliable Producers.<br />
             Todos los derechos reservados.
           </div>
@@ -204,25 +203,24 @@ export default function Layout({ children }) {
           alignItems: 'center',
           justifyContent: 'space-between',
           padding: '.9rem 1.25rem',
-          background: 'var(--surface)',
-          borderBottom: '3px solid #16a34a',
-          boxShadow: '0 1px 3px rgba(0,0,0,.06)',
+          background: 'var(--verde)',
+          borderBottom: 'none',
+          boxShadow: '0 1px 3px rgba(0,0,0,.15)',
           position: 'sticky',
           top: 0,
           zIndex: 30,
         }}>
           <button
             onClick={() => setOpen(!open)}
-            className="btn-ghost"
-            style={{ padding: '.4rem .6rem' }}
+            style={{ padding: '.4rem .6rem', background: 'transparent', border: 'none', color: '#ffffff', cursor: 'pointer', borderRadius: 6 }}
           >
             {open ? <X size={20} /> : <Menu size={20} />}
           </button>
           <div style={{ display: 'flex', alignItems: 'center', gap: '.5rem' }}>
             <img src={LOGO} alt="Sinclair" style={{ height: 28, width: 28, objectFit: 'contain' }} />
-            <span style={{ fontFamily: 'Inter, sans-serif', fontWeight: 700, fontSize: '.9rem', color: 'var(--verde)' }}>SINCLAIR/APP</span>
+            <span style={{ fontFamily: 'Inter, sans-serif', fontWeight: 700, fontSize: '.9rem', color: '#ffffff' }}>SINCLAIR/APP</span>
           </div>
-          <div style={{ fontSize: '.8rem', color: 'var(--muted)', fontFamily: 'DM Mono, monospace', fontWeight: 500 }}>
+          <div style={{ fontSize: '.8rem', color: 'rgba(255,255,255,.85)', fontFamily: 'DM Mono, monospace', fontWeight: 500 }}>
             {usuario?.nombre?.split(' ')[0]}
           </div>
         </header>
