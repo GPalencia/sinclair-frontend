@@ -34,51 +34,30 @@ export default function Login() {
     <div style={{
       minHeight: '100vh',
       display: 'flex',
-      alignItems: 'center',
-      justifyContent: 'center',
-      background: 'linear-gradient(135deg, #dcfce7 0%, #f0fdf4 50%, #bbf7d0 100%)',
-      padding: '1rem',
-      position: 'relative',
-      overflow: 'hidden',
+      flexDirection: 'column',
+      background: '#f8fafc',
     }}>
-      {/* Fondo decorativo */}
-      <div style={{
-        position: 'absolute',
-        width: 500, height: 500,
-        borderRadius: '50%',
-        background: 'rgba(22,163,74,.04)',
-        top: -100, left: -100,
-        pointerEvents: 'none',
-      }} />
-      <div style={{
-        position: 'absolute',
-        width: 400, height: 400,
-        borderRadius: '50%',
-        background: 'rgba(22,163,74,.03)',
-        bottom: -80, right: -80,
-        pointerEvents: 'none',
-      }} />
+      {/* Franja superior */}
+      <div style={{ height: 8, background: 'var(--verde)' }} />
 
-      {/* Card */}
-      <div className="fade-up" style={{
-        width: '100%',
-        maxWidth: 400,
-        background: 'var(--surface)',
-        border: '1px solid var(--border)',
-        borderRadius: 18,
-        padding: '2.5rem',
-        boxShadow: '0 8px 32px rgba(0,0,0,.08)',
-        position: 'relative',
-      }}>
-        {/* Logo + título */}
-        <div style={{ textAlign: 'center', marginBottom: '2rem' }}>
-          <img src={LOGO} alt="Sinclair" style={{ height: 90, width: 90, objectFit: 'contain', display: 'block', margin: '0 auto .75rem' }} />
-          <div style={{ fontFamily: 'Inter, sans-serif', fontSize: '1.6rem', fontWeight: 800, letterSpacing: '.04em', marginBottom: '.25rem' }}>
-            <span style={{ color: 'var(--verde)' }}>SINCLAIR</span>
-            <span style={{ color: 'var(--muted)', fontSize: '.95rem', fontWeight: 400 }}>/APP</span>
+      <div style={{ flex: 1, display: 'flex', alignItems: 'center', justifyContent: 'center', padding: '1rem' }}>
+        {/* Card */}
+        <div style={{
+          width: '100%',
+          maxWidth: 400,
+          background: '#ffffff',
+          border: '1px solid #e2e8f0',
+          borderRadius: 10,
+          padding: '2.5rem 2rem',
+        }}>
+          {/* Logo + título */}
+          <div style={{ textAlign: 'center', marginBottom: '2rem' }}>
+            <img src={LOGO} alt="Sinclair" style={{ height: 84, width: 84, objectFit: 'contain', display: 'block', margin: '0 auto 1rem' }} />
+            <div style={{ fontFamily: 'Inter, sans-serif', fontSize: '1.5rem', fontWeight: 800, letterSpacing: '.06em', color: 'var(--verde)', marginBottom: '.35rem' }}>
+              SINCLAIR
+            </div>
+            <p style={{ fontSize: '.9rem', color: '#334155', fontWeight: 500 }}>Sistema de Control de Fincas</p>
           </div>
-          <p style={{ fontSize: '.85rem', color: 'var(--muted)' }}>Sistema de Operaciones de Fincas</p>
-        </div>
 
         <form onSubmit={handleSubmit} style={{ display: 'flex', flexDirection: 'column', gap: '1rem' }}>
           <div>
@@ -106,12 +85,12 @@ export default function Login() {
 
           {error && (
             <div style={{
-              background: 'rgba(239,68,68,.1)',
-              border: '1px solid rgba(239,68,68,.2)',
+              background: '#fef2f2',
+              border: '1px solid #fecaca',
               borderRadius: 8,
               padding: '.6rem .9rem',
               fontSize: '.85rem',
-              color: '#f87171',
+              color: '#dc2626',
             }}>
               {error}
             </div>
@@ -127,17 +106,9 @@ export default function Login() {
           </button>
         </form>
 
-        <div style={{
-          marginTop: '1.5rem',
-          padding: '.75rem',
-          background: 'var(--bg)',
-          borderRadius: 8,
-          fontSize: '.78rem',
-          color: 'var(--muted)',
-          fontFamily: 'DM Mono, monospace',
-          textAlign: 'center',
-        }}>
-          Sinclair Reliable Producers © 2026
+          <div style={{ marginTop: '1.5rem', textAlign: 'center', fontSize: '.75rem', color: 'var(--muted)' }}>
+            Sinclair Reliable Producers © 2026
+          </div>
         </div>
       </div>
     </div>
