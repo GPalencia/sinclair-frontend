@@ -6,8 +6,9 @@ import { useToast } from '../hooks/useToast'
 import { useAuth } from '../context/AuthContext'
 import CatalogoLotesCosecha from '../components/CatalogoLotesCosecha'
 import { exportarExcel } from '../utils/exportExcel'
+import { fechaCorta, hoyLocal } from '../utils/fecha'
 
-function hoy() { return new Date().toISOString().split('T')[0] }
+function hoy() { return hoyLocal() }
 
 const FORM_VACIO = {
   loteCosecha: '', fecha: hoy(), jornales: '', caporales: '', cestas: '', totalKilos: '', rendAproximado: '',
@@ -139,7 +140,7 @@ export default function ProduccionFinca() {
 
   async function eliminarRegistro(r) {
     const nombreLote = `${r.loteCosecha?.finca} Lote ${r.loteCosecha?.lote}`
-    const fechaTxt = new Date(r.fecha).toLocaleDateString('es-HN')
+    const fechaTxt = fechaCorta(r.fecha)
     if (!window.confirm(`¿Eliminar el registro de ${nombreLote} del ${fechaTxt}? Esta acción no se puede deshacer.`)) return
     const res = await api.del(`/produccion-finca/registros/${r._id}`)
     if (!res?.ok) return toast(res?.mensaje || 'Error al eliminar', 'error')
@@ -165,7 +166,7 @@ export default function ProduccionFinca() {
 
   function exportarHistorial() {
     const filas = registrosFiltrados.map(r => ({
-      Fecha: new Date(r.fecha).toLocaleDateString('es-HN'),
+      Fecha: fechaCorta(r.fecha),
       Finca: r.loteCosecha?.finca ?? '',
       Lote: r.loteCosecha?.lote ?? '',
       'Personal Laborado': r.calculado?.totalPersonal ?? '',
@@ -328,7 +329,7 @@ export default function ProduccionFinca() {
                     {registrosFiltrados.map(r => (
                       <tr key={r._id}>
                         <td style={{ fontFamily: 'DM Mono, monospace', fontSize: '.8rem', color: 'var(--muted)', whiteSpace: 'nowrap' }}>
-                          {new Date(r.fecha).toLocaleDateString('es-HN')}
+                          {fechaCorta(r.fecha)}
                         </td>
                         <td style={{ fontWeight: 500, whiteSpace: 'nowrap' }}>
                           {r.loteCosecha?.finca} — {r.loteCosecha?.lote}
@@ -384,7 +385,7 @@ export default function ProduccionFinca() {
         >
           <div style={{ display: 'flex', flexDirection: 'column', gap: '1rem' }}>
             <div style={{ fontSize: '.8rem', color: 'var(--muted)' }}>
-              {new Date(modalEditar.fecha).toLocaleDateString('es-HN')}
+              {fechaCorta(modalEditar.fecha)}
             </div>
             <div style={{ display: 'flex', gap: '1rem', flexWrap: 'wrap' }}>
               <div style={{ flex: 1 }}>

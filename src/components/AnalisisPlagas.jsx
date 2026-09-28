@@ -7,6 +7,7 @@ import {
 } from 'recharts'
 import { useApi } from '../hooks/useApi'
 import { useToast } from '../hooks/useToast'
+import { fechaDiaMes as fechaCorta } from '../utils/fecha'
 
 // Verde (controlado) → rojo (crítico), relativo al máximo del set actual
 function colorPorNivel(valor, max) {
@@ -18,7 +19,6 @@ function colorPorNivel(valor, max) {
   return `rgb(${r},${g},${b})`
 }
 
-const fechaCorta = f => new Date(f).toLocaleDateString('es-HN', { day: '2-digit', month: '2-digit' })
 
 const TooltipComparacion = ({ active, payload, label }) => {
   if (!active || !payload?.length) return null

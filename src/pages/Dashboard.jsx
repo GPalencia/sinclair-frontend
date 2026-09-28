@@ -6,6 +6,7 @@ import {
   XAxis, YAxis, CartesianGrid, Tooltip,
   ResponsiveContainer, PieChart, Pie, Cell, Legend
 } from 'recharts'
+import { fechaCorta, fechaDiaMes, hoyLocal, haceDiasLocal } from '../utils/fecha'
 
 const COLORES_PIE = ['#22c55e','#3b82f6','#f59e0b','#ef4444','#8b5cf6','#06b6d4','#f97316','#ec4899']
 
@@ -58,10 +59,8 @@ export default function Dashboard() {
       const resHoy = await api.get('/registros/resumen-hoy')
 
       // Últimos 7 días para gráfica de área
-      const hace7 = new Date()
-      hace7.setDate(hace7.getDate() - 6)
-      const desde = hace7.toISOString().split('T')[0]
-      const hasta  = new Date().toISOString().split('T')[0]
+      const desde = haceDiasLocal(6)
+      const hasta  = hoyLocal()
 
       const resHist = await api.get(`/registros?desde=${desde}&hasta=${hasta}&limite=500`)
       const resPersonal = await api.get('/personal')
@@ -79,7 +78,7 @@ export default function Dashboard() {
       if (resHist?.data) {
         const porFecha = {}
         resHist.data.forEach(r => {
-          const f = new Date(r.fecha).toLocaleDateString('es-HN', { day: '2-digit', month: '2-digit' })
+          const f = fechaDiaMes(r.fecha)
           if (!porFecha[f]) porFecha[f] = { fecha: f, salarios: 0, registros: 0 }
           porFecha[f].salarios  += r.salario || 0
           porFecha[f].registros += 1
@@ -287,7 +286,7 @@ export default function Dashboard() {
                 </div>
                 <div style={{ display: 'flex', alignItems: 'center', gap: '.75rem' }}>
                   <span style={{ fontFamily: 'DM Mono, monospace', fontSize: '.78rem', color: 'var(--muted)' }}>
-                    Vence: {new Date(c.fechaFin).toLocaleDateString('es-HN')}
+                    Vence: {fechaCorta(c.fechaFin)}
                   </span>
                   <span className={`badge ${c.diasRestantes <= 5 ? 'badge-red' : 'badge-gray'}`}>
                     {c.diasRestantes === 0 ? 'HOY' : `${c.diasRestantes}d`}

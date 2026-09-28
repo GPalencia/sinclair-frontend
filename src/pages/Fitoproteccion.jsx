@@ -5,8 +5,9 @@ import { useApi } from '../hooks/useApi'
 import { useToast } from '../hooks/useToast'
 import CatalogosFito from '../components/CatalogosFito'
 import AnalisisPlagas from '../components/AnalisisPlagas'
+import { fechaCorta, hoyLocal } from '../utils/fecha'
 
-function hoy() { return new Date().toISOString().split('T')[0] }
+function hoy() { return hoyLocal() }
 
 const FORM_VACIO = {
   loteSembrado: '', plaga: '', fechaMonitoreo: hoy(), nivelFrecuencia: 0,
@@ -259,7 +260,7 @@ export default function Fitoproteccion() {
                     {monitoreos.map(m => (
                       <tr key={m._id}>
                         <td style={{ fontFamily: 'DM Mono, monospace', fontSize: '.8rem', color: 'var(--muted)', whiteSpace: 'nowrap' }}>
-                          {new Date(m.fechaMonitoreo).toLocaleDateString('es-HN')}
+                          {fechaCorta(m.fechaMonitoreo)}
                         </td>
                         <td style={{ fontWeight: 500 }}>{m.loteSembrado?.loteSembrado || '—'}</td>
                         <td>

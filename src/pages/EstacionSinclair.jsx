@@ -7,8 +7,9 @@ import CatalogosEstacion from '../components/CatalogosEstacion'
 import EntradasDiesel from '../components/EntradasDiesel'
 import ComboboxBuscable from '../components/ComboboxBuscable'
 import { exportarExcel } from '../utils/exportExcel'
+import { fechaCorta, hoyLocal } from '../utils/fecha'
 
-function hoy() { return new Date().toISOString().split('T')[0] }
+function hoy() { return hoyLocal() }
 
 const FORM_VACIO = {
   maquinaria: '', fecha: hoy(), numeroRequisicion: '', lecturaActual: '',
@@ -117,7 +118,7 @@ export default function EstacionSinclair() {
 
   function exportarHistorial() {
     const filas = despachos.map(d => ({
-      Fecha: new Date(d.fecha).toLocaleDateString('es-HN'),
+      Fecha: fechaCorta(d.fecha),
       Máquina: `${d.maquinaria?.codigo ?? ''} — ${d.maquinaria?.unidadDestino ?? ''}`,
       Galones: d.cantidadDieselGalones ?? '',
       'Precio/Gal': d.calculado?.precioGalon ?? '',
@@ -291,7 +292,7 @@ export default function EstacionSinclair() {
                     {despachos.map(d => (
                       <tr key={d._id}>
                         <td style={{ fontFamily: 'DM Mono, monospace', fontSize: '.8rem', color: 'var(--muted)', whiteSpace: 'nowrap' }}>
-                          {new Date(d.fecha).toLocaleDateString('es-HN')}
+                          {fechaCorta(d.fecha)}
                         </td>
                         <td style={{ fontWeight: 500, whiteSpace: 'nowrap' }}>
                           {d.maquinaria?.codigo} — {d.maquinaria?.unidadDestino}

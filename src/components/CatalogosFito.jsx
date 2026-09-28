@@ -3,8 +3,9 @@ import { useState, useEffect } from 'react'
 import { Plus } from 'lucide-react'
 import { useApi } from '../hooks/useApi'
 import { useToast } from '../hooks/useToast'
+import { hoyLocal } from '../utils/fecha'
 
-function hoy() { return new Date().toISOString().split('T')[0] }
+function hoy() { return hoyLocal() }
 
 // ── Plagas / Enfermedades ────────────────────────────────
 function PanelPlagas({ onCambio }) {

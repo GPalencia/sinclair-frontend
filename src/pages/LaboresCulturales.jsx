@@ -8,8 +8,9 @@ import CatalogosLabores from '../components/CatalogosLabores'
 import ComboboxBuscable from '../components/ComboboxBuscable'
 import MedidorAreaGPS from '../components/MedidorAreaGPS'
 import { exportarExcel } from '../utils/exportExcel'
+import { fechaCorta, hoyLocal, fechaInput } from '../utils/fecha'
 
-function hoy() { return new Date().toISOString().split('T')[0] }
+function hoy() { return hoyLocal() }
 
 const FORM_VACIO = {
   lote: '', tipoLabor: '', fecha: hoy(), personal: '', avanceMz: '',
@@ -154,7 +155,7 @@ export default function LaboresCulturales() {
 
   function abrirEditar(r) {
     setFormEditar({
-      fecha: new Date(r.fecha).toISOString().split('T')[0],
+      fecha: fechaInput(r.fecha),
       personal: r.personal ?? '', avanceMz: r.avanceMz ?? '',
       variedad: r.variedad ?? '', librasSemilla: r.librasSemilla ?? '', observaciones: r.observaciones ?? '',
     })
@@ -184,7 +185,7 @@ export default function LaboresCulturales() {
 
   async function eliminarRegistro(r) {
     const nombreLote = `${r.lote?.finca} ${r.lote?.lote}`
-    const fechaTxt = new Date(r.fecha).toLocaleDateString('es-HN')
+    const fechaTxt = fechaCorta(r.fecha)
     if (!window.confirm(`¿Eliminar el registro de ${nombreLote} del ${fechaTxt}? Esta acción no se puede deshacer.`)) return
     const res = await api.del(`/labores-culturales/registros/${r._id}`)
     if (!res?.ok) return toast(res?.mensaje || 'Error al eliminar', 'error')
@@ -195,7 +196,7 @@ export default function LaboresCulturales() {
 
   function exportarHistorial() {
     const filas = registros.map(r => ({
-      Fecha: new Date(r.fecha).toLocaleDateString('es-HN'),
+      Fecha: fechaCorta(r.fecha),
       Finca: r.lote?.finca ?? '',
       Lote: r.lote?.lote ?? '',
       'Tipo de Labor': r.tipoLabor?.nombre ?? '',
@@ -368,7 +369,7 @@ export default function LaboresCulturales() {
                     {registros.map(r => (
                       <tr key={r._id}>
                         <td style={{ fontFamily: 'DM Mono, monospace', fontSize: '.8rem', color: 'var(--muted)', whiteSpace: 'nowrap' }}>
-                          {new Date(r.fecha).toLocaleDateString('es-HN')}
+                          {fechaCorta(r.fecha)}
                         </td>
                         <td style={{ fontWeight: 500, whiteSpace: 'nowrap' }}>{r.lote?.finca} — {r.lote?.lote}</td>
                         <td>{r.tipoLabor?.nombre}</td>
@@ -432,7 +433,7 @@ export default function LaboresCulturales() {
                         <span className={`badge ${COLOR_ESTADO[p.estado] || 'badge-gray'}`}>{p.estado}</span>
                       </td>
                       <td style={{ fontFamily: 'DM Mono, monospace', fontSize: '.8rem', color: 'var(--muted)', whiteSpace: 'nowrap' }}>
-                        {p.ultimaFecha ? new Date(p.ultimaFecha).toLocaleDateString('es-HN') : '—'}
+                        {p.ultimaFecha ? fechaCorta(p.ultimaFecha) : '—'}
                       </td>
                     </tr>
                   ))}

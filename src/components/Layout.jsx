@@ -180,7 +180,7 @@ export default function Layout({ children }) {
           background: 'rgba(0,0,0,.1)',
         }}>
           <div style={{ fontSize: '.7rem', fontWeight: 600, color: '#ffffff', fontFamily: 'Inter, sans-serif', letterSpacing: '.04em', marginBottom: '.3rem' }}>
-            SINCLAIR/APP v1.0
+            SINCLAIR/APP v1.0 · {__BUILD__}
           </div>
           <div style={{ fontSize: '.68rem', color: 'rgba(255,255,255,.75)', lineHeight: 1.5 }}>
             Desarrollado por<br />

@@ -3,8 +3,9 @@ import { useState, useEffect } from 'react'
 import { Plus } from 'lucide-react'
 import { useApi } from '../hooks/useApi'
 import { useToast } from '../hooks/useToast'
+import { fechaCorta, hoyLocal } from '../utils/fecha'
 
-function hoy() { return new Date().toISOString().split('T')[0] }
+function hoy() { return hoyLocal() }
 
 const FORM_VACIO = { finca: '', lote: '', variedad: '', fechaCalentamiento: hoy(), area: '' }
 
@@ -112,7 +113,7 @@ export default function CatalogoLotesCosecha({ onCambio }) {
                     <td>{l.lote}</td>
                     <td style={{ fontSize: '.82rem', color: 'var(--muted)' }}>{l.variedad || '—'}</td>
                     <td style={{ fontFamily: 'DM Mono, monospace', fontSize: '.8rem', color: 'var(--muted)' }}>
-                      {new Date(l.fechaCalentamiento).toLocaleDateString('es-HN')}
+                      {fechaCorta(l.fechaCalentamiento)}
                     </td>
                     <td style={{ fontFamily: 'DM Mono, monospace', fontSize: '.82rem' }}>{l.area}</td>
                     <td>

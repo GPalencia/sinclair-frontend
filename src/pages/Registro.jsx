@@ -5,8 +5,9 @@ import { Camera, IdCard, RefreshCw, Save, ScanFace, Search } from 'lucide-react'
 import { useApi } from '../hooks/useApi'
 import { useToast } from '../hooks/useToast'
 import { useSearchParams } from 'react-router-dom'
+import { hoyLocal } from '../utils/fecha'
 
-function hoy() { return new Date().toISOString().split('T')[0] }
+function hoy() { return hoyLocal() }
 
 export default function Registro() {
   const api          = useApi()

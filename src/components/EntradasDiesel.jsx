@@ -3,8 +3,9 @@ import { useState, useEffect } from 'react'
 import { Plus } from 'lucide-react'
 import { useApi } from '../hooks/useApi'
 import { useToast } from '../hooks/useToast'
+import { fechaCorta, hoyLocal } from '../utils/fecha'
 
-function hoy() { return new Date().toISOString().split('T')[0] }
+function hoy() { return hoyLocal() }
 
 const FORM_VACIO = {
   fecha: hoy(), proveedor: '', numeroOrden: '', factura: '', cantidadGalones: '',
@@ -134,7 +135,7 @@ export default function EntradasDiesel({ onCambio }) {
                 {entradas.map(e => (
                   <tr key={e._id}>
                     <td style={{ fontFamily: 'DM Mono, monospace', fontSize: '.8rem', color: 'var(--muted)', whiteSpace: 'nowrap' }}>
-                      {new Date(e.fecha).toLocaleDateString('es-HN')}
+                      {fechaCorta(e.fecha)}
                     </td>
                     <td style={{ fontWeight: 500 }}>{e.proveedor || '—'}</td>
                     <td style={{ fontSize: '.82rem', color: 'var(--muted)' }}>{e.factura || '—'}</td>

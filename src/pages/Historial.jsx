@@ -4,8 +4,9 @@ import { Download, FileSpreadsheet, Search } from 'lucide-react'
 
 import { useApi } from '../hooks/useApi'
 import { useToast } from '../hooks/useToast'
+import { fechaCorta, hoyLocal } from '../utils/fecha'
 
-function hoy() { return new Date().toISOString().split('T')[0] }
+function hoy() { return hoyLocal() }
 
 export default function Historial() {
   const api          = useApi()
@@ -143,7 +144,7 @@ export default function Historial() {
                 {registros.map(r => (
                   <tr key={r._id}>
                     <td style={{ fontFamily: 'DM Mono, monospace', fontSize: '.8rem', color: 'var(--muted)', whiteSpace: 'nowrap' }}>
-                      {new Date(r.fecha).toLocaleDateString('es-HN')}
+                      {fechaCorta(r.fecha)}
                     </td>
                     <td style={{ fontFamily: 'DM Mono, monospace', fontSize: '.8rem' }}>
                       {r.codigoEmpleado || '—'}

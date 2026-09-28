@@ -5,6 +5,7 @@ import { ClipboardList, FileText, Pencil, Plus, ScanFace, UserX } from 'lucide-r
 import { useApi } from '../hooks/useApi'
 import { useToast } from '../hooks/useToast'
 import { useNavigate } from 'react-router-dom'
+import { fechaCorta, fechaInput, hoyLocal } from '../utils/fecha'
 
 
 // ── Modal de Contrato ─────────────────────────
@@ -12,7 +13,7 @@ function ModalContrato({ persona, onCerrar, onGuardado }) {
   const api       = useApi()
   const { toast } = useToast()
 
-  const hoy = new Date().toISOString().split('T')[0]
+  const hoy = hoyLocal()
 
   const [form, setForm] = useState({
     fechaInicio:  hoy,
@@ -39,8 +40,8 @@ function ModalContrato({ persona, onCerrar, onGuardado }) {
   const fechaFinPreview = (() => {
     if (!form.fechaInicio) return '—'
     const d = new Date(form.fechaInicio)
-    d.setDate(d.getDate() + Number(form.diasContrato))
-    return d.toLocaleDateString('es-HN', { day: '2-digit', month: '2-digit', year: 'numeric' })
+    d.setUTCDate(d.getUTCDate() + Number(form.diasContrato))
+    return fechaCorta(d, { day: '2-digit', month: '2-digit', year: 'numeric' })
   })()
 
   async function guardar() {
@@ -176,9 +177,9 @@ function ModalContrato({ persona, onCerrar, onGuardado }) {
                     <span className={`badge ${cls}`}>{label}</span>
                   </div>
                   <div style={{ fontFamily: 'DM Mono, monospace', fontSize: '.76rem', color: 'var(--muted)', lineHeight: 1.8 }}>
-                    <span>Inicio: {new Date(c.fechaInicio).toLocaleDateString('es-HN')}</span>
+                    <span>Inicio: {fechaCorta(c.fechaInicio)}</span>
                     <span style={{ margin: '0 .6rem' }}>→</span>
-                    <span>Fin: {new Date(c.fechaFin).toLocaleDateString('es-HN')}</span>
+                    <span>Fin: {fechaCorta(c.fechaFin)}</span>
                     <span style={{ marginLeft: '.6rem' }}>({c.diasContrato}d)</span>
                   </div>
                   {c.observaciones && (
@@ -209,7 +210,7 @@ function ModalEditar({ persona, onCerrar, onGuardado }) {
     cargo:           persona.cargo           || 'operario',
     activo:          persona.activo !== false,
     FechaIngreso:    persona.FechaIngreso
-                       ? new Date(persona.FechaIngreso).toISOString().split('T')[0]
+                       ? fechaInput(persona.FechaIngreso)
                        : '',
   })
   const [guardando, setGuardando] = useState(false)
@@ -647,7 +648,7 @@ export default function Personal() {
                     </td>
                     <td style={{ fontFamily: 'DM Mono, monospace', fontSize: '.8rem', color: 'var(--muted)' }}>
                       {p.FechaIngreso
-                        ? new Date(p.FechaIngreso).toLocaleDateString('es-HN', { day: '2-digit', month: '2-digit', year: 'numeric' })
+                        ? fechaCorta(p.FechaIngreso, { day: '2-digit', month: '2-digit', year: 'numeric' })
                         : '—'}
                     </td>
                     <td>
