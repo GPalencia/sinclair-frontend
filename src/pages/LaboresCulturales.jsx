@@ -96,6 +96,7 @@ export default function LaboresCulturales() {
 
   const tipoSel = tipos.find(t => t._id === form.tipoLabor)
   const opcionesLotes = lotes.map(l => ({ value: l._id, label: `${l.finca} — ${l.lote}`, sublabel: `${l.areaMz} Mz` }))
+  const opcionesTipos = tipos.map(t => ({ value: t._id, label: t.nombre }))
 
   async function guardar() {
     if (!form.lote)                  return toast('Selecciona el lote', 'error')
@@ -256,12 +257,12 @@ export default function LaboresCulturales() {
 
               <div>
                 <label className="lbl">Tipo de labor *</label>
-                <select className="inp" value={form.tipoLabor} onChange={e => set('tipoLabor', e.target.value)}>
-                  <option value="">Selecciona...</option>
-                  {tipos.map(t => (
-                    <option key={t._id} value={t._id}>{t.nombre}</option>
-                  ))}
-                </select>
+                <ComboboxBuscable
+                  options={opcionesTipos}
+                  value={form.tipoLabor}
+                  onChange={v => set('tipoLabor', v)}
+                  placeholder="Busca el tipo de labor..."
+                />
               </div>
 
               <div style={{ display: 'flex', gap: '1rem', flexWrap: 'wrap' }}>

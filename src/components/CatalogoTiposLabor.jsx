@@ -1,10 +1,28 @@
 // src/components/CatalogoTiposLabor.jsx
 import { useState, useEffect } from 'react'
-import { Plus } from 'lucide-react'
+import { Pencil, Plus } from 'lucide-react'
 import { useApi } from '../hooks/useApi'
 import { useToast } from '../hooks/useToast'
 
 const FORM_VACIO = { nombre: '', requiereVariedad: false, requiereLibrasSemilla: false, objetivoPersonalPorMz: '' }
+
+// ── Modal genérico ─────────────────────────────────────
+function Modal({ titulo, onClose, children }) {
+  return (
+    <div
+      onClick={e => e.target === e.currentTarget && onClose()}
+      style={{ position: 'fixed', inset: 0, background: 'rgba(0,0,0,.75)', zIndex: 100, display: 'flex', alignItems: 'center', justifyContent: 'center', padding: '1rem' }}
+    >
+      <div style={{ background: 'var(--card)', border: '1px solid var(--border)', borderRadius: 14, padding: '1.75rem', width: '100%', maxWidth: 460, animation: 'fadeUp .25s ease' }}>
+        <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', flexWrap: 'wrap', gap: '.75rem', marginBottom: '1.25rem' }}>
+          <h3 style={{ fontFamily: 'Inter, sans-serif', fontSize: '1rem', fontWeight: 700 }}>{titulo}</h3>
+          <button className="btn-ghost" onClick={onClose} style={{ fontSize: '1.1rem', padding: '.3rem .6rem' }}>✕</button>
+        </div>
+        {children}
+      </div>
+    </div>
+  )
+}
 
 export default function CatalogoTiposLabor({ onCambio }) {
   const api       = useApi()
@@ -13,6 +31,9 @@ export default function CatalogoTiposLabor({ onCambio }) {
   const [cargando, setCargando] = useState(true)
   const [form, setForm] = useState(FORM_VACIO)
   const [guardando, setGuardando] = useState(false)
+  const [modalEditar, setModalEditar] = useState(null)
+  const [formEditar, setFormEditar]   = useState(null)
+  const [guardandoEditar, setGE]      = useState(false)
 
   useEffect(() => { cargar() }, [])
 
@@ -49,6 +70,32 @@ export default function CatalogoTiposLabor({ onCambio }) {
     if (!res?.ok) return toast(res?.mensaje || 'Error', 'error')
     cargar()
     onCambio?.()
+  }
+
+  function abrirEditar(t) {
+    setFormEditar({
+      nombre: t.nombre, requiereVariedad: t.requiereVariedad, requiereLibrasSemilla: t.requiereLibrasSemilla,
+      objetivoPersonalPorMz: t.objetivoPersonalPorMz ?? '',
+    })
+    setModalEditar(t)
+  }
+
+  async function guardarEdicion() {
+    if (!formEditar.nombre.trim()) return toast('El nombre no puede quedar vacío', 'error')
+    setGE(true)
+    try {
+      const res = await api.put(`/labores-culturales/tipos-labor/${modalEditar._id}`, {
+        ...formEditar,
+        objetivoPersonalPorMz: formEditar.objetivoPersonalPorMz === '' ? null : Number(formEditar.objetivoPersonalPorMz),
+      })
+      if (!res?.ok) return toast(res?.mensaje || 'Error al actualizar', 'error')
+      toast('✅ Tipo de labor actualizado', 'ok')
+      setModalEditar(null)
+      cargar()
+      onCambio?.()
+    } finally {
+      setGE(false)
+    }
   }
 
   return (
@@ -96,7 +143,7 @@ export default function CatalogoTiposLabor({ onCambio }) {
           <div style={{ overflowX: 'auto' }}>
             <table className="tbl">
               <thead>
-                <tr><th>Nombre</th><th>Pide variedad</th><th>Pide libras semilla</th><th>Personal/Mz obj.</th><th>Estado</th></tr>
+                <tr><th>Nombre</th><th>Pide variedad</th><th>Pide libras semilla</th><th>Personal/Mz obj.</th><th>Estado</th><th></th></tr>
               </thead>
               <tbody>
                 {tipos.map(t => (
@@ -112,16 +159,56 @@ export default function CatalogoTiposLabor({ onCambio }) {
                         {t.activo ? '● Activo' : '○ Inactivo'}
                       </button>
                     </td>
+                    <td>
+                      <button className="btn-ghost" style={{ padding: '.35rem .6rem' }} onClick={() => abrirEditar(t)} title="Editar">
+                        <Pencil size={14} />
+                      </button>
+                    </td>
                   </tr>
                 ))}
                 {!tipos.length && (
-                  <tr><td colSpan={5} style={{ textAlign: 'center', color: 'var(--muted)', padding: '1.5rem' }}>Sin registros aún</td></tr>
+                  <tr><td colSpan={6} style={{ textAlign: 'center', color: 'var(--muted)', padding: '1.5rem' }}>Sin registros aún</td></tr>
                 )}
               </tbody>
             </table>
           </div>
         )}
       </div>
+
+      {modalEditar && formEditar && (
+        <Modal titulo={`Editar tipo de labor`} onClose={() => setModalEditar(null)}>
+          <div style={{ display: 'flex', flexDirection: 'column', gap: '1rem' }}>
+            <div>
+              <label className="lbl">Nombre</label>
+              <input className="inp" value={formEditar.nombre}
+                onChange={e => setFormEditar(p => ({ ...p, nombre: e.target.value }))} />
+            </div>
+            <div style={{ display: 'flex', gap: '1.5rem', flexWrap: 'wrap' }}>
+              <label style={{ display: 'flex', alignItems: 'center', gap: '.5rem', fontSize: '.85rem', cursor: 'pointer' }}>
+                <input type="checkbox" checked={formEditar.requiereVariedad}
+                  onChange={e => setFormEditar(p => ({ ...p, requiereVariedad: e.target.checked }))} />
+                Pide variedad
+              </label>
+              <label style={{ display: 'flex', alignItems: 'center', gap: '.5rem', fontSize: '.85rem', cursor: 'pointer' }}>
+                <input type="checkbox" checked={formEditar.requiereLibrasSemilla}
+                  onChange={e => setFormEditar(p => ({ ...p, requiereLibrasSemilla: e.target.checked }))} />
+                Pide libras de semilla
+              </label>
+            </div>
+            <div style={{ maxWidth: 220 }}>
+              <label className="lbl">Personal objetivo por Mz</label>
+              <input className="inp" type="number" step="0.1" min="0" value={formEditar.objetivoPersonalPorMz}
+                onChange={e => setFormEditar(p => ({ ...p, objetivoPersonalPorMz: e.target.value }))} />
+            </div>
+            <div style={{ display: 'flex', gap: '.75rem', marginTop: '.5rem', flexWrap: 'wrap' }}>
+              <button className="btn-secondary" style={{ flex: 1 }} onClick={() => setModalEditar(null)}>Cancelar</button>
+              <button className="btn-primary" style={{ flex: 1, justifyContent: 'center' }} onClick={guardarEdicion} disabled={guardandoEditar}>
+                {guardandoEditar ? <span className="spinner" /> : <Pencil size={15} />} Guardar
+              </button>
+            </div>
+          </div>
+        </Modal>
+      )}
     </div>
   )
 }
