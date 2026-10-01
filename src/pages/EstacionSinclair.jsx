@@ -311,6 +311,19 @@ export default function EstacionSinclair() {
                       </tr>
                     ))}
                   </tbody>
+                  {despachos.length > 0 && (
+                    <tfoot>
+                      <tr style={{ background: 'var(--card2)', fontWeight: 700, borderTop: '2px solid var(--border)' }}>
+                        <td colSpan={2} style={{ textAlign: 'right', fontFamily: 'Inter, sans-serif', fontSize: '.85rem' }}>
+                          Total Galones
+                        </td>
+                        <td style={{ fontFamily: 'DM Mono, monospace', fontSize: '.88rem', color: 'var(--verde-dark)' }}>
+                          {despachos.reduce((s, d) => s + (d.cantidadDieselGalones || 0), 0).toLocaleString('es-HN', { maximumFractionDigits: 2 })}
+                        </td>
+                        <td colSpan={6}></td>
+                      </tr>
+                    </tfoot>
+                  )}
                 </table>
               </div>
             </div>
