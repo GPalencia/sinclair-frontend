@@ -4,7 +4,7 @@ import { ClipboardList, FileDown, Layers, Pencil, Save, Search, Trash2, Warehous
 import { useApi } from '../hooks/useApi'
 import { useToast } from '../hooks/useToast'
 import { useAuth } from '../context/AuthContext'
-import CatalogoLotesCosecha from '../components/CatalogoLotesCosecha'
+import CatalogosProduccion from '../components/CatalogosProduccion'
 import { exportarExcel } from '../utils/exportExcel'
 import { fechaCorta, hoyLocal } from '../utils/fecha'
 
@@ -12,6 +12,7 @@ function hoy() { return hoyLocal() }
 
 const FORM_VACIO = {
   loteCosecha: '', fecha: hoy(), jornales: '', caporales: '', cestas: '', totalKilos: '', rendAproximado: '',
+  cultivo: '', tamano: '', empaque: '',
 }
 
 const COLOR_ESTADO = {
@@ -22,7 +23,8 @@ const COLOR_ESTADO = {
   'Declive':            'badge-red',
 }
 
-const FINCAS = ['7 de Mayo', 'San Juan', 'La Canoa', 'Ojo de Agua', 'El Vado', 'Palmerola']
+const FINCAS = ['7 de Mayo', 'San Juan', 'La Canoa', 'Ojo de Agua', 'El Vado', 'Palmerola', 'Invernadero-Tomasito', 'Invernadero-Los Cocos']
+const TAMANOS = ['Pequeña', 'Mediana', 'Grande']
 
 // ── Modal genérico ─────────────────────────────────────
 function Modal({ titulo, onClose, children }) {
@@ -49,9 +51,10 @@ export default function ProduccionFinca() {
 
   const [tab, setTab] = useState('registrar') // 'registrar' | 'historial' | 'catalogos'
 
-  // Catálogo de lotes
+  // Catálogos
   const [lotes, setLotes]           = useState([])
   const [cargandoLotes, setCL]      = useState(true)
+  const [cultivos, setCultivos]     = useState([])
 
   // Formulario de registro
   const [form, setForm]             = useState(FORM_VACIO)
@@ -71,7 +74,7 @@ export default function ProduccionFinca() {
   const [formEditar, setFormEditar]   = useState(null)
   const [guardandoEditar, setGE]      = useState(false)
 
-  useEffect(() => { cargarLotes() }, [])
+  useEffect(() => { cargarLotes(); cargarCultivos() }, [])
   useEffect(() => { if (tab === 'historial' && !buscado) buscarHistorial() }, [tab])
 
   async function cargarLotes() {
@@ -84,27 +87,34 @@ export default function ProduccionFinca() {
     }
   }
 
+  async function cargarCultivos() {
+    const res = await api.get('/produccion-finca/cultivos')
+    if (res?.ok) setCultivos(res.data)
+  }
+
   function set(campo, valor) {
     setForm(prev => ({ ...prev, [campo]: valor }))
   }
 
   async function guardar() {
     if (!form.loteCosecha)            return toast('Selecciona el lote', 'error')
-    if (form.jornales === '')         return toast('Los jornales son obligatorios', 'error')
     setGuardando(true)
     try {
       const res = await api.post('/produccion-finca/registros', {
         loteCosecha: form.loteCosecha,
         fecha: form.fecha,
-        jornales: Number(form.jornales),
+        jornales: form.jornales === '' ? null : Number(form.jornales),
         caporales: Number(form.caporales || 0),
         cestas: form.cestas === '' ? null : Number(form.cestas),
         totalKilos: form.totalKilos === '' ? null : Number(form.totalKilos),
         rendAproximado: form.rendAproximado === '' ? null : Number(form.rendAproximado),
+        cultivo: form.cultivo || null,
+        tamano: form.tamano,
+        empaque: form.empaque === '' ? null : Number(form.empaque),
       })
       if (!res?.ok) return toast(res?.mensaje || 'Error al guardar', 'error')
       toast('✅ Cosecha registrada', 'ok')
-      setForm(prev => ({ ...FORM_VACIO, loteCosecha: prev.loteCosecha, fecha: prev.fecha }))
+      setForm(prev => ({ ...FORM_VACIO, loteCosecha: prev.loteCosecha, fecha: prev.fecha, cultivo: prev.cultivo }))
       setBuscado(false)
     } finally {
       setGuardando(false)
@@ -115,6 +125,7 @@ export default function ProduccionFinca() {
     setFormEditar({
       cestas: r.cestas ?? '', totalKilos: r.totalKilos ?? '', rendAproximado: r.rendAproximado ?? '',
       jornales: r.jornales ?? '', caporales: r.caporales ?? '',
+      cultivo: r.cultivo?._id || '', tamano: r.tamano || '', empaque: r.empaque ?? '',
     })
     setModalEditar(r)
   }
@@ -123,11 +134,14 @@ export default function ProduccionFinca() {
     setGE(true)
     try {
       const res = await api.put(`/produccion-finca/registros/${modalEditar._id}`, {
-        jornales: Number(formEditar.jornales),
+        jornales: formEditar.jornales === '' ? null : Number(formEditar.jornales),
         caporales: Number(formEditar.caporales || 0),
         cestas: formEditar.cestas === '' ? null : Number(formEditar.cestas),
         totalKilos: formEditar.totalKilos === '' ? null : Number(formEditar.totalKilos),
         rendAproximado: formEditar.rendAproximado === '' ? null : Number(formEditar.rendAproximado),
+        cultivo: formEditar.cultivo || null,
+        tamano: formEditar.tamano,
+        empaque: formEditar.empaque === '' ? null : Number(formEditar.empaque),
       })
       if (!res?.ok) return toast(res?.mensaje || 'Error al actualizar', 'error')
       toast('✅ Registro actualizado', 'ok')
@@ -169,10 +183,13 @@ export default function ProduccionFinca() {
       Fecha: fechaCorta(r.fecha),
       Finca: r.loteCosecha?.finca ?? '',
       Lote: r.loteCosecha?.lote ?? '',
+      Cultivo: r.cultivo?.nombre ?? '',
+      Tamaño: r.tamano || '',
       'Personal Laborado': r.calculado?.totalPersonal ?? '',
       Cestas: r.cestas ?? '',
       Kilos: r.totalKilos ?? '',
       'Rend. Aproximado': r.rendAproximado ?? '',
+      Empaque: r.empaque ?? '',
       'Cestas/Jornal': r.calculado?.cestasXJornal ?? '',
       'Personal Proyectado': r.calculado?.personalProyectado ?? '',
       'Días Cosecha': r.calculado?.diasCosecha ?? '',
@@ -235,7 +252,7 @@ export default function ProduccionFinca() {
 
               <div style={{ display: 'flex', gap: '1rem', flexWrap: 'wrap' }}>
                 <div style={{ flex: 1, minWidth: 140 }}>
-                  <label className="lbl">Jornales *</label>
+                  <label className="lbl">Jornales</label>
                   <input className="inp" type="number" min="0" value={form.jornales} onChange={e => set('jornales', e.target.value)} />
                 </div>
                 <div style={{ flex: 1, minWidth: 140 }}>
@@ -256,6 +273,32 @@ export default function ProduccionFinca() {
                 <div style={{ flex: 1, minWidth: 140 }}>
                   <label className="lbl">Rend. Aproximado</label>
                   <input className="inp" type="number" step="0.01" min="0" value={form.rendAproximado} onChange={e => set('rendAproximado', e.target.value)} />
+                </div>
+              </div>
+
+              {/* Para remisiones de Invernadero (Willy) — opcionales, no aplican a okra */}
+              <div style={{ display: 'flex', gap: '1rem', flexWrap: 'wrap' }}>
+                <div style={{ flex: 1, minWidth: 180 }}>
+                  <label className="lbl">Cultivo</label>
+                  <select className="inp" value={form.cultivo} onChange={e => set('cultivo', e.target.value)}>
+                    <option value="">Sin especificar</option>
+                    {cultivos.map(c => (
+                      <option key={c._id} value={c._id}>{c.nombre}</option>
+                    ))}
+                  </select>
+                </div>
+                <div style={{ flex: 1, minWidth: 140 }}>
+                  <label className="lbl">Tamaño</label>
+                  <select className="inp" value={form.tamano} onChange={e => set('tamano', e.target.value)}>
+                    <option value="">Sin especificar</option>
+                    {TAMANOS.map(t => (
+                      <option key={t} value={t}>{t}</option>
+                    ))}
+                  </select>
+                </div>
+                <div style={{ flex: 1, minWidth: 140 }}>
+                  <label className="lbl">Empaque</label>
+                  <input className="inp" type="number" min="0" value={form.empaque} onChange={e => set('empaque', e.target.value)} />
                 </div>
               </div>
 
@@ -319,8 +362,8 @@ export default function ProduccionFinca() {
                 <table className="tbl">
                   <thead>
                     <tr>
-                      <th>Fecha</th><th>Finca / Lote</th><th>Personal Laborado</th>
-                      <th>Cestas</th><th>Kilos</th><th>Rend.</th>
+                      <th>Fecha</th><th>Finca / Lote</th><th>Cultivo</th><th>Tamaño</th><th>Personal Laborado</th>
+                      <th>Cestas</th><th>Empaque</th><th>Kilos</th><th>Rend.</th>
                       <th>Cestas/Jornal</th><th>Personal Proy.</th><th>Días Cosecha</th><th>Estado</th>
                       <th style={{ position: 'sticky', right: 0, background: 'var(--card2)', boxShadow: '-4px 0 6px -4px rgba(0,0,0,.15)' }}></th>
                     </tr>
@@ -334,8 +377,11 @@ export default function ProduccionFinca() {
                         <td style={{ fontWeight: 500, whiteSpace: 'nowrap' }}>
                           {r.loteCosecha?.finca} — {r.loteCosecha?.lote}
                         </td>
+                        <td style={{ fontSize: '.82rem', color: 'var(--muted)' }}>{r.cultivo?.nombre || '—'}</td>
+                        <td style={{ fontSize: '.82rem', color: 'var(--muted)' }}>{r.tamano || '—'}</td>
                         <td style={{ textAlign: 'center' }}>{r.calculado?.totalPersonal ?? '—'}</td>
                         <td style={{ textAlign: 'center' }}>{r.cestas ?? '—'}</td>
+                        <td style={{ textAlign: 'center' }}>{r.empaque ?? '—'}</td>
                         <td style={{ fontFamily: 'DM Mono, monospace', fontSize: '.82rem' }}>{r.totalKilos ?? '—'}</td>
                         <td style={{ fontFamily: 'DM Mono, monospace', fontSize: '.82rem' }}>{r.rendAproximado ?? '—'}</td>
                         <td style={{ fontFamily: 'DM Mono, monospace', fontSize: '.82rem' }}>{r.calculado?.cestasXJornal ?? '—'}</td>
@@ -374,7 +420,7 @@ export default function ProduccionFinca() {
 
       {/* ── Catálogos ── */}
       {tab === 'catalogos' && (
-        <CatalogoLotesCosecha onCambio={cargarLotes} />
+        <CatalogosProduccion onCambioLotes={cargarLotes} onCambioCultivos={cargarCultivos} />
       )}
 
       {/* ── Modal: editar registro ── */}
@@ -414,7 +460,32 @@ export default function ProduccionFinca() {
               <input className="inp" type="number" step="0.01" min="0" value={formEditar.rendAproximado}
                 onChange={e => setFormEditar(p => ({ ...p, rendAproximado: e.target.value }))} />
             </div>
-            <div style={{ display: 'flex', gap: '.75rem', marginTop: '.5rem' }}>
+            <div style={{ display: 'flex', gap: '1rem', flexWrap: 'wrap' }}>
+              <div style={{ flex: 1, minWidth: 160 }}>
+                <label className="lbl">Cultivo</label>
+                <select className="inp" value={formEditar.cultivo} onChange={e => setFormEditar(p => ({ ...p, cultivo: e.target.value }))}>
+                  <option value="">Sin especificar</option>
+                  {cultivos.map(c => (
+                    <option key={c._id} value={c._id}>{c.nombre}</option>
+                  ))}
+                </select>
+              </div>
+              <div style={{ flex: 1, minWidth: 140 }}>
+                <label className="lbl">Tamaño</label>
+                <select className="inp" value={formEditar.tamano} onChange={e => setFormEditar(p => ({ ...p, tamano: e.target.value }))}>
+                  <option value="">Sin especificar</option>
+                  {TAMANOS.map(t => (
+                    <option key={t} value={t}>{t}</option>
+                  ))}
+                </select>
+              </div>
+              <div style={{ flex: 1, minWidth: 120 }}>
+                <label className="lbl">Empaque</label>
+                <input className="inp" type="number" min="0" value={formEditar.empaque}
+                  onChange={e => setFormEditar(p => ({ ...p, empaque: e.target.value }))} />
+              </div>
+            </div>
+            <div style={{ display: 'flex', gap: '.75rem', marginTop: '.5rem', flexWrap: 'wrap' }}>
               <button className="btn-secondary" style={{ flex: 1 }} onClick={() => setModalEditar(null)}>Cancelar</button>
               <button className="btn-primary" style={{ flex: 1, justifyContent: 'center' }} onClick={guardarEdicion} disabled={guardandoEditar}>
                 {guardandoEditar ? <span className="spinner" /> : <Save size={15} />} Guardar
