@@ -2,11 +2,11 @@
 import { useState } from 'react'
 import {
   ChevronDown, ClipboardList, Fuel, LayoutDashboard, LogOut,
-  Menu, Shovel, Sprout, UserCog, Warehouse, X
+  Menu, PackageCheck, Shovel, Sprout, UserCog, Warehouse, X
 } from 'lucide-react'
 import { MODULOS, puedeVerModulo } from '../config/modulos'
 
-const ICONOS = { ClipboardList, Sprout, Shovel, Warehouse, Fuel }
+const ICONOS = { ClipboardList, Sprout, Shovel, Warehouse, Fuel, PackageCheck }
 
 const estiloItem = (isActive) => ({
   display: 'flex',
