@@ -59,9 +59,11 @@ function Modal({ titulo, onClose, children }) {
 
 // ── Badge de rol ───────────────────────────────────────
 function BadgeRol({ rol }) {
+  const claseColor = rol === 'admin' ? 'badge-yellow' : rol === 'guardia' ? 'badge-gray' : 'badge-blue'
+  const texto = rol === 'admin' ? '⭑ Admin' : rol === 'guardia' ? '🛡 Caseta' : '◈ Supervisor'
   return (
-    <span className={`badge ${rol === 'admin' ? 'badge-yellow' : 'badge-blue'}`}>
-      {rol === 'admin' ? '⭑ Admin' : '◈ Supervisor'}
+    <span className={`badge ${claseColor}`}>
+      {texto}
     </span>
   )
 }
@@ -328,7 +330,7 @@ export default function Usuarios() {
             <div>
               <label className="lbl">Rol</label>
               <div style={{ display: 'flex', gap: '.5rem', marginTop: '.35rem' }}>
-                {[['supervisor','◈ Supervisor'],['admin','⭑ Administrador']].map(([r, label]) => (
+                {[['supervisor','◈ Supervisor'],['admin','⭑ Administrador'],['guardia','🛡 Caseta']].map(([r, label]) => (
                   <button key={r} type="button"
                     onClick={() => setFormNuevo(p => ({ ...p, rol: r }))}
                     style={{
@@ -344,6 +346,7 @@ export default function Usuarios() {
               </div>
               <p style={{ fontSize: '.73rem', color: 'var(--muted)', marginTop: '.4rem' }}>
                 Supervisor puede registrar planilla. Admin puede crear usuarios y gestionar catálogos.
+                Caseta es la cuenta del guardia — entra directo a la pantalla de Pases de Salida del día, sin ver nada más.
               </p>
             </div>
             {formNuevo.rol === 'supervisor' && (
@@ -385,7 +388,7 @@ export default function Usuarios() {
                 <div>
                   <label className="lbl">Rol</label>
                   <div style={{ display: 'flex', gap: '.5rem', marginTop: '.35rem' }}>
-                    {[['supervisor','◈ Supervisor'],['admin','⭑ Admin']].map(([r, label]) => (
+                    {[['supervisor','◈ Supervisor'],['admin','⭑ Admin'],['guardia','🛡 Caseta']].map(([r, label]) => (
                       <button key={r} type="button"
                         onClick={() => setFormEditar(p => ({ ...p, rol: r }))}
                         style={{

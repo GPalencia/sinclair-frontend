@@ -21,8 +21,10 @@ export default function Login() {
     setError('')
     setCargando(true)
     try {
-      await login(email, password)
-      navigate('/dashboard')
+      const data = await login(email, password)
+      // La cuenta de caseta entra directo a su pantalla — nunca ve el
+      // dashboard ni el resto de módulos.
+      navigate(data.usuario?.rol === 'guardia' ? '/caseta' : '/dashboard')
     } catch (err) {
       setError(err.message)
     } finally {

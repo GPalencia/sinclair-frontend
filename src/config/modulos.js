@@ -46,6 +46,12 @@ export const MODULOS = [
     icon: 'Fuel',
     to: '/estacion-sinclair',
   },
+  {
+    key: 'pasesSalida',
+    label: 'Pases de Salida',
+    icon: 'PackageCheck',
+    to: '/pases-salida',
+  },
 ]
 
 // Devuelve true si el usuario puede ver el módulo con esa key.
@@ -53,5 +59,9 @@ export const MODULOS = [
 export function puedeVerModulo(usuario, key) {
   if (!usuario) return false
   if (usuario.rol === 'admin') return true
+  // La cuenta de caseta (guardia) solo existe para ver/despachar Pases de
+  // Salida — nunca ve el resto de módulos, sin importar lo que traiga el
+  // array modulos.
+  if (usuario.rol === 'guardia') return key === 'pasesSalida'
   return Array.isArray(usuario.modulos) && usuario.modulos.includes(key)
 }

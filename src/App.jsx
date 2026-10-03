@@ -15,9 +15,11 @@ import Fitoproteccion     from './pages/Fitoproteccion'
 import LaboresCulturales  from './pages/LaboresCulturales'
 import ProduccionFinca    from './pages/ProduccionFinca'
 import EstacionSinclair   from './pages/EstacionSinclair'
+import PasesSalida        from './pages/PasesSalida'
+import Caseta             from './pages/Caseta'
 import { puedeVerModulo } from './config/modulos'
 
-function RutaProtegida({ children, modulo, soloAdmin }) {
+function RutaProtegida({ children, modulo, soloAdmin, sinLayout }) {
   const { usuario, cargando } = useAuth()
   if (cargando) return (
     <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', height: '100vh', gap: '1rem', color: 'var(--muted)', fontFamily: 'DM Mono, monospace', fontSize: '.9rem' }}>
@@ -30,7 +32,19 @@ function RutaProtegida({ children, modulo, soloAdmin }) {
   // Rutas de un módulo restringido (Fitoprotección, Labores Culturales, etc.):
   // si el usuario no tiene ese módulo asignado (y no es admin), lo mandamos al dashboard.
   if (modulo && !puedeVerModulo(usuario, modulo)) return <Navigate to="/dashboard" replace />
+  // La pantalla de Caseta es de pantalla completa (sin sidebar) para
+  // cualquier rol que la visite — es un tablero, no una sección más del menú.
+  if (sinLayout) return children
   return <Layout>{children}</Layout>
+}
+
+// '/' y '/dashboard' son la entrada por defecto — pero la cuenta de
+// caseta (guardia) nunca debe caer en el dashboard, solo en su pantalla.
+function InicioSegunRol({ children }) {
+  const { usuario, cargando } = useAuth()
+  if (cargando) return null
+  if (usuario?.rol === 'guardia') return <Navigate to="/caseta" replace />
+  return children
 }
 
 export default function App() {
@@ -40,8 +54,10 @@ export default function App() {
         <ToastProvider>
           <Routes>
             <Route path="/login" element={<Login />} />
-            <Route path="/" element={<Navigate to="/dashboard" replace />} />
-            <Route path="/dashboard" element={<RutaProtegida><Dashboard /></RutaProtegida>} />
+            <Route path="/" element={<InicioSegunRol><Navigate to="/dashboard" replace /></InicioSegunRol>} />
+            <Route path="/dashboard" element={<InicioSegunRol><RutaProtegida><Dashboard /></RutaProtegida></InicioSegunRol>} />
+            <Route path="/caseta" element={<RutaProtegida modulo="pasesSalida" sinLayout><Caseta /></RutaProtegida>} />
+            <Route path="/pases-salida" element={<RutaProtegida modulo="pasesSalida"><PasesSalida /></RutaProtegida>} />
             <Route path="/registro"  element={<RutaProtegida modulo="planillas"><Registro /></RutaProtegida>} />
             <Route path="/personal"  element={<RutaProtegida modulo="planillas"><Personal /></RutaProtegida>} />
             <Route path="/personal/nuevo" element={<RutaProtegida modulo="planillas"><NuevoEmpleado /></RutaProtegida>} />
@@ -52,7 +68,7 @@ export default function App() {
             <Route path="/produccion-finca"    element={<RutaProtegida modulo="produccionFinca"><ProduccionFinca /></RutaProtegida>} />
             <Route path="/estacion-sinclair"   element={<RutaProtegida modulo="estacionSinclair"><EstacionSinclair /></RutaProtegida>} />
             <Route path="/usuarios"  element={<RutaProtegida soloAdmin><Usuarios /></RutaProtegida>} />
-            <Route path="*" element={<Navigate to="/dashboard" replace />} />
+            <Route path="*" element={<InicioSegunRol><Navigate to="/dashboard" replace /></InicioSegunRol>} />
           </Routes>
         </ToastProvider>
       </AuthProvider>
