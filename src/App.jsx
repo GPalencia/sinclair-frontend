@@ -15,6 +15,7 @@ import Fitoproteccion     from './pages/Fitoproteccion'
 import LaboresCulturales  from './pages/LaboresCulturales'
 import ProduccionFinca    from './pages/ProduccionFinca'
 import EstacionSinclair   from './pages/EstacionSinclair'
+import EstacionTablet     from './pages/EstacionTablet'
 import PasesSalida        from './pages/PasesSalida'
 import Caseta             from './pages/Caseta'
 import { puedeVerModulo } from './config/modulos'
@@ -67,6 +68,7 @@ export default function App() {
             <Route path="/labores-culturales"  element={<RutaProtegida modulo="laboresCulturales"><LaboresCulturales /></RutaProtegida>} />
             <Route path="/produccion-finca"    element={<RutaProtegida modulo="produccionFinca"><ProduccionFinca /></RutaProtegida>} />
             <Route path="/estacion-sinclair"   element={<RutaProtegida modulo="estacionSinclair"><EstacionSinclair /></RutaProtegida>} />
+            <Route path="/estacion-sinclair/tablet" element={<RutaProtegida modulo="estacionSinclair" sinLayout><EstacionTablet /></RutaProtegida>} />
             <Route path="/usuarios"  element={<RutaProtegida soloAdmin><Usuarios /></RutaProtegida>} />
             <Route path="*" element={<InicioSegunRol><Navigate to="/dashboard" replace /></InicioSegunRol>} />
           </Routes>

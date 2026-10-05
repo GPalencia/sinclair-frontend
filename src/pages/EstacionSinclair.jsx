@@ -1,6 +1,7 @@
 // src/pages/EstacionSinclair.jsx
 import { useState, useEffect } from 'react'
-import { ClipboardList, FileDown, Fuel, Layers, Save, Search } from 'lucide-react'
+import { useNavigate } from 'react-router-dom'
+import { ClipboardList, FileDown, Fuel, Layers, Save, Search, Tablet } from 'lucide-react'
 import { useApi } from '../hooks/useApi'
 import { useToast } from '../hooks/useToast'
 import CatalogosEstacion from '../components/CatalogosEstacion'
@@ -27,6 +28,7 @@ const COLOR_ALERTA = {
 export default function EstacionSinclair() {
   const api        = useApi()
   const { toast }  = useToast()
+  const navigate    = useNavigate()
 
   const [tab, setTab] = useState('registrar') // 'registrar' | 'historial' | 'entradas' | 'maquinaria'
 
@@ -135,9 +137,14 @@ export default function EstacionSinclair() {
     <div style={{ display: 'flex', flexDirection: 'column', gap: '1.5rem' }}>
 
       {/* Título */}
-      <div className="fade-up">
-        <h1 style={{ fontSize: '1.4rem', fontWeight: 700, marginBottom: '.25rem' }}>Estación Sinclair</h1>
-        <p style={{ color: 'var(--muted)', fontSize: '.88rem' }}>Control de despachos de diesel por máquina</p>
+      <div className="fade-up" style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', flexWrap: 'wrap', gap: '.75rem' }}>
+        <div>
+          <h1 style={{ fontSize: '1.4rem', fontWeight: 700, marginBottom: '.25rem' }}>Estación Sinclair</h1>
+          <p style={{ color: 'var(--muted)', fontSize: '.88rem' }}>Control de despachos de diesel por máquina</p>
+        </div>
+        <button className="btn-primary" onClick={() => navigate('/estacion-sinclair/tablet')}>
+          <Tablet size={16} /> Modo Tablet
+        </button>
       </div>
 
       {/* Inventario */}
