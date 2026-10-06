@@ -19,12 +19,17 @@ export default function ComboboxBuscable({ options, value, onChange, placeholder
     return () => document.removeEventListener('mousedown', alClicFuera)
   }, [])
 
-  const filtradas = query.trim()
+  const coincidencias = query.trim()
     ? options.filter(o =>
         o.label.toLowerCase().includes(query.toLowerCase()) ||
         o.sublabel?.toLowerCase().includes(query.toLowerCase())
       )
     : options
+  // Con catálogos grandes (cientos de artículos) solo se dibujan las primeras;
+  // al escribir se filtra sobre TODAS.
+  const LIMITE = 80
+  const filtradas = coincidencias.slice(0, LIMITE)
+  const ocultas = coincidencias.length - filtradas.length
 
   function elegir(opt) {
     onChange(opt.value)
@@ -81,6 +86,11 @@ export default function ComboboxBuscable({ options, value, onChange, placeholder
               {opt.sublabel && <div style={{ fontSize: '.76rem', color: 'var(--muted)' }}>{opt.sublabel}</div>}
             </div>
           ))}
+          {ocultas > 0 && (
+            <div style={{ padding: '.6rem 1rem', fontSize: '.78rem', color: 'var(--muted)', textAlign: 'center' }}>
+              … y {ocultas} más — escribe para filtrar
+            </div>
+          )}
         </div>
       )}
     </div>

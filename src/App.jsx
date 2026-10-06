@@ -17,6 +17,7 @@ import ProduccionFinca    from './pages/ProduccionFinca'
 import EstacionSinclair   from './pages/EstacionSinclair'
 import EstacionTablet     from './pages/EstacionTablet'
 import PasesSalida        from './pages/PasesSalida'
+import PasesTablet        from './pages/PasesTablet'
 import Caseta             from './pages/Caseta'
 import { puedeVerModulo } from './config/modulos'
 
@@ -59,6 +60,7 @@ export default function App() {
             <Route path="/dashboard" element={<InicioSegunRol><RutaProtegida><Dashboard /></RutaProtegida></InicioSegunRol>} />
             <Route path="/caseta" element={<RutaProtegida modulo="pasesSalida" sinLayout><Caseta /></RutaProtegida>} />
             <Route path="/pases-salida" element={<RutaProtegida modulo="pasesSalida"><PasesSalida /></RutaProtegida>} />
+            <Route path="/pases-salida/tablet" element={<RutaProtegida modulo="pasesSalida" sinLayout><PasesTablet /></RutaProtegida>} />
             <Route path="/registro"  element={<RutaProtegida modulo="planillas"><Registro /></RutaProtegida>} />
             <Route path="/personal"  element={<RutaProtegida modulo="planillas"><Personal /></RutaProtegida>} />
             <Route path="/personal/nuevo" element={<RutaProtegida modulo="planillas"><NuevoEmpleado /></RutaProtegida>} />

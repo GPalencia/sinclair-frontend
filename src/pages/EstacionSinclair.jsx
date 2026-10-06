@@ -166,7 +166,7 @@ export default function EstacionSinclair() {
       )}
 
       {/* Tabs */}
-      <div className="fade-up" style={{ display: 'flex', gap: '.5rem', borderBottom: '1px solid var(--border)' }}>
+      <div className="fade-up" style={{ display: 'flex', gap: '.5rem', borderBottom: '1px solid var(--border)', flexWrap: 'wrap' }}>
         {[['registrar', 'Registrar Despacho', ClipboardList], ['historial', 'Historial', Search], ['entradas', 'Entradas', Fuel], ['catalogos', 'Catálogos', Layers]].map(([key, label, Icon]) => (
           <button key={key} type="button" onClick={() => setTab(key)}
             style={{

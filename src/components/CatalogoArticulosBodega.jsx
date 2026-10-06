@@ -12,6 +12,8 @@ export default function CatalogoArticulosBodega({ onCambio }) {
   const [codigo, setCodigo]       = useState('')
   const [nombre, setNombre]       = useState('')
   const [unidadMedida, setUnidadMedida] = useState('Unidad')
+  const [categoria, setCategoria] = useState('')
+  const [filtro, setFiltro]     = useState('')
   const [guardando, setGuardando] = useState(false)
 
   useEffect(() => { cargar() }, [])
@@ -26,11 +28,16 @@ export default function CatalogoArticulosBodega({ onCambio }) {
     }
   }
 
+  const q = filtro.trim().toLowerCase()
+  const coincidentes = q
+    ? articulos.filter(a => `${a.codigo} ${a.nombre} ${a.categoria}`.toLowerCase().includes(q))
+    : articulos
+
   async function crear() {
     if (!nombre.trim()) return toast('El nombre del artículo es obligatorio', 'error')
     setGuardando(true)
     try {
-      const res = await api.post('/pases-salida/articulos', { nombre, unidadMedida, codigo })
+      const res = await api.post('/pases-salida/articulos', { nombre, unidadMedida, codigo, categoria })
       if (!res?.ok) return toast(res?.mensaje || 'Error al guardar', 'error')
       toast('✅ Artículo agregado', 'ok')
       setNombre(''); setCodigo('')
@@ -70,6 +77,14 @@ export default function CatalogoArticulosBodega({ onCambio }) {
             <input className="inp" placeholder="Unidad, Rollo, Galón..." value={unidadMedida}
               onChange={e => setUnidadMedida(e.target.value)} />
           </div>
+          <div style={{ flex: 1, minWidth: 160 }}>
+            <label className="lbl">Categoría (tablet)</label>
+            <input className="inp" list="categorias-articulos" placeholder="Ej. Riego, Empaque..." value={categoria}
+              onChange={e => setCategoria(e.target.value)} />
+            <datalist id="categorias-articulos">
+              {[...new Set(articulos.map(a => a.categoria).filter(Boolean))].sort().map(c => <option key={c} value={c} />)}
+            </datalist>
+          </div>
           <button className="btn-primary" onClick={crear} disabled={guardando}>
             {guardando ? <span className="spinner" /> : <Plus size={15} />} Agregar
           </button>
@@ -77,8 +92,9 @@ export default function CatalogoArticulosBodega({ onCambio }) {
       </div>
 
       <div className="card" style={{ padding: 0, overflow: 'hidden' }}>
-        <div style={{ padding: '1rem 1.5rem', borderBottom: '1px solid var(--border)', fontFamily: 'Inter, sans-serif', fontSize: '.85rem', fontWeight: 600 }}>
-          Catálogo de artículos
+        <div style={{ padding: '1rem 1.5rem', borderBottom: '1px solid var(--border)', fontFamily: 'Inter, sans-serif', fontSize: '.85rem', fontWeight: 600, display: 'flex', justifyContent: 'space-between', alignItems: 'center', gap: '1rem', flexWrap: 'wrap' }}>
+          <span>Catálogo de artículos <span style={{ color: 'var(--muted)', fontWeight: 400 }}>· {articulos.length} en total{coincidentes.length !== articulos.length ? `, ${coincidentes.length} coinciden` : ''}</span></span>
+          <input className="inp" style={{ maxWidth: 280 }} placeholder="Buscar por código, nombre o categoría..." value={filtro} onChange={e => setFiltro(e.target.value)} />
         </div>
         {cargando ? (
           <div style={{ padding: '2rem', textAlign: 'center' }}><span className="spinner" /></div>
@@ -86,13 +102,14 @@ export default function CatalogoArticulosBodega({ onCambio }) {
           <div style={{ overflowX: 'auto' }}>
             <table className="tbl">
               <thead>
-                <tr><th>Código</th><th>Artículo</th><th>U/M</th><th>Estado</th></tr>
+                <tr><th>Código</th><th>Artículo</th><th>Categoría</th><th>U/M</th><th>Estado</th></tr>
               </thead>
               <tbody>
-                {articulos.map(a => (
+                {coincidentes.slice(0, 150).map(a => (
                   <tr key={a._id}>
                     <td style={{ fontFamily: 'DM Mono, monospace', fontSize: '.8rem', color: 'var(--muted)' }}>{a.codigo || '—'}</td>
                     <td style={{ fontWeight: 500 }}>{a.nombre}</td>
+                    <td style={{ fontSize: '.8rem', color: 'var(--muted)' }}>{a.categoria || '—'}</td>
                     <td style={{ fontSize: '.82rem', color: 'var(--muted)' }}>{a.unidadMedida}</td>
                     <td>
                       <button type="button" onClick={() => toggleActivo(a)}
@@ -103,8 +120,13 @@ export default function CatalogoArticulosBodega({ onCambio }) {
                     </td>
                   </tr>
                 ))}
+                {coincidentes.length > 150 && (
+                  <tr><td colSpan={5} style={{ textAlign: 'center', color: 'var(--muted)', padding: '.8rem', fontSize: '.8rem' }}>
+                    Mostrando 150 de {coincidentes.length} — usa el buscador para encontrar el resto
+                  </td></tr>
+                )}
                 {!articulos.length && (
-                  <tr><td colSpan={4} style={{ textAlign: 'center', color: 'var(--muted)', padding: '1.5rem' }}>Sin registros aún</td></tr>
+                  <tr><td colSpan={5} style={{ textAlign: 'center', color: 'var(--muted)', padding: '1.5rem' }}>Sin registros aún</td></tr>
                 )}
               </tbody>
             </table>

@@ -195,7 +195,7 @@ export default function Layout({ children }) {
       </aside>
 
       {/* ── Contenido principal ── */}
-      <div style={{ flex: 1, display: 'flex', flexDirection: 'column', marginLeft: 0 }} className="main-content">
+      <div style={{ flex: 1, minWidth: 0, display: 'flex', flexDirection: 'column', marginLeft: 0 }} className="main-content">
 
         {/* Header móvil */}
         <header style={{
@@ -226,7 +226,7 @@ export default function Layout({ children }) {
         </header>
 
         {/* Página */}
-        <main style={{ flex: 1, padding: '1.5rem', maxWidth: 1100, width: '100%', margin: '0 auto' }}>
+        <main style={{ flex: 1, minWidth: 0, padding: '1.5rem', maxWidth: 1100, width: '100%', margin: '0 auto' }}>
           {children}
         </main>
       </div>

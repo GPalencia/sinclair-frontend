@@ -1,6 +1,7 @@
 // src/pages/PasesSalida.jsx
 import { useState, useEffect } from 'react'
-import { ClipboardList, FileDown, FileText, Layers, Plus, Save, Search, Trash2, X } from 'lucide-react'
+import { useNavigate } from 'react-router-dom'
+import { ClipboardList, FileDown, FileText, Layers, Plus, Save, Search, Tablet, Trash2, X } from 'lucide-react'
 import { useApi } from '../hooks/useApi'
 import { useToast } from '../hooks/useToast'
 import { useAuth } from '../context/AuthContext'
@@ -21,6 +22,7 @@ export default function PasesSalida() {
   const api        = useApi()
   const { toast }  = useToast()
   const { usuario } = useAuth()
+  const navigate   = useNavigate()
 
   const [tab, setTab] = useState('registrar') // 'registrar' | 'historial' | 'catalogos'
 
@@ -165,9 +167,14 @@ export default function PasesSalida() {
   return (
     <div style={{ display: 'flex', flexDirection: 'column', gap: '1.5rem' }}>
 
-      <div className="fade-up">
-        <h1 style={{ fontSize: '1.4rem', fontWeight: 700, marginBottom: '.25rem' }}>Pases de Salida</h1>
-        <p style={{ color: 'var(--muted)', fontSize: '.88rem' }}>Traslado de insumos, equipos y herramientas entre bodegas</p>
+      <div className="fade-up" style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', flexWrap: 'wrap', gap: '.75rem' }}>
+        <div>
+          <h1 style={{ fontSize: '1.4rem', fontWeight: 700, marginBottom: '.25rem' }}>Pases de Salida</h1>
+          <p style={{ color: 'var(--muted)', fontSize: '.88rem' }}>Traslado de insumos, equipos y herramientas entre bodegas</p>
+        </div>
+        <button className="btn-primary" onClick={() => navigate('/pases-salida/tablet')}>
+          <Tablet size={16} /> Modo Tablet
+        </button>
       </div>
 
       <div className="fade-up" style={{ display: 'flex', gap: '.5rem', borderBottom: '1px solid var(--border)', flexWrap: 'wrap' }}>

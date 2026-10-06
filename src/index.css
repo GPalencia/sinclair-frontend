@@ -244,3 +244,25 @@ select option { background: var(--surface); color: var(--text); }
     max-width: none;
   }
 }
+
+/* ── Formularios en pantallas angostas (celular) ─────────────
+   Cada campo ocupa todo el ancho: así el label nunca queda encima del
+   campo vecino ni los inputs se desalinean cuando un label ocupa 2 líneas. */
+@media (max-width: 520px) {
+  /* filas flex de formulario: cada bloque con label va a todo el ancho */
+  [style*="flex-wrap: wrap"] > :has(> .lbl),
+  [style*="flex-wrap: wrap"] > :has(> label.lbl) {
+    flex: 1 1 100% !important;
+    min-width: 0 !important;
+  }
+  /* grids de formulario de 2+ columnas → 1 columna (los grids de tarjetas de resumen no se tocan) */
+  [style*="grid-template-columns"]:has(> :is(div, label) > .lbl) {
+    grid-template-columns: 1fr !important;
+  }
+  .lbl { overflow-wrap: anywhere; }
+  /* nada de lo que hay dentro de una tarjeta debe poder ensanchar la página */
+  .card, .card > * { min-width: 0; max-width: 100%; }
+  input[type="date"], input[type="time"], input[type="datetime-local"], input[type="month"] {
+    min-width: 0; max-width: 100%; -webkit-appearance: none; appearance: none; min-height: 2.6rem;
+  }
+}
