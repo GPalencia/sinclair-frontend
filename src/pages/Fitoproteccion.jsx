@@ -1,10 +1,11 @@
 // src/pages/Fitoproteccion.jsx
 import { useState, useEffect } from 'react'
-import { BarChart2, Bug, ClipboardList, Layers, Save, Search } from 'lucide-react'
+import { BarChart2, Bug, ClipboardCheck, ClipboardList, Layers, Save, Search } from 'lucide-react'
 import { useApi } from '../hooks/useApi'
 import { useToast } from '../hooks/useToast'
 import CatalogosFito from '../components/CatalogosFito'
 import AnalisisPlagas from '../components/AnalisisPlagas'
+import HojaMonitoreo from '../components/HojaMonitoreo'
 import { fechaCorta, hoyLocal } from '../utils/fecha'
 
 function hoy() { return hoyLocal() }
@@ -111,7 +112,7 @@ export default function Fitoproteccion() {
 
       {/* Tabs */}
       <div className="fade-up" style={{ display: 'flex', gap: '.5rem', borderBottom: '1px solid var(--border)', flexWrap: 'wrap' }}>
-        {[['registrar', 'Registrar Monitoreo', ClipboardList], ['historial', 'Historial', Search], ['analisis', 'Análisis de Plagas', BarChart2], ['catalogos', 'Catálogos', Layers]].map(([key, label, Icon]) => (
+        {[['registrar', 'Registrar Monitoreo', ClipboardList], ['hoja', 'Hoja RC-026', ClipboardCheck], ['historial', 'Historial', Search], ['analisis', 'Análisis de Plagas', BarChart2], ['catalogos', 'Catálogos', Layers]].map(([key, label, Icon]) => (
           <button key={key} type="button" onClick={() => setTab(key)}
             style={{
               display: 'flex', alignItems: 'center', gap: '.4rem',
@@ -125,6 +126,13 @@ export default function Fitoproteccion() {
           </button>
         ))}
       </div>
+
+      {/* ── Hoja RC-026 (10 muestras por plaga) ── */}
+      {tab === 'hoja' && (
+        cargandoCatalogos
+          ? <div className="card" style={{ padding: '2rem', textAlign: 'center' }}><span className="spinner" /></div>
+          : <HojaMonitoreo lotesSembrados={lotesSembrados} plagas={plagas} onGuardada={() => setBuscado(false)} />
+      )}
 
       {/* ── Registrar ── */}
       {tab === 'registrar' && (
