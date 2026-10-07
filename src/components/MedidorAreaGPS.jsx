@@ -24,10 +24,19 @@ export default function MedidorAreaGPS({ onGuardar, onCerrar }) {
   useEffect(() => {
     if (mapaInstancia.current || !mapaRef.current) return
     const mapa = L.map(mapaRef.current, { zoomControl: true }).setView([14.6, -87.2], 15)
-    L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+    // Vista satelital por defecto (Esri World Imagery, sin llave) + opción de mapa de calles
+    const satelite = L.tileLayer('https://server.arcgisonline.com/ArcGIS/rest/services/World_Imagery/MapServer/tile/{z}/{y}/{x}', {
+      attribution: 'Imágenes © Esri, Maxar, Earthstar Geographics',
+      maxNativeZoom: 19,
+      maxZoom: 21,
+    })
+    const calles = L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
       attribution: '© OpenStreetMap',
-      maxZoom: 20,
-    }).addTo(mapa)
+      maxNativeZoom: 19,
+      maxZoom: 21,
+    })
+    satelite.addTo(mapa)
+    L.control.layers({ 'Satélite': satelite, 'Mapa': calles }, null, { position: 'topright', collapsed: true }).addTo(mapa)
     mapaInstancia.current = mapa
     capaPuntos.current = L.layerGroup().addTo(mapa)
 
@@ -63,7 +72,7 @@ export default function MedidorAreaGPS({ onGuardar, onCerrar }) {
 
     capaPuntos.current.clearLayers()
     puntos.forEach((p, i) => {
-      L.circleMarker([p.lat, p.lng], { radius: 7, color: '#16a34a', fillColor: '#16a34a', fillOpacity: 1, weight: 2 })
+      L.circleMarker([p.lat, p.lng], { radius: 7, color: '#ffffff', fillColor: '#facc15', fillOpacity: 1, weight: 2 })
         .addTo(capaPuntos.current)
         .bindTooltip(String(i + 1), { permanent: true, direction: 'top', offset: [0, -6] })
     })
@@ -72,8 +81,8 @@ export default function MedidorAreaGPS({ onGuardar, onCerrar }) {
     if (puntos.length >= 2) {
       const latlngs = puntos.map(p => [p.lat, p.lng])
       capaPoligono.current = puntos.length >= 3
-        ? L.polygon(latlngs, { color: '#16a34a', weight: 2, fillOpacity: 0.25 }).addTo(mapa)
-        : L.polyline(latlngs, { color: '#16a34a', weight: 2 }).addTo(mapa)
+        ? L.polygon(latlngs, { color: '#facc15', weight: 3, fillOpacity: 0.25 }).addTo(mapa)
+        : L.polyline(latlngs, { color: '#facc15', weight: 3 }).addTo(mapa)
     }
   }, [puntos])
 
