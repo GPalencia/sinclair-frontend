@@ -14,7 +14,7 @@ function hoy() { return hoyLocal() }
 
 const FORM_VACIO = {
   lote: '', tipoLabor: '', fecha: hoy(), personal: '', avanceMz: '',
-  variedad: '', librasSemilla: '', observaciones: '', coordenadas: null,
+  cultivo: '', variedad: '', librasSemilla: '', observaciones: '', coordenadas: null,
 }
 
 const COLOR_ESTADO = { 'Completado': 'badge-green', 'En proceso': 'badge-yellow' }
@@ -68,6 +68,7 @@ export default function LaboresCulturales() {
   const [guardandoEditar, setGE]      = useState(false)
 
   // Progreso
+  const [cultivos, setCultivos]         = useState([])
   const [progreso, setProgreso]         = useState([])
   const [cargandoProgreso, setCP]       = useState(false)
   const [progresoBuscado, setPB]        = useState(false)
@@ -85,6 +86,11 @@ export default function LaboresCulturales() {
       ])
       if (resLotes?.ok) setLotes(resLotes.data)
       if (resTipos?.ok) setTipos(resTipos.data)
+      // Sugerencias de cultivo (catálogo de Producción); si falla, el campo sigue siendo texto libre
+      try {
+        const resCult = await api.get('/produccion-finca/cultivos')
+        if (resCult?.ok) setCultivos(resCult.data.map(c => c.nombre))
+      } catch { /* sin sugerencias */ }
     } finally {
       setCC(false)
     }
@@ -111,6 +117,7 @@ export default function LaboresCulturales() {
         fecha: form.fecha,
         personal: Number(form.personal),
         avanceMz: Number(form.avanceMz),
+        cultivo: form.cultivo,
         variedad: form.variedad,
         librasSemilla: form.librasSemilla === '' ? null : Number(form.librasSemilla),
         observaciones: form.observaciones,
@@ -158,7 +165,7 @@ export default function LaboresCulturales() {
     setFormEditar({
       fecha: fechaInput(r.fecha),
       personal: r.personal ?? '', avanceMz: r.avanceMz ?? '',
-      variedad: r.variedad ?? '', librasSemilla: r.librasSemilla ?? '', observaciones: r.observaciones ?? '',
+      cultivo: r.cultivo ?? '', variedad: r.variedad ?? '', librasSemilla: r.librasSemilla ?? '', observaciones: r.observaciones ?? '',
     })
     setModalEditar(r)
   }
@@ -170,6 +177,7 @@ export default function LaboresCulturales() {
         fecha: formEditar.fecha,
         personal: Number(formEditar.personal),
         avanceMz: Number(formEditar.avanceMz),
+        cultivo: formEditar.cultivo,
         variedad: formEditar.variedad,
         librasSemilla: formEditar.librasSemilla === '' ? null : Number(formEditar.librasSemilla),
         observaciones: formEditar.observaciones,
@@ -203,6 +211,7 @@ export default function LaboresCulturales() {
       'Tipo de Labor': r.tipoLabor?.nombre ?? '',
       Personal: r.personal ?? '',
       'Avance (Mz)': r.avanceMz ?? '',
+      Cultivo: r.cultivo || '',
       Variedad: r.variedad || '',
       'Libras Semilla': r.librasSemilla ?? '',
       'Avance Acumulado (Mz)': r.calculado?.avanceAcumulado ?? '',
@@ -214,6 +223,7 @@ export default function LaboresCulturales() {
 
   return (
     <div style={{ display: 'flex', flexDirection: 'column', gap: '1.5rem' }}>
+      <datalist id="lista-cultivos">{cultivos.map(n => <option key={n} value={n} />)}</datalist>
 
       {/* Título */}
       <div className="fade-up">
@@ -293,6 +303,13 @@ export default function LaboresCulturales() {
 
               {tipoSel?.requiereVariedad && (
                 <div>
+                  <label className="lbl">Cultivo</label>
+                  <input className="inp" list="lista-cultivos" placeholder="Ej. Berenjena China" value={form.cultivo} onChange={e => set('cultivo', e.target.value)} />
+                </div>
+              )}
+
+              {tipoSel?.requiereVariedad && (
+                <div>
                   <label className="lbl">Variedad</label>
                   <input className="inp" placeholder="Ej. Americana" value={form.variedad} onChange={e => set('variedad', e.target.value)} />
                 </div>
@@ -362,7 +379,7 @@ export default function LaboresCulturales() {
                   <thead>
                     <tr>
                       <th>Fecha</th><th>Finca / Lote</th><th>Labor</th><th>Personal</th>
-                      <th>Avance (Mz)</th><th>Variedad</th><th>Acumulado</th><th>%</th><th>Estado</th>
+                      <th>Avance (Mz)</th><th>Cultivo</th><th>Variedad</th><th>Acumulado</th><th>%</th><th>Estado</th>
                       <th style={{ position: 'sticky', right: 0, background: 'var(--card2)', boxShadow: '-4px 0 6px -4px rgba(0,0,0,.15)' }}></th>
                     </tr>
                   </thead>
@@ -376,6 +393,7 @@ export default function LaboresCulturales() {
                         <td>{r.tipoLabor?.nombre}</td>
                         <td style={{ textAlign: 'center' }}>{r.personal}</td>
                         <td style={{ fontFamily: 'DM Mono, monospace', fontSize: '.82rem' }}>{r.avanceMz}</td>
+                        <td style={{ fontSize: '.82rem' }}>{r.cultivo || '—'}</td>
                         <td style={{ fontSize: '.82rem', color: 'var(--muted)' }}>{r.variedad || '—'}</td>
                         <td style={{ fontFamily: 'DM Mono, monospace', fontSize: '.82rem', color: 'var(--verde)', fontWeight: 600 }}>
                           {r.calculado?.avanceAcumulado} / {r.lote?.areaMz}
@@ -477,6 +495,13 @@ export default function LaboresCulturales() {
                   onChange={e => setFormEditar(p => ({ ...p, avanceMz: e.target.value }))} />
               </div>
             </div>
+            {modalEditar.tipoLabor?.requiereVariedad && (
+              <div>
+                <label className="lbl">Cultivo</label>
+                <input className="inp" list="lista-cultivos" value={formEditar.cultivo}
+                  onChange={e => setFormEditar(p => ({ ...p, cultivo: e.target.value }))} />
+              </div>
+            )}
             {modalEditar.tipoLabor?.requiereVariedad && (
               <div>
                 <label className="lbl">Variedad</label>
