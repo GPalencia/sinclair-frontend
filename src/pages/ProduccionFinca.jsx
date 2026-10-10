@@ -267,7 +267,7 @@ export default function ProduccionFinca() {
                   <input className="inp" type="number" min="0" value={form.cestas} onChange={e => set('cestas', e.target.value)} />
                 </div>
                 <div style={{ flex: 1, minWidth: 140 }}>
-                  <label className="lbl">Total Kilos</label>
+                  <label className="lbl">Total Kilos Neto</label>
                   <input className="inp" type="number" step="0.01" min="0" value={form.totalKilos} onChange={e => set('totalKilos', e.target.value)} />
                 </div>
                 <div style={{ flex: 1, minWidth: 140 }}>
@@ -363,7 +363,7 @@ export default function ProduccionFinca() {
                   <thead>
                     <tr>
                       <th>Fecha</th><th>Finca / Lote</th><th>Cultivo</th><th>Tamaño</th><th>Personal Laborado</th>
-                      <th>Cestas</th><th>Empaque</th><th>Kilos</th><th>Rend.</th>
+                      <th>Cestas</th><th>Empaque</th><th>KilosNeto</th><th>Peso x Cesta</th><th>Rend.</th>
                       <th>Cestas/Jornal</th><th>Personal Proy.</th><th>Días Cosecha</th><th>Estado</th>
                       <th style={{ position: 'sticky', right: 0, background: 'var(--card2)', boxShadow: '-4px 0 6px -4px rgba(0,0,0,.15)' }}></th>
                     </tr>
@@ -383,6 +383,7 @@ export default function ProduccionFinca() {
                         <td style={{ textAlign: 'center' }}>{r.cestas ?? '—'}</td>
                         <td style={{ textAlign: 'center' }}>{r.empaque ?? '—'}</td>
                         <td style={{ fontFamily: 'DM Mono, monospace', fontSize: '.82rem' }}>{r.totalKilos ?? '—'}</td>
+                        <td style={{ fontFamily: 'DM Mono, monospace', fontSize: '.82rem' }}>{r.calculado?.pesoXCesta ?? '—'}</td>
                         <td style={{ fontFamily: 'DM Mono, monospace', fontSize: '.82rem' }}>{r.rendAproximado ?? '—'}</td>
                         <td style={{ fontFamily: 'DM Mono, monospace', fontSize: '.82rem' }}>{r.calculado?.cestasXJornal ?? '—'}</td>
                         <td style={{ fontFamily: 'DM Mono, monospace', fontSize: '.82rem' }}>{r.calculado?.personalProyectado ?? '—'}</td>
