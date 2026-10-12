@@ -158,6 +158,12 @@ export default function EstacionSinclair() {
             <div style={{ fontSize: '.75rem', color: 'var(--muted)', fontFamily: 'Inter, sans-serif', textTransform: 'uppercase', letterSpacing: '.05em' }}>Despachos totales</div>
             <div style={{ fontSize: '1.3rem', fontWeight: 700, fontFamily: 'DM Mono, monospace', marginTop: '.3rem' }}>{inventario.totalDespachosGalones} gal</div>
           </div>
+          {inventario.totalBajasGalones > 0 && (
+            <div className="card">
+              <div style={{ fontSize: '.75rem', color: 'var(--muted)', fontFamily: 'Inter, sans-serif', textTransform: 'uppercase', letterSpacing: '.05em' }}>Dados de baja</div>
+              <div style={{ fontSize: '1.3rem', fontWeight: 700, fontFamily: 'DM Mono, monospace', marginTop: '.3rem' }}>{inventario.totalBajasGalones} gal</div>
+            </div>
+          )}
           <div className="card">
             <div style={{ fontSize: '.75rem', color: 'var(--muted)', fontFamily: 'Inter, sans-serif', textTransform: 'uppercase', letterSpacing: '.05em' }}>Existencia actual</div>
             <div style={{ fontSize: '1.3rem', fontWeight: 700, fontFamily: 'DM Mono, monospace', marginTop: '.3rem', color: 'var(--verde)' }}>{inventario.existenciaActualGalones} gal</div>
