@@ -188,6 +188,7 @@ export default function ProduccionFinca() {
       'Personal Laborado': r.calculado?.totalPersonal ?? '',
       Cestas: r.cestas ?? '',
       Kilos: r.totalKilos ?? '',
+      'Peso x Cesta': r.calculado?.pesoXCesta ?? '',
       'Rend. Aproximado': r.rendAproximado ?? '',
       Empaque: r.empaque ?? '',
       'Cestas/Jornal': r.calculado?.cestasXJornal ?? '',
@@ -195,12 +196,37 @@ export default function ProduccionFinca() {
       'Días Cosecha': r.calculado?.diasCosecha ?? '',
       Estado: r.calculado?.pendiente ? 'Pendiente' : (r.calculado?.estadoLote ?? ''),
     }))
+    // Fila final: total de cestas y promedios de lo filtrado
+    filas.push({
+      Fecha: 'TOTALES / PROMEDIOS',
+      Finca: 'Cestas = total · Kilos, Rend. y Cestas/Jornal = promedio',
+      Lote: '', Cultivo: '', Tamaño: '', 'Personal Laborado': '',
+      Cestas: resumen.cestas,
+      Kilos: resumen.kilos ?? '',
+      'Peso x Cesta': '',
+      'Rend. Aproximado': resumen.rend ?? '',
+      Empaque: '',
+      'Cestas/Jornal': resumen.cestasPorPersona ?? '',
+      'Personal Proyectado': '', 'Días Cosecha': '', Estado: '',
+    })
     exportarExcel(filas, `Historial_Cosecha_${desde}_a_${hasta}`)
   }
 
   const registrosFiltrados = fincaFiltro
     ? registros.filter(r => r.loteCosecha?.finca?.trim().toLowerCase() === fincaFiltro.trim().toLowerCase())
     : registros
+
+  // Totales y promedios de lo filtrado. Los registros sin dato (pendientes) no cuentan
+  // en los promedios, para no bajarlos con ceros que no existen.
+  const valores = (fn) => registrosFiltrados.map(fn).filter(v => typeof v === 'number' && Number.isFinite(v))
+  const promedio = (arr) => arr.length ? Math.round((arr.reduce((a, b) => a + b, 0) / arr.length) * 100) / 100 : null
+  const resumen = {
+    cestas: valores(r => r.cestas).reduce((a, b) => a + b, 0),
+    kilos: promedio(valores(r => r.totalKilos)),
+    rend: promedio(valores(r => r.rendAproximado)),
+    cestasPorPersona: promedio(valores(r => r.calculado?.cestasXJornal)),
+  }
+  const fmtNum = (n) => n == null ? '—' : n.toLocaleString('es-HN', { maximumFractionDigits: 2 })
 
   return (
     <div style={{ display: 'flex', flexDirection: 'column', gap: '1.5rem' }}>
@@ -267,7 +293,7 @@ export default function ProduccionFinca() {
                   <input className="inp" type="number" min="0" value={form.cestas} onChange={e => set('cestas', e.target.value)} />
                 </div>
                 <div style={{ flex: 1, minWidth: 140 }}>
-                  <label className="lbl">Peso Neto</label>
+                  <label className="lbl">Total Kilos Neto</label>
                   <input className="inp" type="number" step="0.01" min="0" value={form.totalKilos} onChange={e => set('totalKilos', e.target.value)} />
                 </div>
                 <div style={{ flex: 1, minWidth: 140 }}>
@@ -363,7 +389,7 @@ export default function ProduccionFinca() {
                   <thead>
                     <tr>
                       <th>Fecha</th><th>Finca / Lote</th><th>Cultivo</th><th>Tamaño</th><th>Personal Laborado</th>
-                      <th>Cestas</th><th>Empaque</th><th>Kilos</th><th>Rend.</th>
+                      <th>Cestas</th><th>Empaque</th><th>KilosNeto</th><th>Peso x Cesta</th><th>Rend.</th>
                       <th>Cestas/Jornal</th><th>Personal Proy.</th><th>Días Cosecha</th><th>Estado</th>
                       <th style={{ position: 'sticky', right: 0, background: 'var(--card2)', boxShadow: '-4px 0 6px -4px rgba(0,0,0,.15)' }}></th>
                     </tr>
@@ -383,6 +409,7 @@ export default function ProduccionFinca() {
                         <td style={{ textAlign: 'center' }}>{r.cestas ?? '—'}</td>
                         <td style={{ textAlign: 'center' }}>{r.empaque ?? '—'}</td>
                         <td style={{ fontFamily: 'DM Mono, monospace', fontSize: '.82rem' }}>{r.totalKilos ?? '—'}</td>
+                        <td style={{ fontFamily: 'DM Mono, monospace', fontSize: '.82rem' }}>{r.calculado?.pesoXCesta ?? '—'}</td>
                         <td style={{ fontFamily: 'DM Mono, monospace', fontSize: '.82rem' }}>{r.rendAproximado ?? '—'}</td>
                         <td style={{ fontFamily: 'DM Mono, monospace', fontSize: '.82rem' }}>{r.calculado?.cestasXJornal ?? '—'}</td>
                         <td style={{ fontFamily: 'DM Mono, monospace', fontSize: '.82rem' }}>{r.calculado?.personalProyectado ?? '—'}</td>
@@ -411,6 +438,35 @@ export default function ProduccionFinca() {
                       </tr>
                     ))}
                   </tbody>
+                  {registrosFiltrados.length > 0 && (
+                    <tfoot>
+                      <tr style={{ background: 'var(--card2)', borderTop: '2px solid var(--border)', fontWeight: 700 }}>
+                        <td colSpan={5} style={{ fontSize: '.78rem', textTransform: 'uppercase', letterSpacing: '.05em', color: 'var(--muted)' }}>
+                          Totales / promedios ({registrosFiltrados.length} registros)
+                        </td>
+                        <td style={{ textAlign: 'center', fontFamily: 'DM Mono, monospace', fontSize: '.85rem' }}>
+                          <div style={{ fontSize: '.62rem', color: 'var(--muted)', fontFamily: 'Inter, sans-serif' }}>TOTAL</div>
+                          {fmtNum(resumen.cestas)}
+                        </td>
+                        <td />
+                        <td style={{ fontFamily: 'DM Mono, monospace', fontSize: '.85rem' }}>
+                          <div style={{ fontSize: '.62rem', color: 'var(--muted)', fontFamily: 'Inter, sans-serif' }}>PROM.</div>
+                          {fmtNum(resumen.kilos)}
+                        </td>
+                        <td />
+                        <td style={{ fontFamily: 'DM Mono, monospace', fontSize: '.85rem' }}>
+                          <div style={{ fontSize: '.62rem', color: 'var(--muted)', fontFamily: 'Inter, sans-serif' }}>PROM.</div>
+                          {fmtNum(resumen.rend)}
+                        </td>
+                        <td style={{ fontFamily: 'DM Mono, monospace', fontSize: '.85rem' }}>
+                          <div style={{ fontSize: '.62rem', color: 'var(--muted)', fontFamily: 'Inter, sans-serif' }}>PROM.</div>
+                          {fmtNum(resumen.cestasPorPersona)}
+                        </td>
+                        <td colSpan={3} />
+                        <td style={{ position: 'sticky', right: 0, background: 'var(--card2)', boxShadow: '-4px 0 6px -4px rgba(0,0,0,.15)' }} />
+                      </tr>
+                    </tfoot>
+                  )}
                 </table>
               </div>
             </div>
