@@ -1,12 +1,13 @@
 // src/pages/ProduccionFinca.jsx
 import { useState, useEffect } from 'react'
-import { ClipboardList, FileDown, Layers, Pencil, Save, Search, Trash2, Warehouse } from 'lucide-react'
+import { ClipboardList, FileDown, Layers, Pencil, RefreshCcw, Save, Search, Trash2, Warehouse } from 'lucide-react'
 import { useApi } from '../hooks/useApi'
 import { useToast } from '../hooks/useToast'
 import { useAuth } from '../context/AuthContext'
 import CatalogosProduccion from '../components/CatalogosProduccion'
+import CiclosProduccion from '../components/CiclosProduccion'
 import { exportarExcel } from '../utils/exportExcel'
-import { fechaCorta, hoyLocal } from '../utils/fecha'
+import { fechaCorta, hoyLocal, fechaInput } from '../utils/fecha'
 
 function hoy() { return hoyLocal() }
 
@@ -49,10 +50,11 @@ export default function ProduccionFinca() {
   const { toast }  = useToast()
   const { usuario } = useAuth()
 
-  const [tab, setTab] = useState('registrar') // 'registrar' | 'historial' | 'catalogos'
+  const [tab, setTab] = useState('registrar') // 'registrar' | 'historial' | 'ciclos' | 'catalogos'
 
   // Catálogos
-  const [lotes, setLotes]           = useState([])
+  const [lotes, setLotes]           = useState([])   // solo ciclos activos (para registrar)
+  const [lotesTodos, setLotesTodos] = useState([])   // todos los ciclos, también cerrados (filtro del historial)
   const [cargandoLotes, setCL]      = useState(true)
   const [cultivos, setCultivos]     = useState([])
 
@@ -80,8 +82,11 @@ export default function ProduccionFinca() {
   async function cargarLotes() {
     setCL(true)
     try {
-      const res = await api.get('/produccion-finca/lotes')
-      if (res?.ok) setLotes(res.data)
+      const res = await api.get('/produccion-finca/lotes?todas=1')
+      if (res?.ok) {
+        setLotesTodos(res.data)
+        setLotes(res.data.filter(l => l.activo))
+      }
     } finally {
       setCL(false)
     }
@@ -162,6 +167,16 @@ export default function ProduccionFinca() {
     buscarHistorial()
   }
 
+  // Al elegir un ciclo en el filtro, las fechas se ajustan a ese ciclo
+  // (desde su calentamiento hasta su cierre, o hasta hoy si sigue activo)
+  function elegirCicloFiltro(id) {
+    setLoteFiltro(id)
+    const l = lotesTodos.find(x => x._id === id)
+    if (!l) return
+    setDesde(fechaInput(l.fechaCalentamiento))
+    setHasta(l.fechaCierre ? fechaInput(l.fechaCierre) : hoy())
+  }
+
   async function buscarHistorial() {
     setCH(true)
     setBuscado(false)
@@ -239,7 +254,7 @@ export default function ProduccionFinca() {
 
       {/* Tabs */}
       <div className="fade-up" style={{ display: 'flex', gap: '.5rem', borderBottom: '1px solid var(--border)', flexWrap: 'wrap' }}>
-        {[['registrar', 'Registrar Cosecha', ClipboardList], ['historial', 'Historial', Search], ['catalogos', 'Catálogos', Layers]].map(([key, label, Icon]) => (
+        {[['registrar', 'Registrar Cosecha', ClipboardList], ['historial', 'Historial', Search], ['ciclos', 'Ciclos', RefreshCcw], ['catalogos', 'Catálogos', Layers]].map(([key, label, Icon]) => (
           <button key={key} type="button" onClick={() => setTab(key)}
             style={{
               display: 'flex', alignItems: 'center', gap: '.4rem',
@@ -266,7 +281,7 @@ export default function ProduccionFinca() {
                 <select className="inp" value={form.loteCosecha} onChange={e => set('loteCosecha', e.target.value)}>
                   <option value="">Selecciona...</option>
                   {lotes.map(l => (
-                    <option key={l._id} value={l._id}>{l.finca} — Lote {l.lote} ({l.variedad || 's/variedad'})</option>
+                    <option key={l._id} value={l._id}>{l.finca} — Lote {l.lote} ({l.variedad || 's/variedad'}) · ciclo desde {fechaCorta(l.fechaCalentamiento)}</option>
                   ))}
                 </select>
               </div>
@@ -361,11 +376,15 @@ export default function ProduccionFinca() {
               </div>
               <div style={{ flex: 1, minWidth: 180 }}>
                 <label className="lbl">Lote</label>
-                <select className="inp" value={loteFiltro} onChange={e => setLoteFiltro(e.target.value)}>
+                <select className="inp" value={loteFiltro} onChange={e => elegirCicloFiltro(e.target.value)}>
                   <option value="">Todos</option>
-                  {lotes.map(l => (
-                    <option key={l._id} value={l._id}>{l.finca} — Lote {l.lote}</option>
-                  ))}
+                  {lotesTodos
+                    .filter(l => !fincaFiltro || l.finca?.trim().toLowerCase() === fincaFiltro.trim().toLowerCase())
+                    .map(l => (
+                      <option key={l._id} value={l._id}>
+                        {l.finca} — Lote {l.lote} · {l.activo ? 'ciclo actual' : 'ciclo cerrado'} desde {fechaCorta(l.fechaCalentamiento)}
+                      </option>
+                    ))}
                 </select>
               </div>
               <button className="btn-primary" onClick={buscarHistorial} disabled={cargandoHist}>
@@ -475,6 +494,8 @@ export default function ProduccionFinca() {
       )}
 
       {/* ── Catálogos ── */}
+      {tab === 'ciclos' && <CiclosProduccion fincas={FINCAS} />}
+
       {tab === 'catalogos' && (
         <CatalogosProduccion onCambioLotes={cargarLotes} onCambioCultivos={cargarCultivos} />
       )}
