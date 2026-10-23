@@ -5,6 +5,7 @@
 //   editar    → corregir cualquier campo de un turno ya guardado.
 //   manual    → registrar un turno pasado (por ejemplo, de la hoja de papel).
 import { useState } from 'react'
+import { createPortal } from 'react-dom'
 import { Play, Square, Save, Plus, X } from 'lucide-react'
 import { fechaInput, hoyLocal } from '../utils/fecha'
 import {
@@ -87,7 +88,8 @@ export default function TurnoRiegoModal({ modo, estaciones, turno, estacionId, e
     </div>
   )
 
-  return (
+  // Portal al <body>: así ningún contenedor con transform/overflow lo recorta
+  return createPortal(
     <div onClick={e => e.target === e.currentTarget && onClose()}
       style={{ position: 'fixed', inset: 0, background: 'rgba(0,0,0,.75)', zIndex: 100, display: 'flex', alignItems: 'center', justifyContent: 'center', padding: '1rem' }}>
       <div style={{ background: 'var(--card)', border: '1px solid var(--border)', borderRadius: 14, padding: '1.5rem', width: '100%', maxWidth: 520, maxHeight: 'calc(100dvh - 2rem)', overflowY: 'auto', animation: 'fadeUp .25s ease' }}>
@@ -235,6 +237,7 @@ export default function TurnoRiegoModal({ modo, estaciones, turno, estacionId, e
           </div>
         </div>
       </div>
-    </div>
+    </div>,
+    document.body
   )
 }

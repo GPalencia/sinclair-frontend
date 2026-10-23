@@ -1,6 +1,7 @@
 // src/components/CatalogoEstacionesRiego.jsx
 // Catálogo de estaciones de riego y la lista de lotes que riega cada una.
 import { useState } from 'react'
+import { createPortal } from 'react-dom'
 import { Plus, Pencil, Save, X } from 'lucide-react'
 import { useApi } from '../hooks/useApi'
 import { useToast } from '../hooks/useToast'
@@ -74,7 +75,7 @@ export default function CatalogoEstacionesRiego({ estaciones, onCambio, puedeEdi
         </table>
       </div>
 
-      {modal && (
+      {modal && createPortal(
         <div onClick={e => e.target === e.currentTarget && setModal(null)}
           style={{ position: 'fixed', inset: 0, background: 'rgba(0,0,0,.75)', zIndex: 100, display: 'flex', alignItems: 'center', justifyContent: 'center', padding: '1rem' }}>
           <div style={{ background: 'var(--card)', border: '1px solid var(--border)', borderRadius: 14, padding: '1.5rem', width: '100%', maxWidth: 460, maxHeight: 'calc(100dvh - 2rem)', overflowY: 'auto', animation: 'fadeUp .25s ease' }}>
@@ -88,7 +89,7 @@ export default function CatalogoEstacionesRiego({ estaciones, onCambio, puedeEdi
                 <label className="lbl">Finca *</label>
                 <input className="inp" list="lista-fincas-riego" value={form.finca} onChange={e => setForm({ finca: e.target.value })} />
               </div>
-              <div style={{ display: 'flex', gap: '1rem' }}>
+              <div style={{ display: 'flex', gap: '1rem', alignItems: 'flex-end' }}>
                 <div style={{ flex: 1 }}>
                   <label className="lbl">Estación (nombre o número) *</label>
                   <input className="inp" placeholder="Ej. 10" value={form.nombre} onChange={e => setForm({ nombre: e.target.value })} />
@@ -130,7 +131,8 @@ export default function CatalogoEstacionesRiego({ estaciones, onCambio, puedeEdi
               </div>
             </div>
           </div>
-        </div>
+        </div>,
+        document.body
       )}
     </div>
   )
