@@ -11,7 +11,7 @@ import TurnoRiegoModal from '../components/TurnoRiegoModal'
 import CatalogoEstacionesRiego from '../components/CatalogoEstacionesRiego'
 import { exportarExcel } from '../utils/exportExcel'
 import { fechaCorta, hoyLocal, haceDiasLocal } from '../utils/fecha'
-import { fmtHoras, fmtNum, fmtDuracion, minutosDesdeInicio } from '../utils/riego'
+import { fmtHoras, fmtNum, fmtDuracion, minutosDesdeInicio, siguienteLote } from '../utils/riego'
 
 const textoProductos = (t) => (t.productos || []).map(p => `${p.nombre}${p.cantidad != null ? ` ${p.cantidad} ${p.unidad}` : ''}`).join(', ')
 const KEY_ESTACIONERO = 'riego.ultimoEstacionero'
@@ -40,7 +40,9 @@ function TarjetaEstacion({ estacion, turno, ahora, onIniciar, onFinalizar }) {
       {regando ? (
         <>
           <div>
-            <div style={{ fontSize: '1.6rem', fontWeight: 800, fontFamily: 'DM Mono, monospace', color: 'var(--verde)' }}>Lote {turno.lote}</div>
+            <div style={{ fontSize: '1.6rem', fontWeight: 800, fontFamily: 'DM Mono, monospace', color: 'var(--verde)' }}>
+              Lote {turno.lote}{turno.sector && <span style={{ fontSize: '1rem', color: 'var(--text2)', fontWeight: 600 }}> · turno {turno.sector}</span>}
+            </div>
             <div style={{ display: 'flex', gap: '.5rem', alignItems: 'center', flexWrap: 'wrap', marginTop: '.25rem' }}>
               <BadgeTipo t={turno} />
               <span style={{ fontSize: '.82rem', color: 'var(--text2)' }}>desde las <b>{turno.horaInicio}</b> · {fmtDuracion(min)}</span>
@@ -89,7 +91,10 @@ function TablaTurnos({ turnos, onEditar, onEliminar, esAdmin, conTotales }) {
                 <div style={{ fontSize: '.7rem', color: 'var(--muted2)', textTransform: 'capitalize' }}>{fechaCorta(t.fecha, { weekday: 'long' })}</div>
               </td>
               <td style={{ fontWeight: 600, whiteSpace: 'nowrap' }}>{t.estacion?.nombre ?? '—'}</td>
-              <td style={{ fontFamily: 'DM Mono, monospace', fontWeight: 600 }}>{t.lote}</td>
+              <td style={{ fontFamily: 'DM Mono, monospace', fontWeight: 600, whiteSpace: 'nowrap' }}>
+                {t.lote}
+                {t.sector && <div style={{ fontSize: '.7rem', color: 'var(--muted)', fontWeight: 500 }}>turno {t.sector}</div>}
+              </td>
               <td>
                 <BadgeTipo t={t} />
                 {t.productos?.length > 0 && <div style={{ fontSize: '.7rem', color: 'var(--muted)', marginTop: '.2rem' }}>{textoProductos(t)}</div>}
@@ -239,7 +244,7 @@ export default function Riego() {
   }, [turnosHoy, historial])
 
   // ── Guardar desde el modal ──
-  async function alGuardar(f, { siguiente, proximoLote } = {}) {
+  async function alGuardar(f, { siguiente } = {}) {
     const modo = modal.modo
     if (!f.estacion) return toast('Selecciona la estación', 'error')
     if (!f.lote?.trim()) return toast('Selecciona el lote', 'error')
@@ -250,7 +255,7 @@ export default function Riego() {
     setGuardando(true)
     try {
       const body = {
-        fecha: f.fecha, estacion: f.estacion, lote: f.lote.trim(), tipo: f.tipo, productos: f.productos,
+        fecha: f.fecha, estacion: f.estacion, lote: f.lote.trim(), sector: f.sector || '', tipo: f.tipo, productos: f.productos,
         horaInicio: f.horaInicio || undefined, horaFin: modo === 'iniciar' ? undefined : (f.horaFin || null),
         rpm: f.rpm, horometroInicial: f.horometroInicial, horometroFinal: f.horometroFinal,
         combustibleInicial: f.combustibleInicial, combustibleFinal: f.combustibleFinal, combustibleAgregado: f.combustibleAgregado,
@@ -262,21 +267,29 @@ export default function Riego() {
       if (!res?.ok) return toast(res?.mensaje || 'Error al guardar', 'error')
       guardarEstacionero(f.estacionero)
 
-      if (siguiente) {
-        const nuevo = await api.post('/riego/turnos', {
-          fecha: hoyLocal(), estacion: f.estacion, lote: proximoLote, tipo: f.tipo,
-          productos: f.productos.map(p => ({ nombre: p.nombre, cantidad: null, unidad: p.unidad })),
-          horaInicio: f.horaFin, rpm: f.rpm,
-          horometroInicial: f.horometroFinal, combustibleInicial: f.combustibleFinal,
-          estacionero: f.estacionero,
-        })
-        if (!nuevo?.ok) toast(`Turno finalizado, pero no se pudo iniciar el lote ${proximoLote}: ${nuevo?.mensaje || 'error'}`, 'error')
-        else toast(`✅ Turno finalizado · Regando lote ${proximoLote}`, 'ok')
-      } else {
-        toast(modo === 'iniciar' ? '💧 Turno iniciado' : modo === 'finalizar' ? '✅ Turno finalizado' : '✅ Turno guardado', 'ok')
-      }
-      setModal(null)
+      toast(modo === 'iniciar' ? '💧 Turno iniciado' : modo === 'finalizar' ? '✅ Turno finalizado' : '✅ Turno guardado', 'ok')
       refrescar()
+
+      if (siguiente) {
+        // Abre "Iniciar turno" ya lleno: arranca donde terminó este.
+        // Si traía sector numerado (10.12) propone el siguiente (10.13) en el mismo lote;
+        // si no, propone el siguiente lote de la estación.
+        const est = estaciones.find(e => e._id === f.estacion)
+        const m = (f.sector || '').match(/^(.*?)(\d+)$/)
+        const sigSector = m ? `${m[1]}${String(Number(m[2]) + 1).padStart(m[2].length, '0')}` : ''
+        setModal({
+          modo: 'iniciar', estacionId: f.estacion,
+          prefill: {
+            lote: m ? f.lote : siguienteLote(est, f.lote), sector: sigSector,
+            tipo: f.tipo, productos: f.productos.map(p => ({ nombre: p.nombre, cantidad: '', unidad: p.unidad })),
+            horaInicio: f.horaFin, rpm: f.rpm ?? '',
+            horometroInicial: f.horometroFinal ?? '', combustibleInicial: f.combustibleFinal ?? '',
+            estacionero: f.estacionero,
+          },
+        })
+      } else {
+        setModal(null)
+      }
     } finally { setGuardando(false) }
   }
 
@@ -293,7 +306,7 @@ export default function Riego() {
     const filas = historial.map(t => ({
       Día: fechaCorta(t.fecha, { weekday: 'long' }), Fecha: fechaCorta(t.fecha),
       Finca: t.estacion?.finca ?? '', Estación: t.estacion?.nombre ?? '', RPM: t.rpm ?? '',
-      Lote: t.lote, Tipo: t.tipo, Productos: textoProductos(t),
+      Lote: t.lote, 'Turno/Sector': t.sector || '', Tipo: t.tipo, Productos: textoProductos(t),
       'Hora Inicio': t.horaInicio || '', 'Hora Fin': t.horaFin || '',
       'Horas Turno': t.calculado?.horasTurno ?? '',
       'Horómetro Inicial': t.horometroInicial ?? '', 'Horómetro Final': t.horometroFinal ?? '', 'Horas Horómetro': t.calculado?.horasHorometro ?? '',
@@ -498,7 +511,8 @@ export default function Riego() {
 
       {modal && (
         <TurnoRiegoModal
-          modo={modal.modo} turno={modal.turno} estacionId={modal.estacionId}
+          key={`${modal.modo}-${modal.turno?._id || ''}-${modal.prefill ? 'p' : ''}`}
+          modo={modal.modo} turno={modal.turno} estacionId={modal.estacionId} prefill={modal.prefill}
           estaciones={estaciones} estacioneroGuardado={leerEstacionero()}
           productosSugeridos={sugerencias.productos} estacionerosSugeridos={sugerencias.estacioneros}
           guardando={guardando} onGuardar={alGuardar} onClose={() => setModal(null)} />

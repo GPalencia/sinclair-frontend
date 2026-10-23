@@ -1,11 +1,11 @@
 // src/components/CatalogoEstacionesRiego.jsx
 // Catálogo de estaciones de riego y la lista de lotes que riega cada una.
-import { useState } from 'react'
+import { useState, useEffect, useMemo } from 'react'
 import { createPortal } from 'react-dom'
 import { Plus, Pencil, Save, X } from 'lucide-react'
 import { useApi } from '../hooks/useApi'
 import { useToast } from '../hooks/useToast'
-import { num, vacioSiNull } from '../utils/riego'
+import { num, vacioSiNull, normFinca, normLote, compararLotes } from '../utils/riego'
 
 const VACIO = { finca: '', nombre: '', rpmHabitual: '', lotes: [], activo: true }
 
@@ -15,8 +15,32 @@ export default function CatalogoEstacionesRiego({ estaciones, onCambio, puedeEdi
   const [modal, setModal] = useState(null)   // null | { id?, form }
   const [nuevoLote, setNuevoLote] = useState('')
   const [guardando, setGuardando] = useState(false)
+  const [lotesFinca, setLotesFinca] = useState([])   // catálogo maestro LoteFinca
+
+  useEffect(() => {
+    api.get('/riego/lotes-finca').then(res => { if (res?.ok) setLotesFinca(res.data) })
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [])
 
   const form = modal?.form
+  // Lotes de LoteFinca que pertenecen a la finca escrita en el formulario
+  const lotesDeLaFinca = useMemo(() => {
+    const nf = normFinca(form?.finca)
+    return nf ? lotesFinca.filter(l => normFinca(l.finca) === nf).sort((a, b) => compararLotes(a.codigo, b.codigo)) : []
+  }, [lotesFinca, form?.finca])
+  const fincasCatalogo = useMemo(() => [...new Set(lotesFinca.map(l => l.finca))], [lotesFinca])
+
+  const estaElegido = (lf) => form.lotes.some(x => (x.loteFinca && x.loteFinca === lf._id) || normLote(x.codigo) === normLote(lf.codigo))
+  function alternarLoteFinca(lf) {
+    if (estaElegido(lf)) setForm({ lotes: form.lotes.filter(x => !((x.loteFinca && x.loteFinca === lf._id) || normLote(x.codigo) === normLote(lf.codigo))) })
+    else setForm({ lotes: [...form.lotes, { codigo: lf.codigo, areaMz: lf.areaMz, loteFinca: lf._id }].sort((a, b) => compararLotes(a.codigo, b.codigo)) })
+  }
+  function elegirTodos(todos) {
+    const ajenos = form.lotes.filter(x => !lotesDeLaFinca.some(lf => (x.loteFinca && x.loteFinca === lf._id) || normLote(x.codigo) === normLote(lf.codigo)))
+    const nuevos = todos ? lotesDeLaFinca.map(lf => ({ codigo: lf.codigo, areaMz: lf.areaMz, loteFinca: lf._id })) : []
+    setForm({ lotes: [...ajenos, ...nuevos].sort((a, b) => compararLotes(a.codigo, b.codigo)) })
+  }
+
   const setForm = (patch) => setModal(m => ({ ...m, form: { ...m.form, ...patch } }))
 
   function abrirNueva() { setNuevoLote(''); setModal({ form: { ...VACIO, finca: estaciones[0]?.finca || '' } }) }
@@ -84,7 +108,7 @@ export default function CatalogoEstacionesRiego({ estaciones, onCambio, puedeEdi
               <button className="btn-ghost" onClick={() => setModal(null)} style={{ padding: '.3rem .6rem' }}><X size={18} /></button>
             </div>
             <div style={{ display: 'flex', flexDirection: 'column', gap: '1rem' }}>
-              <datalist id="lista-fincas-riego">{[...new Set(estaciones.map(e => e.finca))].map(f => <option key={f} value={f} />)}</datalist>
+              <datalist id="lista-fincas-riego">{[...new Set([...estaciones.map(e => e.finca), ...fincasCatalogo])].map(f => <option key={f} value={f} />)}</datalist>
               <div>
                 <label className="lbl">Finca *</label>
                 <input className="inp" list="lista-fincas-riego" value={form.finca} onChange={e => setForm({ finca: e.target.value })} />
@@ -100,7 +124,33 @@ export default function CatalogoEstacionesRiego({ estaciones, onCambio, puedeEdi
                 </div>
               </div>
               <div>
-                <label className="lbl">Lotes que riega (en el orden en que se riegan)</label>
+                <label className="lbl">Lotes que riega</label>
+                {lotesDeLaFinca.length > 0 ? (
+                  <div style={{ background: 'var(--card2)', border: '1px solid var(--border)', borderRadius: 10, padding: '.7rem', marginBottom: '.75rem' }}>
+                    <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '.5rem', gap: '.5rem', flexWrap: 'wrap' }}>
+                      <span style={{ fontSize: '.78rem', color: 'var(--muted)' }}>Toca los lotes de la finca que riega esta estación</span>
+                      <span style={{ display: 'flex', gap: '.35rem' }}>
+                        <button type="button" className="btn-ghost" style={{ padding: '.2rem .5rem', fontSize: '.75rem' }} onClick={() => elegirTodos(true)}>Todos</button>
+                        <button type="button" className="btn-ghost" style={{ padding: '.2rem .5rem', fontSize: '.75rem' }} onClick={() => elegirTodos(false)}>Ninguno</button>
+                      </span>
+                    </div>
+                    <div style={{ display: 'flex', gap: '.4rem', flexWrap: 'wrap' }}>
+                      {lotesDeLaFinca.map(lf => {
+                        const on = estaElegido(lf)
+                        return (
+                          <button key={lf._id} type="button" onClick={() => alternarLoteFinca(lf)} title={`${lf.nombreLote} · ${lf.areaMz} Mz`}
+                            style={{ padding: '.4rem .75rem', borderRadius: 999, cursor: 'pointer', fontSize: '.82rem', fontWeight: on ? 700 : 500,
+                              border: `1.5px solid ${on ? 'var(--verde)' : 'var(--border)'}`, background: on ? 'var(--verde)' : 'var(--card)', color: on ? '#fff' : 'var(--text2)' }}>
+                            {lf.codigo}
+                          </button>
+                        )
+                      })}
+                    </div>
+                  </div>
+                ) : form.finca.trim() ? (
+                  <p style={{ fontSize: '.78rem', color: 'var(--muted)', marginBottom: '.5rem' }}>No hay lotes de esta finca en el catálogo de lotes (LoteFinca). Puedes escribirlos abajo.</p>
+                ) : null}
+                <label className="lbl" style={{ fontSize: '.7rem' }}>Seleccionados</label>
                 <div style={{ display: 'flex', gap: '.4rem', flexWrap: 'wrap', marginBottom: '.5rem' }}>
                   {form.lotes.map(l => (
                     <span key={l.codigo} className="badge badge-green" style={{ display: 'inline-flex', alignItems: 'center', gap: '.3rem', fontSize: '.85rem', padding: '.3rem .6rem' }}>
@@ -112,7 +162,7 @@ export default function CatalogoEstacionesRiego({ estaciones, onCambio, puedeEdi
                   {!form.lotes.length && <span style={{ fontSize: '.8rem', color: 'var(--muted)' }}>Sin lotes todavía</span>}
                 </div>
                 <div style={{ display: 'flex', gap: '.5rem' }}>
-                  <input className="inp" placeholder="Ej. 10.12 (varios separados por coma)" value={nuevoLote}
+                  <input className="inp" placeholder="Otro lote que no esté en el catálogo" value={nuevoLote}
                     onChange={e => setNuevoLote(e.target.value)}
                     onKeyDown={e => { if (e.key === 'Enter') { e.preventDefault(); agregarLote() } }} />
                   <button type="button" className="btn-secondary" style={{ flexShrink: 0 }} onClick={agregarLote}><Plus size={15} /> Agregar</button>

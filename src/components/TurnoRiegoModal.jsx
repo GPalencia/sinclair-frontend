@@ -1,7 +1,8 @@
 // src/components/TurnoRiegoModal.jsx
 // Un solo formulario para los cuatro momentos de un turno de riego:
 //   iniciar   → estación + lote + tipo (hora de inicio = ahora). Lo mínimo para arrancar.
-//   finalizar → hora fin, horómetro y diesel finales. Opción de pasar al siguiente lote.
+//   finalizar → hora fin, horómetro y diesel finales. Opción de seguir con el siguiente
+//               turno (abre 'iniciar' prellenado con la hora, horómetro y diesel finales).
 //   editar    → corregir cualquier campo de un turno ya guardado.
 //   manual    → registrar un turno pasado (por ejemplo, de la hoja de papel).
 import { useState } from 'react'
@@ -9,17 +10,17 @@ import { createPortal } from 'react-dom'
 import { Play, Square, Save, Plus, X } from 'lucide-react'
 import { fechaInput, hoyLocal } from '../utils/fecha'
 import {
-  ahoraHHMM, minutosEntre, fmtDuracion, fmtNum, num, vacioSiNull, siguienteLote, UNIDADES,
+  ahoraHHMM, minutosEntre, fmtDuracion, fmtNum, num, vacioSiNull, UNIDADES,
 } from '../utils/riego'
 
 const TITULO = { iniciar: 'Iniciar turno', finalizar: 'Finalizar turno', editar: 'Editar turno', manual: 'Registrar turno anterior' }
 
-function formInicial(modo, { estaciones, turno, estacionId, estacioneroGuardado }) {
+function formInicial(modo, { estaciones, turno, estacionId, estacioneroGuardado, prefill }) {
   if (turno) {
     return {
       fecha: fechaInput(turno.fecha),
       estacion: turno.estacion?._id || turno.estacion,
-      lote: turno.lote, tipo: turno.tipo,
+      lote: turno.lote, sector: turno.sector || '', tipo: turno.tipo,
       productos: (turno.productos || []).map(p => ({ ...p, cantidad: vacioSiNull(p.cantidad) })),
       horaInicio: turno.horaInicio || '',
       horaFin: modo === 'finalizar' ? ahoraHHMM() : (turno.horaFin || ''),
@@ -34,11 +35,12 @@ function formInicial(modo, { estaciones, turno, estacionId, estacioneroGuardado 
   const est = estaciones.find(e => e._id === estacionId) || (estaciones.length === 1 ? estaciones[0] : null)
   return {
     fecha: hoyLocal(),
-    estacion: est?._id || '', lote: '', tipo: 'Riego', productos: [],
+    estacion: est?._id || '', lote: '', sector: '', tipo: 'Riego', productos: [],
     horaInicio: modo === 'iniciar' ? ahoraHHMM() : '', horaFin: '',
     rpm: vacioSiNull(est?.rpmHabitual),
     horometroInicial: '', horometroFinal: '', combustibleInicial: '', combustibleFinal: '', combustibleAgregado: '',
     estacionero: estacioneroGuardado || '', observaciones: '',
+    ...(prefill || {}),   // viene de "seguir con el siguiente turno"
   }
 }
 
@@ -49,15 +51,13 @@ const chip = (activo) => ({
   background: activo ? 'var(--verde)' : 'var(--card)', color: activo ? '#fff' : 'var(--text2)',
 })
 
-export default function TurnoRiegoModal({ modo, estaciones, turno, estacionId, estacioneroGuardado, productosSugeridos = [], estacionerosSugeridos = [], guardando, onGuardar, onClose }) {
-  const [f, setF] = useState(() => formInicial(modo, { estaciones, turno, estacionId, estacioneroGuardado }))
+export default function TurnoRiegoModal({ modo, estaciones, turno, estacionId, prefill, estacioneroGuardado, productosSugeridos = [], estacionerosSugeridos = [], guardando, onGuardar, onClose }) {
+  const [f, setF] = useState(() => formInicial(modo, { estaciones, turno, estacionId, estacioneroGuardado, prefill }))
   const [siguiente, setSiguiente] = useState(true)
   const set = (k, v) => setF(p => ({ ...p, [k]: v }))
 
   const est = estaciones.find(e => e._id === f.estacion)
   const lotes = est?.lotes || []
-  const proximo = modo === 'finalizar' ? siguienteLote(est, f.lote) : ''
-  const hayProximo = modo === 'finalizar' && lotes.length > 1 && proximo && proximo !== f.lote
 
   const verInicio = modo !== 'finalizar'                       // hora inicio, horómetro/diesel iniciales
   const verFin    = modo !== 'iniciar'                         // hora fin, horómetro/diesel finales
@@ -77,7 +77,7 @@ export default function TurnoRiegoModal({ modo, estaciones, turno, estacionId, e
       { ...f, rpm: num(f.rpm), horometroInicial: num(f.horometroInicial), horometroFinal: num(f.horometroFinal),
         combustibleInicial: num(f.combustibleInicial), combustibleFinal: num(f.combustibleFinal), combustibleAgregado: num(f.combustibleAgregado),
         productos: f.tipo === 'Fertirriego' ? f.productos.map(p => ({ ...p, cantidad: num(p.cantidad) })) : [] },
-      { siguiente: modo === 'finalizar' && siguiente && hayProximo, proximoLote: proximo }
+      { siguiente: modo === 'finalizar' && siguiente }
     )
   }
 
@@ -105,7 +105,7 @@ export default function TurnoRiegoModal({ modo, estaciones, turno, estacionId, e
           {(modo === 'manual' || (modo === 'iniciar' && !estacionId) || modo === 'editar') && (
             <div>
               <label className="lbl">Estación *</label>
-              <select className="inp" value={f.estacion} onChange={e => { const n = estaciones.find(x => x._id === e.target.value); setF(p => ({ ...p, estacion: e.target.value, lote: '', rpm: p.rpm === '' ? vacioSiNull(n?.rpmHabitual) : p.rpm })) }}>
+              <select className="inp" value={f.estacion} onChange={e => { const n = estaciones.find(x => x._id === e.target.value); setF(p => ({ ...p, estacion: e.target.value, lote: '', sector: '', rpm: p.rpm === '' ? vacioSiNull(n?.rpmHabitual) : p.rpm })) }}>
                 <option value="">Selecciona...</option>
                 {estaciones.map(e => <option key={e._id} value={e._id}>{e.finca} — Estación {e.nombre}</option>)}
               </select>
@@ -132,6 +132,11 @@ export default function TurnoRiegoModal({ modo, estaciones, turno, estacionId, e
             ) : (
               <input className="inp" placeholder={est ? 'Ej. 10.12 (agrega los lotes en Catálogos)' : 'Primero elige la estación'} value={f.lote} onChange={e => set('lote', e.target.value)} />
             )}
+          </div>
+
+          <div>
+            <label className="lbl">Turno / sector (opcional)</label>
+            <input className="inp" placeholder="Ej. 10.12 — la válvula o sector que se abrió" value={f.sector} onChange={e => set('sector', e.target.value)} />
           </div>
 
           {/* Tipo */}
@@ -221,10 +226,10 @@ export default function TurnoRiegoModal({ modo, estaciones, turno, estacionId, e
             </div>
           </div>
 
-          {hayProximo && (
+          {modo === 'finalizar' && (
             <label style={{ display: 'flex', alignItems: 'center', gap: '.6rem', fontSize: '.9rem', background: 'var(--verde-light)', borderRadius: 10, padding: '.7rem .85rem', cursor: 'pointer' }}>
               <input type="checkbox" checked={siguiente} onChange={e => setSiguiente(e.target.checked)} style={{ width: 18, height: 18 }} />
-              <span>Iniciar enseguida el lote <b>{proximo}</b></span>
+              <span>Seguir enseguida con <b>otro turno</b> en esta estación (se abre ya lleno con la hora, horómetro y diesel de este)</span>
             </label>
           )}
 

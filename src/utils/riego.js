@@ -53,3 +53,10 @@ export function siguienteLote(estacion, actual) {
 }
 
 export const UNIDADES = ['lb', 'kg', 'L', 'gal', 'oz']
+
+// Mismo emparejamiento que el backend (utils/lotesFinca.js):
+// "Finca 7 de Mayo" == "7 DE MAYO"
+const sinAcentos = (s) => String(s ?? '').normalize('NFD').replace(/[\u0300-\u036f]/g, '')
+export const normFinca = (s) => sinAcentos(s).toUpperCase().replace(/^FINCA\s+/, '').replace(/[^A-Z0-9]/g, '')
+export const normLote  = (s) => sinAcentos(s).toUpperCase().replace(/^LOTE\s*/, '').replace(/[^A-Z0-9]/g, '')
+export const compararLotes = (a, b) => String(a).localeCompare(String(b), 'es', { numeric: true })
