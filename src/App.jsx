@@ -16,6 +16,7 @@ import LaboresCulturales  from './pages/LaboresCulturales'
 import ProduccionFinca    from './pages/ProduccionFinca'
 import EstacionSinclair   from './pages/EstacionSinclair'
 import EstacionTablet     from './pages/EstacionTablet'
+import Riego              from './pages/Riego'
 import PasesSalida        from './pages/PasesSalida'
 import PasesTablet        from './pages/PasesTablet'
 import Caseta             from './pages/Caseta'
@@ -71,6 +72,7 @@ export default function App() {
             <Route path="/produccion-finca"    element={<RutaProtegida modulo="produccionFinca"><ProduccionFinca /></RutaProtegida>} />
             <Route path="/estacion-sinclair"   element={<RutaProtegida modulo="estacionSinclair"><EstacionSinclair /></RutaProtegida>} />
             <Route path="/estacion-sinclair/tablet" element={<RutaProtegida modulo="estacionSinclair" sinLayout><EstacionTablet /></RutaProtegida>} />
+            <Route path="/riego" element={<RutaProtegida modulo="riego"><Riego /></RutaProtegida>} />
             <Route path="/usuarios"  element={<RutaProtegida soloAdmin><Usuarios /></RutaProtegida>} />
             <Route path="*" element={<InicioSegunRol><Navigate to="/dashboard" replace /></InicioSegunRol>} />
           </Routes>

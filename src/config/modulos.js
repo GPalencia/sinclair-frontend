@@ -47,6 +47,12 @@ export const MODULOS = [
     to: '/estacion-sinclair',
   },
   {
+    key: 'riego',
+    label: 'Estaciones de Riego',
+    icon: 'Droplets',
+    to: '/riego',
+  },
+  {
     key: 'pasesSalida',
     label: 'Pases de Salida',
     icon: 'PackageCheck',
