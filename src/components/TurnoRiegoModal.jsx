@@ -4,7 +4,8 @@
 //   finalizar → hora fin, horómetro y diesel finales. Opción de seguir con el siguiente
 //               turno (abre 'iniciar' prellenado con la hora, horómetro y diesel finales).
 //   editar    → corregir cualquier campo de un turno ya guardado.
-//   manual    → registrar un turno pasado (por ejemplo, de la hoja de papel).
+//   manual    → registrar un turno con hora de inicio y fin escritas a mano. Con
+//               inline=true se pinta dentro de la página (pestaña Registrar) en vez de modal.
 import { useState } from 'react'
 import { createPortal } from 'react-dom'
 import { Play, Square, Save, Plus, X } from 'lucide-react'
@@ -51,7 +52,7 @@ const chip = (activo) => ({
   background: activo ? 'var(--verde)' : 'var(--card)', color: activo ? '#fff' : 'var(--text2)',
 })
 
-export default function TurnoRiegoModal({ modo, estaciones, turno, estacionId, prefill, estacioneroGuardado, productosSugeridos = [], estacionerosSugeridos = [], guardando, onGuardar, onClose }) {
+export default function TurnoRiegoModal({ modo, inline = false, estaciones, turno, estacionId, prefill, estacioneroGuardado, productosSugeridos = [], estacionerosSugeridos = [], guardando, onGuardar, onClose }) {
   const [f, setF] = useState(() => formInicial(modo, { estaciones, turno, estacionId, estacioneroGuardado, prefill }))
   const [siguiente, setSiguiente] = useState(true)
   const set = (k, v) => setF(p => ({ ...p, [k]: v }))
@@ -88,18 +89,7 @@ export default function TurnoRiegoModal({ modo, estaciones, turno, estacionId, p
     </div>
   )
 
-  // Portal al <body>: así ningún contenedor con transform/overflow lo recorta
-  return createPortal(
-    <div onClick={e => e.target === e.currentTarget && onClose()}
-      style={{ position: 'fixed', inset: 0, background: 'rgba(0,0,0,.75)', zIndex: 100, display: 'flex', alignItems: 'center', justifyContent: 'center', padding: '1rem' }}>
-      <div style={{ background: 'var(--card)', border: '1px solid var(--border)', borderRadius: 14, padding: '1.5rem', width: '100%', maxWidth: 520, maxHeight: 'calc(100dvh - 2rem)', overflowY: 'auto', animation: 'fadeUp .25s ease' }}>
-        <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '1.1rem' }}>
-          <h3 style={{ fontFamily: 'Inter, sans-serif', fontSize: '1.05rem', fontWeight: 700 }}>
-            {TITULO[modo]}{est ? ` — Estación ${est.nombre}` : ''}
-          </h3>
-          <button className="btn-ghost" onClick={onClose} style={{ padding: '.3rem .6rem' }}><X size={18} /></button>
-        </div>
-
+  const cuerpo = (
         <div style={{ display: 'flex', flexDirection: 'column', gap: '1rem' }}>
           {/* Estación (solo si no viene fijada) */}
           {(modo === 'manual' || (modo === 'iniciar' && !estacionId) || modo === 'editar') && (
@@ -179,7 +169,7 @@ export default function TurnoRiegoModal({ modo, estaciones, turno, estacionId, p
             )}
             {verFin && (
               <div style={{ flex: 1, minWidth: 130 }}>
-                <label className="lbl">Hora de fin {modo === 'finalizar' ? '*' : ''}</label>
+                <label className="lbl">Hora de fin {modo === 'finalizar' || modo === 'manual' ? '*' : ''}</label>
                 <input className="inp" type="time" value={f.horaFin} onChange={e => set('horaFin', e.target.value)} />
               </div>
             )}
@@ -234,13 +224,30 @@ export default function TurnoRiegoModal({ modo, estaciones, turno, estacionId, p
           )}
 
           <div style={{ display: 'flex', gap: '.75rem' }}>
-            <button className="btn-secondary" style={{ flex: 1 }} onClick={onClose}>Cancelar</button>
+            <button className="btn-secondary" style={{ flex: 1 }} onClick={onClose}>{inline ? 'Limpiar' : 'Cancelar'}</button>
             <button className="btn-primary" style={{ flex: 2, justifyContent: 'center', minHeight: 44 }} onClick={enviar} disabled={guardando}>
               {guardando ? <span className="spinner" /> : modo === 'iniciar' ? <Play size={16} /> : modo === 'finalizar' ? <Square size={16} /> : <Save size={16} />}
-              {modo === 'iniciar' ? 'Iniciar turno' : modo === 'finalizar' ? 'Finalizar turno' : 'Guardar'}
+              {modo === 'iniciar' ? 'Iniciar turno' : modo === 'finalizar' ? 'Finalizar turno' : inline ? 'Guardar turno' : 'Guardar'}
             </button>
           </div>
         </div>
+  )
+
+  // Formulario dentro de la página (pestaña Registrar)
+  if (inline) return <div style={{ maxWidth: 640 }}>{cuerpo}</div>
+
+  // Modal: portal al <body> para que ningún contenedor con transform/overflow lo recorte
+  return createPortal(
+    <div onClick={e => e.target === e.currentTarget && onClose()}
+      style={{ position: 'fixed', inset: 0, background: 'rgba(0,0,0,.75)', zIndex: 100, display: 'flex', alignItems: 'center', justifyContent: 'center', padding: '1rem' }}>
+      <div style={{ background: 'var(--card)', border: '1px solid var(--border)', borderRadius: 14, padding: '1.5rem', width: '100%', maxWidth: 520, maxHeight: 'calc(100dvh - 2rem)', overflowY: 'auto', animation: 'fadeUp .25s ease' }}>
+        <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '1.1rem' }}>
+          <h3 style={{ fontFamily: 'Inter, sans-serif', fontSize: '1.05rem', fontWeight: 700 }}>
+            {TITULO[modo]}{est ? ` — Estación ${est.nombre}` : ''}
+          </h3>
+          <button className="btn-ghost" onClick={onClose} style={{ padding: '.3rem .6rem' }}><X size={18} /></button>
+        </div>
+        {cuerpo}
       </div>
     </div>,
     document.body
