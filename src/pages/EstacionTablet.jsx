@@ -17,7 +17,7 @@ import { useAuth } from '../context/AuthContext'
 import TecladoNumerico, { aplicarTecla } from '../components/TecladoNumerico'
 import { hoyLocal, fechaCorta } from '../utils/fecha'
 
-const SIN_MEDIDOR = ['Ninguno', 'Ninguno (temporal)']
+import { medidorDe } from '../utils/medidor'
 const LLAVE_ENCARGADO = 'sinclair_encargado_bomba'
 
 const CATEGORIAS = [
@@ -44,7 +44,7 @@ function categoriaDe(m) {
   return 'otros'
 }
 
-const etiquetaMedidor = (m) => (m.tipoMedidor === 'Kilometraje' ? 'Km' : m.tipoMedidor === 'Horometro' ? 'Hrs' : '')
+const etiquetaMedidor = (m) => { const t = medidorDe(m); return t === 'Kilometraje' ? 'Km' : t === 'Horometro' ? 'Hrs' : '' }
 const fmt = (n, dec = 2) => Number(n || 0).toLocaleString('es-HN', { maximumFractionDigits: dec })
 
 export default function EstacionTablet() {
@@ -165,7 +165,8 @@ export default function EstacionTablet() {
     return maquinas.filter(m => categoriaDe(m) === categoria).sort(porCodigo)
   }, [maquinas, busqueda, categoria, topIds])
 
-  const requiereLectura = !!seleccionada && !SIN_MEDIDOR.includes(seleccionada.tipoMedidor)
+  // Kilometraje/horómetro según el catálogo; las estaciones de riego siempre llevan horómetro
+  const requiereLectura = !!medidorDe(seleccionada)
   const ultimaLectura = seleccionada ? stats.ultima[seleccionada._id]?.lectura : null
   const galonesNum = Number(galones)
   const puedeDespachar = !!seleccionada && galonesNum > 0 && !guardando
@@ -423,7 +424,7 @@ export default function EstacionTablet() {
                   style={{ borderColor: campoActivo === 'lectura' ? 'var(--verde)' : '#e2e8f0' }}
                 >
                   <span className="pos-campo-etiqueta">
-                    LECTURA {seleccionada.tipoMedidor === 'Kilometraje' ? '(Km)' : '(Horas)'}
+                    LECTURA {medidorDe(seleccionada) === 'Kilometraje' ? '(Km)' : '(Horas)'}
                     {ultimaLectura != null && <span style={{ fontWeight: 500, textTransform: 'none' }}> · última: {fmt(ultimaLectura)}</span>}
                   </span>
                   <span className="pos-campo-valor" style={{ fontSize: '1.8rem', color: lectura ? 'var(--text)' : '#94a3b8' }}>{lectura || '—'}</span>

@@ -8,6 +8,25 @@ import CatalogosProduccion from '../components/CatalogosProduccion'
 import CiclosProduccion from '../components/CiclosProduccion'
 import { exportarExcel } from '../utils/exportExcel'
 import { fechaCorta, hoyLocal, fechaInput } from '../utils/fecha'
+import { calcularEmpaque } from '../utils/empaque'
+
+// Vista previa de lo que se calcula solo (rendimiento y cajas) mientras se llena el formulario
+function PreviaEmpaque({ pesoNeto, cestas, rendManual, variedad }) {
+  const e = calcularEmpaque({ pesoNeto, cestas, rendManual, variedad })
+  if (e.rendimiento == null) return null
+  const Item = ({ k, v }) => v == null ? null : (
+    <div><div style={{ fontSize: '.65rem', color: 'var(--muted)', textTransform: 'uppercase' }}>{k}</div><b style={{ fontFamily: 'DM Mono, monospace' }}>{v}</b></div>
+  )
+  return (
+    <div style={{ display: 'flex', gap: '1.25rem', flexWrap: 'wrap', background: 'var(--verde-light)', borderRadius: 10, padding: '.65rem .9rem' }}>
+      <Item k="Peso x cesta" v={e.pesoXCesta} />
+      <Item k="Rend." v={e.rendimiento} />
+      <Item k="Cajas 7kg" v={e.cajas7kg} />
+      <Item k="Cajas 4kg" v={e.cajas4kg} />
+      <Item k="Cajas 5kg" v={e.cajas5kg} />
+    </div>
+  )
+}
 
 function hoy() { return hoyLocal() }
 
@@ -112,7 +131,8 @@ export default function ProduccionFinca() {
         caporales: Number(form.caporales || 0),
         cestas: form.cestas === '' ? null : Number(form.cestas),
         totalKilos: form.totalKilos === '' ? null : Number(form.totalKilos),
-        rendAproximado: form.rendAproximado === '' ? null : Number(form.rendAproximado),
+        // Con peso neto el rendimiento se calcula solo; el manual solo vale si no hay peso
+        rendAproximado: form.totalKilos !== '' || form.rendAproximado === '' ? null : Number(form.rendAproximado),
         cultivo: form.cultivo || null,
         tamano: form.tamano,
         empaque: form.empaque === '' ? null : Number(form.empaque),
@@ -143,7 +163,7 @@ export default function ProduccionFinca() {
         caporales: Number(formEditar.caporales || 0),
         cestas: formEditar.cestas === '' ? null : Number(formEditar.cestas),
         totalKilos: formEditar.totalKilos === '' ? null : Number(formEditar.totalKilos),
-        rendAproximado: formEditar.rendAproximado === '' ? null : Number(formEditar.rendAproximado),
+        rendAproximado: formEditar.totalKilos !== '' || formEditar.rendAproximado === '' ? null : Number(formEditar.rendAproximado),
         cultivo: formEditar.cultivo || null,
         tamano: formEditar.tamano,
         empaque: formEditar.empaque === '' ? null : Number(formEditar.empaque),
@@ -202,9 +222,12 @@ export default function ProduccionFinca() {
       Tamaño: r.tamano || '',
       'Personal Laborado': r.calculado?.totalPersonal ?? '',
       Cestas: r.cestas ?? '',
-      Kilos: r.totalKilos ?? '',
+      'Peso Neto (3 cestas)': r.totalKilos ?? '',
       'Peso x Cesta': r.calculado?.pesoXCesta ?? '',
-      'Rend. Aproximado': r.rendAproximado ?? '',
+      'Rend. Aproximado': r.calculado?.rendimiento ?? '',
+      'Cajas 7KG': r.calculado?.cajas7kg ?? '',
+      'Cajas 4KG': r.calculado?.cajas4kg ?? '',
+      'Cajas 5KG': r.calculado?.cajas5kg ?? '',
       Empaque: r.empaque ?? '',
       'Cestas/Jornal': r.calculado?.cestasXJornal ?? '',
       'Personal Proyectado': r.calculado?.personalProyectado ?? '',
@@ -214,12 +237,15 @@ export default function ProduccionFinca() {
     // Fila final: total de cestas y promedios de lo filtrado
     filas.push({
       Fecha: 'TOTALES / PROMEDIOS',
-      Finca: 'Cestas = total · Kilos, Rend. y Cestas/Jornal = promedio',
+      Finca: 'Cestas y Cajas = total · Peso, Rend. y Cestas/Jornal = promedio',
       Lote: '', Cultivo: '', Tamaño: '', 'Personal Laborado': '',
       Cestas: resumen.cestas,
-      Kilos: resumen.kilos ?? '',
+      'Peso Neto (3 cestas)': resumen.kilos ?? '',
       'Peso x Cesta': '',
       'Rend. Aproximado': resumen.rend ?? '',
+      'Cajas 7KG': resumen.cajas7kg ?? '',
+      'Cajas 4KG': resumen.cajas4kg ?? '',
+      'Cajas 5KG': resumen.cajas5kg ?? '',
       Empaque: '',
       'Cestas/Jornal': resumen.cestasPorPersona ?? '',
       'Personal Proyectado': '', 'Días Cosecha': '', Estado: '',
@@ -234,11 +260,15 @@ export default function ProduccionFinca() {
   // Totales y promedios de lo filtrado. Los registros sin dato (pendientes) no cuentan
   // en los promedios, para no bajarlos con ceros que no existen.
   const valores = (fn) => registrosFiltrados.map(fn).filter(v => typeof v === 'number' && Number.isFinite(v))
+  const suma = (arr) => arr.length ? Math.round(arr.reduce((a, b) => a + b, 0) * 100) / 100 : null
   const promedio = (arr) => arr.length ? Math.round((arr.reduce((a, b) => a + b, 0) / arr.length) * 100) / 100 : null
   const resumen = {
     cestas: valores(r => r.cestas).reduce((a, b) => a + b, 0),
     kilos: promedio(valores(r => r.totalKilos)),
-    rend: promedio(valores(r => r.rendAproximado)),
+    rend: promedio(valores(r => r.calculado?.rendimiento)),
+    cajas7kg: suma(valores(r => r.calculado?.cajas7kg)),
+    cajas4kg: suma(valores(r => r.calculado?.cajas4kg)),
+    cajas5kg: suma(valores(r => r.calculado?.cajas5kg)),
     cestasPorPersona: promedio(valores(r => r.calculado?.cestasXJornal)),
   }
   const fmtNum = (n) => n == null ? '—' : n.toLocaleString('es-HN', { maximumFractionDigits: 2 })
@@ -308,14 +338,18 @@ export default function ProduccionFinca() {
                   <input className="inp" type="number" min="0" value={form.cestas} onChange={e => set('cestas', e.target.value)} />
                 </div>
                 <div style={{ flex: 1, minWidth: 140 }}>
-                  <label className="lbl">Total Kilos Neto</label>
+                  <label className="lbl">Peso Neto (3 cestas)</label>
                   <input className="inp" type="number" step="0.01" min="0" value={form.totalKilos} onChange={e => set('totalKilos', e.target.value)} />
                 </div>
-                <div style={{ flex: 1, minWidth: 140 }}>
-                  <label className="lbl">Rend. Aproximado</label>
-                  <input className="inp" type="number" step="0.01" min="0" value={form.rendAproximado} onChange={e => set('rendAproximado', e.target.value)} />
-                </div>
+                {form.totalKilos === '' && (
+                  <div style={{ flex: 1, minWidth: 140 }}>
+                    <label className="lbl">Rend. (solo si no hay peso)</label>
+                    <input className="inp" type="number" step="0.01" min="0" value={form.rendAproximado} onChange={e => set('rendAproximado', e.target.value)} />
+                  </div>
+                )}
               </div>
+              <PreviaEmpaque pesoNeto={form.totalKilos} cestas={form.cestas} rendManual={form.rendAproximado}
+                variedad={lotes.find(l => l._id === form.loteCosecha)?.variedad} />
 
               {/* Para remisiones de Invernadero (Willy) — opcionales, no aplican a okra */}
               <div style={{ display: 'flex', gap: '1rem', flexWrap: 'wrap' }}>
@@ -408,7 +442,8 @@ export default function ProduccionFinca() {
                   <thead>
                     <tr>
                       <th>Fecha</th><th>Finca / Lote</th><th>Cultivo</th><th>Tamaño</th><th>Personal Laborado</th>
-                      <th>Cestas</th><th>Empaque</th><th>KilosNeto</th><th>Peso x Cesta</th><th>Rend.</th>
+                      <th>Cestas</th><th>Empaque</th><th>Peso Neto</th><th>Peso x Cesta</th><th>Rend.</th>
+                      <th>Cajas 7kg</th><th>Cajas 4kg</th><th>Cajas 5kg</th>
                       <th>Cestas/Jornal</th><th>Personal Proy.</th><th>Días Cosecha</th><th>Estado</th>
                       <th style={{ position: 'sticky', right: 0, background: 'var(--card2)', boxShadow: '-4px 0 6px -4px rgba(0,0,0,.15)' }}></th>
                     </tr>
@@ -429,7 +464,12 @@ export default function ProduccionFinca() {
                         <td style={{ textAlign: 'center' }}>{r.empaque ?? '—'}</td>
                         <td style={{ fontFamily: 'DM Mono, monospace', fontSize: '.82rem' }}>{r.totalKilos ?? '—'}</td>
                         <td style={{ fontFamily: 'DM Mono, monospace', fontSize: '.82rem' }}>{r.calculado?.pesoXCesta ?? '—'}</td>
-                        <td style={{ fontFamily: 'DM Mono, monospace', fontSize: '.82rem' }}>{r.rendAproximado ?? '—'}</td>
+                        <td style={{ fontFamily: 'DM Mono, monospace', fontSize: '.82rem' }} title={r.calculado?.rendOrigen === 'manual' ? 'Escrito a mano (el registro no tiene peso)' : 'Peso x cesta ÷ 15.4'}>
+                          {r.calculado?.rendimiento ?? '—'}{r.calculado?.rendOrigen === 'manual' && <span style={{ color: 'var(--muted2)' }}>*</span>}
+                        </td>
+                        <td style={{ fontFamily: 'DM Mono, monospace', fontSize: '.82rem', fontWeight: 600 }}>{r.calculado?.cajas7kg ?? '—'}</td>
+                        <td style={{ fontFamily: 'DM Mono, monospace', fontSize: '.82rem' }}>{r.calculado?.cajas4kg ?? '—'}</td>
+                        <td style={{ fontFamily: 'DM Mono, monospace', fontSize: '.82rem' }}>{r.calculado?.cajas5kg ?? '—'}</td>
                         <td style={{ fontFamily: 'DM Mono, monospace', fontSize: '.82rem' }}>{r.calculado?.cestasXJornal ?? '—'}</td>
                         <td style={{ fontFamily: 'DM Mono, monospace', fontSize: '.82rem' }}>{r.calculado?.personalProyectado ?? '—'}</td>
                         <td style={{ textAlign: 'center', fontFamily: 'DM Mono, monospace', fontSize: '.82rem' }}>{r.calculado?.diasCosecha ?? '—'}</td>
@@ -477,6 +517,12 @@ export default function ProduccionFinca() {
                           <div style={{ fontSize: '.62rem', color: 'var(--muted)', fontFamily: 'Inter, sans-serif' }}>PROM.</div>
                           {fmtNum(resumen.rend)}
                         </td>
+                        {['cajas7kg', 'cajas4kg', 'cajas5kg'].map(k => (
+                          <td key={k} style={{ fontFamily: 'DM Mono, monospace', fontSize: '.85rem' }}>
+                            <div style={{ fontSize: '.62rem', color: 'var(--muted)', fontFamily: 'Inter, sans-serif' }}>TOTAL</div>
+                            {fmtNum(resumen[k])}
+                          </td>
+                        ))}
                         <td style={{ fontFamily: 'DM Mono, monospace', fontSize: '.85rem' }}>
                           <div style={{ fontSize: '.62rem', color: 'var(--muted)', fontFamily: 'Inter, sans-serif' }}>PROM.</div>
                           {fmtNum(resumen.cestasPorPersona)}
@@ -528,15 +574,19 @@ export default function ProduccionFinca() {
                 onChange={e => setFormEditar(p => ({ ...p, cestas: e.target.value }))} />
             </div>
             <div>
-              <label className="lbl">Total Kilos</label>
+              <label className="lbl">Peso Neto (3 cestas)</label>
               <input className="inp" type="number" step="0.01" min="0" value={formEditar.totalKilos}
                 onChange={e => setFormEditar(p => ({ ...p, totalKilos: e.target.value }))} />
             </div>
-            <div>
-              <label className="lbl">Rend. Aproximado</label>
-              <input className="inp" type="number" step="0.01" min="0" value={formEditar.rendAproximado}
-                onChange={e => setFormEditar(p => ({ ...p, rendAproximado: e.target.value }))} />
-            </div>
+            {formEditar.totalKilos === '' && (
+              <div>
+                <label className="lbl">Rend. (solo si no hay peso)</label>
+                <input className="inp" type="number" step="0.01" min="0" value={formEditar.rendAproximado}
+                  onChange={e => setFormEditar(p => ({ ...p, rendAproximado: e.target.value }))} />
+              </div>
+            )}
+            <PreviaEmpaque pesoNeto={formEditar.totalKilos} cestas={formEditar.cestas} rendManual={formEditar.rendAproximado}
+              variedad={modalEditar?.loteCosecha?.variedad} />
             <div style={{ display: 'flex', gap: '1rem', flexWrap: 'wrap' }}>
               <div style={{ flex: 1, minWidth: 160 }}>
                 <label className="lbl">Cultivo</label>

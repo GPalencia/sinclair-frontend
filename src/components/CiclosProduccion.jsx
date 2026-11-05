@@ -40,6 +40,7 @@ export default function CiclosProduccion({ fincas }) {
       'Días Cosechando': c.diasCosechando ?? '', Registros: c.registros,
       'Cestas (total)': c.cestas, 'Kilos (promedio)': c.kilosPromedio ?? '', 'Rend. (promedio)': c.rendPromedio ?? '',
       'Cestas/Jornal (promedio)': c.cestasPorPersonaPromedio ?? '',
+      'Cajas 7KG (total)': c.cajas7kg ?? '', 'Cajas 4KG (total)': c.cajas4kg ?? '', 'Cajas 5KG (total)': c.cajas5kg ?? '',
     })), 'Ciclos_Produccion')
   }
 
@@ -78,6 +79,9 @@ export default function CiclosProduccion({ fincas }) {
                 <th>Kilos<div style={{ fontSize: '.6rem', fontWeight: 500 }}>PROM.</div></th>
                 <th>Rend.<div style={{ fontSize: '.6rem', fontWeight: 500 }}>PROM.</div></th>
                 <th>Cestas/Jornal<div style={{ fontSize: '.6rem', fontWeight: 500 }}>PROM.</div></th>
+                <th>Cajas 7kg<div style={{ fontSize: '.6rem', fontWeight: 500 }}>TOTAL</div></th>
+                <th>Cajas 4kg<div style={{ fontSize: '.6rem', fontWeight: 500 }}>TOTAL</div></th>
+                <th>Cajas 5kg<div style={{ fontSize: '.6rem', fontWeight: 500 }}>TOTAL</div></th>
               </tr>
             </thead>
             <tbody>
@@ -99,9 +103,12 @@ export default function CiclosProduccion({ fincas }) {
                   <td style={{ fontFamily: 'DM Mono, monospace' }}>{fmt(c.kilosPromedio)}</td>
                   <td style={{ fontFamily: 'DM Mono, monospace' }}>{fmt(c.rendPromedio)}</td>
                   <td style={{ fontFamily: 'DM Mono, monospace' }}>{fmt(c.cestasPorPersonaPromedio)}</td>
+                  <td style={{ fontFamily: 'DM Mono, monospace', fontWeight: 600 }}>{fmt(c.cajas7kg)}</td>
+                  <td style={{ fontFamily: 'DM Mono, monospace' }}>{fmt(c.cajas4kg)}</td>
+                  <td style={{ fontFamily: 'DM Mono, monospace' }}>{fmt(c.cajas5kg)}</td>
                 </tr>
               ))}
-              {!visibles.length && <tr><td colSpan={10} style={{ textAlign: 'center', color: 'var(--muted)', padding: '1.5rem' }}>{cargando ? 'Cargando...' : 'Sin ciclos'}</td></tr>}
+              {!visibles.length && <tr><td colSpan={13} style={{ textAlign: 'center', color: 'var(--muted)', padding: '1.5rem' }}>{cargando ? 'Cargando...' : 'Sin ciclos'}</td></tr>}
             </tbody>
           </table>
         </div>

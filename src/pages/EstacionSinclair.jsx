@@ -17,7 +17,7 @@ const FORM_VACIO = {
   cantidadDieselGalones: '', encargadoBomba: '', ruta: '',
 }
 
-const SIN_MEDIDOR = ['Ninguno', 'Ninguno (temporal)']
+import { medidorDe } from '../utils/medidor'
 
 const COLOR_ALERTA = {
   'Bajo rendimiento':     'badge-red',
@@ -75,7 +75,9 @@ export default function EstacionSinclair() {
   }
 
   const maquinaSel = maquinas.find(m => m._id === form.maquinaria)
-  const requiereLectura = maquinaSel && !SIN_MEDIDOR.includes(maquinaSel.tipoMedidor)
+  // Kilometraje/horómetro según el catálogo; las estaciones de riego siempre llevan horómetro
+  const medidorSel = medidorDe(maquinaSel)
+  const requiereLectura = !!medidorSel
   const opcionesMaquinas = maquinas.map(m => ({ value: m._id, label: `${m.codigo} — ${m.unidadDestino}`, sublabel: m.tipo }))
 
   async function guardar() {
@@ -218,7 +220,7 @@ export default function EstacionSinclair() {
 
               {requiereLectura && (
                 <div>
-                  <label className="lbl">Lectura actual ({maquinaSel.tipoMedidor})</label>
+                  <label className="lbl">{medidorSel === 'Horometro' ? 'Horómetro (lectura actual)' : 'Kilometraje (lectura actual)'}</label>
                   <input className="inp" type="number" step="0.01" min="0" value={form.lecturaActual}
                     onChange={e => set('lecturaActual', e.target.value)} />
                 </div>
