@@ -338,12 +338,12 @@ export default function ProduccionFinca() {
                   <input className="inp" type="number" min="0" value={form.cestas} onChange={e => set('cestas', e.target.value)} />
                 </div>
                 <div style={{ flex: 1, minWidth: 140 }}>
-                  <label className="lbl">Peso Neto (3 cestas)</label>
+                  <label className="lbl">Peso Neto </label>
                   <input className="inp" type="number" step="0.01" min="0" value={form.totalKilos} onChange={e => set('totalKilos', e.target.value)} />
                 </div>
                 {form.totalKilos === '' && (
                   <div style={{ flex: 1, minWidth: 140 }}>
-                    <label className="lbl">Rend. (solo si no hay peso)</label>
+                    <label className="lbl">Rend Aproximado</label>
                     <input className="inp" type="number" step="0.01" min="0" value={form.rendAproximado} onChange={e => set('rendAproximado', e.target.value)} />
                   </div>
                 )}
