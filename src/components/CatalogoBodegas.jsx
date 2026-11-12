@@ -31,7 +31,7 @@ export default function CatalogoBodegas({ onCambio }) {
     try {
       const res = await api.post('/pases-salida/bodegas', { nombre, ubicacion })
       if (!res?.ok) return toast(res?.mensaje || 'Error al guardar', 'error')
-      toast('✅ Bodega agregada', 'ok')
+      toast('Bodega agregada', 'ok')
       setNombre(''); setUbicacion('')
       cargar()
       onCambio?.()
@@ -91,7 +91,7 @@ export default function CatalogoBodegas({ onCambio }) {
                       <button type="button" onClick={() => toggleActivo(b)}
                         className={`badge ${b.activo ? 'badge-green' : 'badge-gray'}`}
                         style={{ cursor: 'pointer', border: 'none' }}>
-                        {b.activo ? '● Activa' : '○ Inactiva'}
+                        {b.activo ? 'Activa' : 'Inactiva'}
                       </button>
                     </td>
                   </tr>

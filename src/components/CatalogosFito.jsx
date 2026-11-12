@@ -34,7 +34,7 @@ function PanelPlagas({ onCambio }) {
     try {
       const res = await api.post('/fitoproteccion/plagas', form)
       if (!res?.ok) return toast(res?.mensaje || 'Error al guardar', 'error')
-      toast('✅ Agregada al catálogo', 'ok')
+      toast('Agregada al catálogo', 'ok')
       setForm({ tipoPlaga: 'plaga', nombre: '', descripcion: '' })
       cargar()
       onCambio?.()
@@ -104,7 +104,7 @@ function PanelPlagas({ onCambio }) {
                       <button type="button" onClick={() => toggleActivo(p)}
                         className={`badge ${p.activo ? 'badge-green' : 'badge-gray'}`}
                         style={{ cursor: 'pointer', border: 'none' }}>
-                        {p.activo ? '● Activo' : '○ Inactivo'}
+                        {p.activo ? 'Activo' : 'Inactivo'}
                       </button>
                     </td>
                   </tr>
@@ -151,7 +151,7 @@ function PanelLotesSembrados({ onCambio }) {
     try {
       const res = await api.post('/fitoproteccion/lotes-sembrados', form)
       if (!res?.ok) return toast(res?.mensaje || 'Error al guardar', 'error')
-      toast('✅ Lote sembrado agregado', 'ok')
+      toast('Lote sembrado agregado', 'ok')
       setForm(FORM_LOTE_VACIO)
       cargar()
       onCambio?.()
@@ -237,7 +237,7 @@ function PanelLotesSembrados({ onCambio }) {
                       <button type="button" onClick={() => toggleActivo(l)}
                         className={`badge ${l.activo ? 'badge-green' : 'badge-gray'}`}
                         style={{ cursor: 'pointer', border: 'none' }}>
-                        {l.activo ? '● Activo' : '○ Inactivo'}
+                        {l.activo ? 'Activo' : 'Inactivo'}
                       </button>
                     </td>
                   </tr>

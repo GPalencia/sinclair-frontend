@@ -33,7 +33,7 @@ export default function CatalogoLotesLabores({ onCambio }) {
     try {
       const res = await api.post('/labores-culturales/lotes', { ...form, areaMz: Number(form.areaMz) })
       if (!res?.ok) return toast(res?.mensaje || 'Error al guardar', 'error')
-      toast('✅ Lote agregado', 'ok')
+      toast('Lote agregado', 'ok')
       setForm(FORM_VACIO)
       cargar()
       onCambio?.()
@@ -99,7 +99,7 @@ export default function CatalogoLotesLabores({ onCambio }) {
                       <button type="button" onClick={() => toggleActivo(l)}
                         className={`badge ${l.activo ? 'badge-green' : 'badge-gray'}`}
                         style={{ cursor: 'pointer', border: 'none' }}>
-                        {l.activo ? '● Activo' : '○ Inactivo'}
+                        {l.activo ? 'Activo' : 'Inactivo'}
                       </button>
                     </td>
                   </tr>

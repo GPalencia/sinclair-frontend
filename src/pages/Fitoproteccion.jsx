@@ -79,7 +79,7 @@ export default function Fitoproteccion() {
       const res = await api.postForm('/fitoproteccion/monitoreos', fd)
       if (!res?.ok) return toast(res?.mensaje || 'Error al guardar', 'error')
 
-      toast('✅ Monitoreo registrado', 'ok')
+      toast('Monitoreo registrado', 'ok')
       setForm(FORM_VACIO)
       setBuscado(false)
     } finally {

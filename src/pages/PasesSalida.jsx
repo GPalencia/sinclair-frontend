@@ -1,16 +1,20 @@
-// src/pages/PasesSalida.jsx
+// src/pages/PasesSalida.jsx — en pantalla: "Salida de Bodega" (la key del módulo sigue siendo 'pasesSalida')
+// Pestaña Solicitudes: lo que piden los departamentos (ver SolicitudesBodega.jsx); desde
+// ahí se genera la salida ya llena y queda ligada a la solicitud (trazabilidad).
 import { useState, useEffect } from 'react'
 import { useNavigate } from 'react-router-dom'
-import { ClipboardList, FileDown, FileText, Layers, Plus, Save, Search, Tablet, Trash2, X } from 'lucide-react'
+import { ClipboardList, FileDown, FileText, Inbox, Layers, Plus, Save, Search, Tablet, Trash2, X } from 'lucide-react'
 import { useApi } from '../hooks/useApi'
 import { useToast } from '../hooks/useToast'
 import { useAuth } from '../context/AuthContext'
 import CatalogosPases from '../components/CatalogosPases'
 import ComboboxBuscable from '../components/ComboboxBuscable'
+import GestionSolicitudes from '../components/GestionSolicitudes'
+import { pendienteDe, fmtCant } from '../utils/solicitudesBodega'
 import { exportarExcel } from '../utils/exportExcel'
 import { fechaCorta, hoyLocal, haceDiasLocal } from '../utils/fecha'
 
-const ITEM_VACIO = { articulo: '', cantidad: '', unidadMedida: '' }
+const ITEM_VACIO = { articulo: '', cantidad: '', unidadMedida: '', solicitudItem: null, descSolicitud: '', maximo: null }
 const FORM_VACIO = {
   bodega: '', fecha: hoyLocal(), destino: '', autorizadoPara: '', transporte: '', placa: '',
   tipoMovimiento: '', entregadoPor: '', llevaConforme: '', autorizadoPor: '',
@@ -24,7 +28,9 @@ export default function PasesSalida() {
   const { usuario } = useAuth()
   const navigate   = useNavigate()
 
-  const [tab, setTab] = useState('registrar') // 'registrar' | 'historial' | 'catalogos'
+  const [tab, setTab] = useState('registrar') // 'registrar' | 'solicitudes' | 'historial' | 'catalogos'
+  const [solicitudOrigen, setSolicitudOrigen] = useState(null) // salida generada desde una solicitud
+  const [conteo, setConteo] = useState({ pendientes: 0, abiertas: 0 })
 
   // Catálogos
   const [bodegas, setBodegas]     = useState([])
@@ -45,7 +51,35 @@ export default function PasesSalida() {
   const [cargandoHist, setCH]       = useState(false)
   const [buscado, setBuscado]       = useState(false)
 
-  useEffect(() => { cargarCatalogos() }, [])
+  useEffect(() => { cargarCatalogos(); cargarConteo() }, [])
+
+  async function cargarConteo() {
+    const r = await api.get('/solicitudes-bodega/solicitudes/conteo')
+    if (r?.ok) setConteo({ pendientes: r.pendientes, abiertas: r.abiertas })
+  }
+
+  // Arma la salida con lo que falta por entregar de la solicitud
+  function generarDesdeSolicitud(sol) {
+    const lineas = sol.items.filter(it => pendienteDe(it) > 0)
+    setSolicitudOrigen(sol)
+    setForm(prev => ({
+      ...FORM_VACIO, bodega: prev.bodega,
+      destino: sol.destino || sol.departamentoNombre || '',
+      autorizadoPara: sol.solicitante,
+      tipoMovimiento: tiposMov.includes('Traslado Definitivo') ? 'Traslado Definitivo' : '',
+    }))
+    setItems(lineas.map(it => ({
+      articulo: it.articulo || '', cantidad: pendienteDe(it), unidadMedida: it.unidadMedida || '',
+      solicitudItem: it._id, descSolicitud: it.descripcion, maximo: pendienteDe(it),
+    })))
+    setTab('registrar')
+  }
+
+  function cancelarSolicitudOrigen() {
+    setSolicitudOrigen(null)
+    setForm(prev => ({ ...FORM_VACIO, bodega: prev.bodega }))
+    setItems([{ ...ITEM_VACIO }])
+  }
   useEffect(() => { if (tab === 'historial' && !buscado) buscarHistorial() }, [tab])
 
   async function cargarCatalogos() {
@@ -106,19 +140,26 @@ export default function PasesSalida() {
     if (!form.bodega)          return toast('Selecciona la bodega', 'error')
     if (!form.autorizadoPara)  return toast('Indica a quién se autoriza el traslado', 'error')
     if (!form.tipoMovimiento)  return toast('Selecciona el tipo de movimiento', 'error')
-    const itemsValidos = items.filter(i => i.articulo && i.cantidad !== '')
+    const sinLigar = items.find(i => i.solicitudItem && !i.articulo && Number(i.cantidad) > 0)
+    if (sinLigar) return toast(`Escoge del catálogo el artículo para "${sinLigar.descSolicitud}" o quita esa línea`, 'error')
+    const excedido = items.find(i => i.maximo != null && Number(i.cantidad) > i.maximo)
+    if (excedido) return toast(`"${excedido.descSolicitud}": solo faltan ${fmtCant(excedido.maximo)} por entregar`, 'error')
+    const itemsValidos = items.filter(i => i.articulo && i.cantidad !== '' && Number(i.cantidad) > 0)
     if (!itemsValidos.length)  return toast('Agrega al menos un artículo con cantidad', 'error')
 
     setGuardando(true)
     try {
       const res = await api.post('/pases-salida/pases', {
         ...form,
-        items: itemsValidos.map(i => ({ articulo: i.articulo, cantidad: Number(i.cantidad), unidadMedida: i.unidadMedida })),
+        solicitud: solicitudOrigen?._id || null,
+        items: itemsValidos.map(i => ({ articulo: i.articulo, cantidad: Number(i.cantidad), unidadMedida: i.unidadMedida, solicitudItem: i.solicitudItem || null })),
       })
       if (!res?.ok) return toast(res?.mensaje || 'Error al guardar', 'error')
-      toast(`✅ ${res.mensaje}`, 'ok')
+      toast(res.mensaje, 'ok')
       setForm(prev => ({ ...FORM_VACIO, bodega: prev.bodega }))
       setItems([{ ...ITEM_VACIO }])
+      setSolicitudOrigen(null)
+      cargarConteo()
       setBuscado(false)
       abrirPDF(res.data)
     } finally {
@@ -136,24 +177,27 @@ export default function PasesSalida() {
       if (!res?.ok) return toast(res?.mensaje || 'Error', 'error')
       setPases(res.data)
       setBuscado(true)
-      if (!res.data.length) toast('Sin pases en ese período', 'info')
+      if (!res.data.length) toast('Sin salidas en ese período', 'info')
     } finally {
       setCH(false)
     }
   }
 
   async function eliminarPase(p) {
-    if (!window.confirm(`¿Eliminar el Pase #${p.folio}? Esta acción no se puede deshacer.`)) return
+    if (!window.confirm(`¿Eliminar la Salida No. ${p.folio}?${p.solicitud ? ` Se le devolverá lo despachado a la Solicitud No. ${p.solicitud.folio}.` : ''} Esta acción no se puede deshacer.`)) return
     const res = await api.del(`/pases-salida/pases/${p._id}`)
     if (!res?.ok) return toast(res?.mensaje || 'Error al eliminar', 'error')
-    toast('✅ Pase eliminado', 'ok')
+    toast(res.mensaje || 'Salida eliminada', 'ok')
     buscarHistorial()
+    cargarConteo()
   }
 
   function exportarHistorial() {
     const filas = pases.map(p => ({
       Folio: p.folio,
       Fecha: fechaCorta(p.fecha),
+      'Solicitud No.': p.solicitud?.folio ?? '',
+      Departamento: p.solicitud?.departamentoNombre ?? '',
       Bodega: p.bodega?.nombre ?? '',
       Destino: p.destino || '',
       'Autorizado Para': p.autorizadoPara,
@@ -161,7 +205,7 @@ export default function PasesSalida() {
       Artículos: p.items?.map(i => `${i.cantidad} ${i.unidadMedida} ${i.nombre}`).join('; '),
       Estado: p.estado,
     }))
-    exportarExcel(filas, `Historial_Pases_${desde}_a_${hasta}`)
+    exportarExcel(filas, `Historial_Salidas_Bodega_${desde}_a_${hasta}`)
   }
 
   return (
@@ -169,7 +213,7 @@ export default function PasesSalida() {
 
       <div className="fade-up" style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', flexWrap: 'wrap', gap: '.75rem' }}>
         <div>
-          <h1 style={{ fontSize: '1.4rem', fontWeight: 700, marginBottom: '.25rem' }}>Pases de Salida</h1>
+          <h1 style={{ fontSize: '1.4rem', fontWeight: 700, marginBottom: '.25rem' }}>Salida de Bodega</h1>
           <p style={{ color: 'var(--muted)', fontSize: '.88rem' }}>Traslado de insumos, equipos y herramientas entre bodegas</p>
         </div>
         <button className="btn-primary" onClick={() => navigate('/pases-salida/tablet')}>
@@ -178,7 +222,7 @@ export default function PasesSalida() {
       </div>
 
       <div className="fade-up" style={{ display: 'flex', gap: '.5rem', borderBottom: '1px solid var(--border)', flexWrap: 'wrap' }}>
-        {[['registrar', 'Registrar Pase', ClipboardList], ['historial', 'Historial', Search], ['catalogos', 'Catálogos', Layers]].map(([key, label, Icon]) => (
+        {[['registrar', 'Registrar Salida', ClipboardList], ['solicitudes', 'Solicitudes', Inbox], ['historial', 'Historial', Search], ['catalogos', 'Catálogos', Layers]].map(([key, label, Icon]) => (
           <button key={key} type="button" onClick={() => setTab(key)}
             style={{
               display: 'flex', alignItems: 'center', gap: '.4rem',
@@ -189,6 +233,12 @@ export default function PasesSalida() {
               marginBottom: '-1px', transition: 'all .15s',
             }}>
             <Icon size={15} /> {label}
+            {key === 'solicitudes' && conteo.abiertas > 0 && (
+              <span style={{ background: conteo.pendientes > 0 ? '#dc2626' : 'var(--verde)', color: '#fff', borderRadius: 999, fontSize: '.68rem', fontWeight: 700, padding: '.05rem .45rem', marginLeft: '.2rem' }}
+                title={`${conteo.pendientes} sin revisar · ${conteo.abiertas} por atender`}>
+                {conteo.abiertas}
+              </span>
+            )}
           </button>
         ))}
       </div>
@@ -200,6 +250,17 @@ export default function PasesSalida() {
             <div style={{ padding: '2rem', textAlign: 'center' }}><span className="spinner" /></div>
           ) : (
             <div style={{ display: 'flex', flexDirection: 'column', gap: '1rem', maxWidth: 700 }}>
+              {solicitudOrigen && (
+                <div style={{ background: 'var(--verde-light)', border: '1px solid var(--verde)', borderRadius: 10, padding: '.7rem .9rem', display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', gap: '.75rem', fontSize: '.85rem' }}>
+                  <div>
+                    <b>Salida para la Solicitud No. {solicitudOrigen.folio}</b> — {solicitudOrigen.departamentoNombre} · {solicitudOrigen.solicitante}
+                    <div style={{ fontSize: '.78rem', color: 'var(--text2)', marginTop: '.2rem' }}>
+                      Vienen las cantidades que faltan por entregar. Si algo sale de otra bodega, quita esa línea: queda pendiente en la solicitud para otra salida.
+                    </div>
+                  </div>
+                  <button className="btn-ghost" style={{ padding: '.25rem .5rem', flexShrink: 0 }} onClick={cancelarSolicitudOrigen} title="Quitar la solicitud"><X size={16} /></button>
+                </div>
+              )}
               <div style={{ display: 'flex', gap: '1rem', flexWrap: 'wrap' }}>
                 <div style={{ flex: 1, minWidth: 200 }}>
                   <label className="lbl">Bodega *</label>
@@ -251,6 +312,11 @@ export default function PasesSalida() {
                 <div style={{ display: 'flex', flexDirection: 'column', gap: '.6rem' }}>
                   {items.map((it, i) => (
                     <div key={i} style={{ display: 'flex', gap: '.5rem', alignItems: 'flex-start', flexWrap: 'wrap' }}>
+                      {it.solicitudItem && (
+                        <div style={{ flexBasis: '100%', fontSize: '.75rem', color: it.articulo ? 'var(--muted)' : '#b45309', marginBottom: '-.25rem' }}>
+                          Solicitado: {it.descSolicitud} · faltan {fmtCant(it.maximo)} {it.unidadMedida}{!it.articulo && ' — escoge el artículo del catálogo'}
+                        </div>
+                      )}
                       <div style={{ flex: 3, minWidth: 220 }}>
                         <ComboboxBuscable
                           options={opcionesArticulos}
@@ -291,7 +357,7 @@ export default function PasesSalida() {
 
               <button className="btn-primary" style={{ justifyContent: 'center', marginTop: '.5rem' }}
                 onClick={guardar} disabled={guardando}>
-                {guardando ? <span className="spinner" /> : <Save size={15} />} Guardar y ver PDF
+                {guardando ? <span className="spinner" /> : <Save size={15} />} {solicitudOrigen ? `Guardar salida de la Solicitud No. ${solicitudOrigen.folio}` : 'Guardar y ver PDF'}
               </button>
             </div>
           )}
@@ -330,7 +396,7 @@ export default function PasesSalida() {
             <div className="card fade-up" style={{ padding: 0, overflow: 'hidden' }}>
               <div style={{ padding: '1rem 1.5rem', borderBottom: '1px solid var(--border)', display: 'flex', justifyContent: 'space-between', alignItems: 'center', flexWrap: 'wrap', gap: '.75rem' }}>
                 <span style={{ fontFamily: 'Inter, sans-serif', fontSize: '.85rem', fontWeight: 600 }}>
-                  {pases.length} pases encontrados
+                  {pases.length} salidas encontradas
                 </span>
                 <button className="btn-secondary" onClick={exportarHistorial} disabled={!pases.length}>
                   <FileDown size={15} /> Exportar Excel
@@ -340,7 +406,7 @@ export default function PasesSalida() {
                 <table className="tbl">
                   <thead>
                     <tr>
-                      <th>Folio</th><th>Fecha</th><th>Bodega</th><th>Autorizado Para</th>
+                      <th>Folio</th><th>Fecha</th><th>Bodega</th><th>Solicitud</th><th>Autorizado Para</th>
                       <th>Tipo</th><th>Artículos</th><th>Estado</th>
                       <th style={{ position: 'sticky', right: 0, background: 'var(--card2)', boxShadow: '-4px 0 6px -4px rgba(0,0,0,.15)' }}></th>
                     </tr>
@@ -353,6 +419,9 @@ export default function PasesSalida() {
                           {fechaCorta(p.fecha)}
                         </td>
                         <td style={{ whiteSpace: 'nowrap' }}>{p.bodega?.nombre}</td>
+                        <td style={{ fontSize: '.8rem', whiteSpace: 'nowrap' }}>
+                          {p.solicitud ? <>No. {p.solicitud.folio}<div style={{ fontSize: '.7rem', color: 'var(--muted)' }}>{p.solicitud.departamentoNombre}</div></> : '—'}
+                        </td>
                         <td>{p.autorizadoPara}</td>
                         <td style={{ fontSize: '.82rem' }}>{p.tipoMovimiento}</td>
                         <td style={{ fontSize: '.8rem', color: 'var(--muted)', maxWidth: 220 }}>
@@ -381,6 +450,11 @@ export default function PasesSalida() {
             </div>
           )}
         </>
+      )}
+
+      {/* ── Solicitudes de los departamentos ── */}
+      {tab === 'solicitudes' && (
+        <GestionSolicitudes onGenerarSalida={generarDesdeSolicitud} onCambio={cargarConteo} />
       )}
 
       {/* ── Catálogos ── */}

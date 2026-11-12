@@ -92,7 +92,7 @@ export default function CiclosProduccion({ fincas }) {
                     <div style={{ fontSize: '.72rem', color: 'var(--muted)', fontWeight: 400 }}>{c.variedad || 's/variedad'}{c.area ? ` · ${c.area} Mz` : ''}</div>
                   </td>
                   <td style={{ whiteSpace: 'nowrap' }}>
-                    <span className={`badge ${c.activo ? 'badge-green' : 'badge-gray'}`}>{c.activo ? '● Activo' : 'Cerrado'}</span>
+                    <span className={`badge ${c.activo ? 'badge-green' : 'badge-gray'}`}>{c.activo ? 'Activo' : 'Cerrado'}</span>
                     {c.ciclo?.de > 1 && <div style={{ fontSize: '.7rem', color: 'var(--muted)', marginTop: '.2rem' }}>ciclo {c.ciclo.n} de {c.ciclo.de}</div>}
                   </td>
                   <td style={{ fontFamily: 'DM Mono, monospace', fontSize: '.8rem' }}>{fechaCorta(c.fechaCalentamiento)}</td>

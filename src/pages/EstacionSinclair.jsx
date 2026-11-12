@@ -95,7 +95,7 @@ export default function EstacionSinclair() {
         ruta: form.ruta,
       })
       if (!res?.ok) return toast(res?.mensaje || 'Error al guardar', 'error')
-      toast('✅ Despacho registrado', 'ok')
+      toast('Despacho registrado', 'ok')
       setForm(prev => ({ ...FORM_VACIO, fecha: prev.fecha, encargadoBomba: prev.encargadoBomba }))
       setBuscado(false)
       cargarInventario()

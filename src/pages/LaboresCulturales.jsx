@@ -29,7 +29,7 @@ function Modal({ titulo, onClose, children }) {
       <div style={{ background: 'var(--card)', border: '1px solid var(--border)', borderRadius: 14, padding: '1.75rem', width: '100%', maxWidth: 460, maxHeight: 'calc(100dvh - 2rem)', overflowY: 'auto', animation: 'fadeUp .25s ease' }}>
         <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', flexWrap: 'wrap', gap: '.75rem', marginBottom: '1.25rem' }}>
           <h3 style={{ fontFamily: 'Inter, sans-serif', fontSize: '1rem', fontWeight: 700 }}>{titulo}</h3>
-          <button className="btn-ghost" onClick={onClose} style={{ fontSize: '1.1rem', padding: '.3rem .6rem' }}>✕</button>
+          <button className="btn-ghost" onClick={onClose} style={{ fontSize: '1.1rem', padding: '.3rem .6rem' }}>×</button>
         </div>
         {children}
       </div>
@@ -124,7 +124,7 @@ export default function LaboresCulturales() {
         coordenadas: form.coordenadas || undefined,
       })
       if (!res?.ok) return toast(res?.mensaje || 'Error al guardar', 'error')
-      toast('✅ Labor registrada', 'ok')
+      toast('Labor registrada', 'ok')
       setForm(prev => ({ ...FORM_VACIO, lote: prev.lote, tipoLabor: prev.tipoLabor, fecha: prev.fecha }))
       setBuscado(false)
       setPB(false)
@@ -183,7 +183,7 @@ export default function LaboresCulturales() {
         observaciones: formEditar.observaciones,
       })
       if (!res?.ok) return toast(res?.mensaje || 'Error al actualizar', 'error')
-      toast('✅ Registro actualizado', 'ok')
+      toast('Registro actualizado', 'ok')
       setModalEditar(null)
       buscarHistorial()
       setPB(false)
@@ -198,7 +198,7 @@ export default function LaboresCulturales() {
     if (!window.confirm(`¿Eliminar el registro de ${nombreLote} del ${fechaTxt}? Esta acción no se puede deshacer.`)) return
     const res = await api.del(`/labores-culturales/registros/${r._id}`)
     if (!res?.ok) return toast(res?.mensaje || 'Error al eliminar', 'error')
-    toast('✅ Registro eliminado', 'ok')
+    toast('Registro eliminado', 'ok')
     buscarHistorial()
     setPB(false)
   }
@@ -295,7 +295,7 @@ export default function LaboresCulturales() {
                   </div>
                   {form.coordenadas && (
                     <p style={{ fontSize: '.72rem', color: 'var(--verde)', marginTop: '.3rem' }}>
-                      📍 Área marcada con GPS ({form.coordenadas.length} puntos)
+                      Área marcada con GPS ({form.coordenadas.length} puntos)
                     </p>
                   )}
                 </div>
@@ -538,7 +538,7 @@ export default function LaboresCulturales() {
           onGuardar={({ areaMz, coordenadas }) => {
             setForm(prev => ({ ...prev, avanceMz: String(areaMz), coordenadas }))
             setModalGPS(false)
-            toast(`✅ Área marcada: ${areaMz} Mz`, 'ok')
+            toast(`Área marcada: ${areaMz} Mz`, 'ok')
           }}
         />
       )}

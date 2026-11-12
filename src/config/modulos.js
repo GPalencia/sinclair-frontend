@@ -53,8 +53,14 @@ export const MODULOS = [
     to: '/riego',
   },
   {
+    key: 'solicitudesBodega',
+    label: 'Solicitudes a Bodega',
+    icon: 'ClipboardPen',
+    to: '/solicitudes-bodega',
+  },
+  {
     key: 'pasesSalida',
-    label: 'Pases de Salida',
+    label: 'Salida de Bodega',
     icon: 'PackageCheck',
     to: '/pases-salida',
   },

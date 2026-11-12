@@ -32,12 +32,12 @@ export default function Caseta() {
   }, [cargar])
 
   async function despachar(p) {
-    if (!window.confirm(`¿Confirmar que el Pase #${p.folio} (${p.autorizadoPara}) está saliendo?`)) return
+    if (!window.confirm(`¿Confirmar que la Salida No. ${p.folio} (${p.autorizadoPara}) está saliendo?`)) return
     setDespachando(p._id)
     try {
       const res = await api.put(`/pases-salida/pases/${p._id}/despachar`)
       if (!res?.ok) { toast(res?.mensaje || 'Error', 'error'); return }
-      toast(`✅ Pase #${p.folio} despachado`, 'ok')
+      toast(`Salida No. ${p.folio} despachada`, 'ok')
       cargar()
     } finally {
       setDespachando(null)
@@ -54,7 +54,7 @@ export default function Caseta() {
         <div style={{ display: 'flex', alignItems: 'center', gap: '.75rem' }}>
           <img src={LOGO} alt="Sinclair" style={{ height: 40, width: 40, objectFit: 'contain' }} />
           <div>
-            <div style={{ fontSize: '1.1rem', fontWeight: 800 }}>Caseta — Pases de Salida</div>
+            <div style={{ fontSize: '1.1rem', fontWeight: 800 }}>Caseta — Salidas de Bodega</div>
             <div style={{ fontSize: '.8rem', opacity: .85 }}>
               {new Date().toLocaleDateString('es-HN', { weekday: 'long', day: 'numeric', month: 'long' })}
             </div>
@@ -98,7 +98,7 @@ export default function Caseta() {
                   </div>
                   {(p.transporte || p.placa) && (
                     <div style={{ fontSize: '.9rem', color: 'var(--muted)' }}>
-                      🚚 {p.transporte || '—'} {p.placa ? `· Placa ${p.placa}` : ''}
+                      Transporte: {p.transporte || '—'} {p.placa ? `· Placa ${p.placa}` : ''}
                     </div>
                   )}
                   <div style={{ fontSize: '.85rem', color: 'var(--muted)', marginTop: '.3rem' }}>

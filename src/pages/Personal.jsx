@@ -1,6 +1,6 @@
 // src/pages/Personal.jsx
 import { useState, useEffect, useRef } from 'react'
-import { ClipboardList, FileText, Pencil, Plus, ScanFace, UserX } from 'lucide-react'
+import { Camera, ClipboardList, FileText, Pencil, Plus, ScanFace, UserX } from 'lucide-react'
 
 import { useApi } from '../hooks/useApi'
 import { useToast } from '../hooks/useToast'
@@ -55,7 +55,7 @@ function ModalContrato({ persona, onCerrar, onGuardado }) {
         observaciones: form.observaciones
       })
       if (!res?.ok) return toast(res?.mensaje || 'Error al guardar', 'error')
-      toast('✅ Contrato registrado', 'ok')
+      toast('Contrato registrado', 'ok')
       setTab('historial')
       cargarHistorial()
       onGuardado()
@@ -63,7 +63,7 @@ function ModalContrato({ persona, onCerrar, onGuardado }) {
   }
 
   const badgeEstado = (estado, dias) => {
-    if (estado === 'activo' && dias <= 5)  return { cls: 'badge-red',  label: `⚠ ${dias}d restantes` }
+    if (estado === 'activo' && dias <= 5)  return { cls: 'badge-red',  label: `${dias}d restantes` }
     if (estado === 'activo' && dias <= 10) return { cls: 'badge-red',  label: `${dias}d restantes` }
     if (estado === 'activo')               return { cls: 'badge-green', label: `${dias}d restantes` }
     if (estado === 'renovado')             return { cls: 'badge-gray',  label: 'Renovado' }
@@ -90,7 +90,7 @@ function ModalContrato({ persona, onCerrar, onGuardado }) {
               {persona.codigoEmpleado || 'Sin código'}
             </span>
           </div>
-          <button className="btn-ghost" onClick={onCerrar} style={{ fontSize: '1.1rem' }}>✕</button>
+          <button className="btn-ghost" onClick={onCerrar} style={{ fontSize: '1.1rem' }}>×</button>
         </div>
 
         {/* Tabs */}
@@ -140,7 +140,7 @@ function ModalContrato({ persona, onCerrar, onGuardado }) {
               <div style={{ padding: '.65rem 1rem', background: 'rgba(234,179,8,.06)',
                 border: '1px solid rgba(234,179,8,.25)', borderRadius: 8,
                 fontSize: '.8rem', color: '#ca8a04' }}>
-                ⚠ Este empleado ya tiene un contrato activo. Al guardar, el contrato anterior
+                Este empleado ya tiene un contrato activo. Al guardar, el contrato anterior
                 quedará marcado como <strong>Renovado</strong>.
               </div>
             )}
@@ -240,7 +240,7 @@ function ModalEditar({ persona, onCerrar, onGuardado }) {
       }).then(r => r.json())
 
       if (!res?.ok) return toast(res?.mensaje || 'Error al guardar', 'error')
-      toast('✅ Empleado actualizado', 'ok')
+      toast('Empleado actualizado', 'ok')
       onGuardado()
     } finally { setGuardando(false) }
   }
@@ -259,7 +259,7 @@ function ModalEditar({ persona, onCerrar, onGuardado }) {
           <h3 style={{ fontFamily: 'Inter, sans-serif', fontSize: '1rem', fontWeight: 700 }}>
             Editar — {persona.nombres} {persona.apellidos}
           </h3>
-          <button className="btn-ghost" onClick={onCerrar} style={{ fontSize: '1.1rem' }}>✕</button>
+          <button className="btn-ghost" onClick={onCerrar} style={{ fontSize: '1.1rem' }}>×</button>
         </div>
 
         <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '1rem' }}>
@@ -316,7 +316,7 @@ function ModalEditar({ persona, onCerrar, onGuardado }) {
             className={`badge ${form.activo ? 'badge-green' : 'badge-red'}`}
             style={{ cursor: 'pointer', border: 'none', padding: '.35rem .9rem', fontSize: '.8rem' }}
           >
-            {form.activo ? '● Activo' : '○ Inactivo'}
+            {form.activo ? 'Activo' : 'Inactivo'}
           </button>
           <span style={{ fontSize: '.78rem', color: 'var(--muted)' }}>
             {form.activo ? 'El empleado puede hacer registros' : 'El empleado no aparecerá en búsquedas'}
@@ -378,7 +378,7 @@ function ModalFaceId({ persona, onCerrar, onGuardado }) {
         .withFaceLandmarks().withFaceDescriptor()
       if (!det) { toast('No se detectó rostro, ajusta la posición', 'warn'); return }
       setDescriptor(Array.from(det.descriptor))
-      toast('✅ Descriptor facial capturado', 'ok')
+      toast('Descriptor facial capturado', 'ok')
     } catch { toast('Error al capturar', 'error') }
     finally { setCapturando(false) }
   }
@@ -400,7 +400,7 @@ function ModalFaceId({ persona, onCerrar, onGuardado }) {
       ).then(r => r.json())
 
       if (!res?.ok) return toast(res?.mensaje || 'Error al guardar Face ID', 'error')
-      toast('✅ Face ID asignado correctamente', 'ok')
+      toast('Face ID asignado correctamente', 'ok')
       onGuardado()
     } finally { setGuardando(false) }
   }
@@ -430,14 +430,14 @@ function ModalFaceId({ persona, onCerrar, onGuardado }) {
               )}
             </p>
           </div>
-          <button className="btn-ghost" onClick={onCerrar} style={{ fontSize: '1.1rem' }}>✕</button>
+          <button className="btn-ghost" onClick={onCerrar} style={{ fontSize: '1.1rem' }}>×</button>
         </div>
 
         {/* Badge si ya tiene Face ID */}
         {persona.faceDescriptor && (
           <div style={{ marginBottom: '1rem', padding: '.6rem .9rem', background: 'rgba(34,197,94,.1)',
             border: '1px solid rgba(34,197,94,.3)', borderRadius: 8, fontSize: '.8rem', color: '#16a34a' }}>
-            ✓ Este empleado ya tiene Face ID registrado. Puedes reemplazarlo capturando uno nuevo.
+            Este empleado ya tiene Face ID registrado. Puedes reemplazarlo capturando uno nuevo.
           </div>
         )}
 
@@ -472,7 +472,7 @@ function ModalFaceId({ persona, onCerrar, onGuardado }) {
           {!stream && (
             <div style={{ position: 'absolute', inset: 0, display: 'flex', flexDirection: 'column',
               alignItems: 'center', justifyContent: 'center', gap: '.75rem', color: 'var(--muted)' }}>
-              <span style={{ fontSize: '2.5rem' }}>📷</span>
+              <Camera size={40} strokeWidth={1.5} />
               <span style={{ fontSize: '.82rem' }}>Activa la cámara</span>
             </div>
           )}
@@ -482,7 +482,7 @@ function ModalFaceId({ persona, onCerrar, onGuardado }) {
               background: 'rgba(0,0,0,.75)', padding: '.25rem .9rem', borderRadius: 20,
               fontSize: '.75rem', fontFamily: 'DM Mono, monospace', whiteSpace: 'nowrap',
               color: descriptor ? '#4ade80' : capturando ? '#fbbf24' : 'rgba(255,255,255,.8)' }}>
-              {descriptor ? '✓ Descriptor capturado' : capturando ? '⟳ Procesando...' : 'Centra tu rostro'}
+              {descriptor ? 'Descriptor capturado' : capturando ? 'Procesando...' : 'Centra tu rostro'}
             </div>
           )}
         </div>
@@ -497,7 +497,7 @@ function ModalFaceId({ persona, onCerrar, onGuardado }) {
             <button className="btn-primary" onClick={capturarDescriptor}
               disabled={capturando || !!descriptor}
               style={{ justifyContent: 'center', background: descriptor ? 'var(--verde-dark)' : 'var(--verde)' }}>
-              {capturando ? <span className="spinner" /> : descriptor ? 'Capturado ✓' : 'Capturar rostro'}
+              {capturando ? <span className="spinner" /> : descriptor ? 'Capturado' : 'Capturar rostro'}
             </button>
           )}
           {descriptor && (
@@ -653,12 +653,12 @@ export default function Personal() {
                     </td>
                     <td>
                       <span className={`badge ${p.activo ? 'badge-green' : 'badge-red'}`}>
-                        {p.activo ? '● Activo' : '○ Inactivo'}
+                        {p.activo ? 'Activo' : 'Inactivo'}
                       </span>
                     </td>
                     <td>
                       {p.faceDescriptor
-                        ? <span className="badge badge-green">✓ Face ID</span>
+                        ? <span className="badge badge-green">Face ID</span>
                         : <span className="badge badge-red">Sin Face ID</span>}
                     </td>
                     <td>

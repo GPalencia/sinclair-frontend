@@ -16,7 +16,7 @@ function Modal({ titulo, onClose, children }) {
       <div style={{ background: 'var(--card)', border: '1px solid var(--border)', borderRadius: 14, padding: '1.75rem', width: '100%', maxWidth: 460, maxHeight: 'calc(100dvh - 2rem)', overflowY: 'auto', animation: 'fadeUp .25s ease' }}>
         <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', flexWrap: 'wrap', gap: '.75rem', marginBottom: '1.25rem' }}>
           <h3 style={{ fontFamily: 'Inter, sans-serif', fontSize: '1rem', fontWeight: 700 }}>{titulo}</h3>
-          <button className="btn-ghost" onClick={onClose} style={{ fontSize: '1.1rem', padding: '.3rem .6rem' }}>✕</button>
+          <button className="btn-ghost" onClick={onClose} style={{ fontSize: '1.1rem', padding: '.3rem .6rem' }}>×</button>
         </div>
         {children}
       </div>
@@ -56,7 +56,7 @@ export default function CatalogoTiposLabor({ onCambio }) {
         objetivoPersonalPorMz: form.objetivoPersonalPorMz === '' ? null : Number(form.objetivoPersonalPorMz),
       })
       if (!res?.ok) return toast(res?.mensaje || 'Error al guardar', 'error')
-      toast('✅ Tipo de labor agregado', 'ok')
+      toast('Tipo de labor agregado', 'ok')
       setForm(FORM_VACIO)
       cargar()
       onCambio?.()
@@ -89,7 +89,7 @@ export default function CatalogoTiposLabor({ onCambio }) {
         objetivoPersonalPorMz: formEditar.objetivoPersonalPorMz === '' ? null : Number(formEditar.objetivoPersonalPorMz),
       })
       if (!res?.ok) return toast(res?.mensaje || 'Error al actualizar', 'error')
-      toast('✅ Tipo de labor actualizado', 'ok')
+      toast('Tipo de labor actualizado', 'ok')
       setModalEditar(null)
       cargar()
       onCambio?.()
@@ -156,7 +156,7 @@ export default function CatalogoTiposLabor({ onCambio }) {
                       <button type="button" onClick={() => toggleActivo(t)}
                         className={`badge ${t.activo ? 'badge-green' : 'badge-gray'}`}
                         style={{ cursor: 'pointer', border: 'none' }}>
-                        {t.activo ? '● Activo' : '○ Inactivo'}
+                        {t.activo ? 'Activo' : 'Inactivo'}
                       </button>
                     </td>
                     <td>

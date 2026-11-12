@@ -134,7 +134,7 @@ export default function Registro() {
       const s = await navigator.mediaDevices.getUserMedia({ video: { facingMode: 'user' } })
       setStream(s)
       if (videoRef.current) videoRef.current.srcObject = s
-      setEstadoCam('● En vivo')
+      setEstadoCam('En vivo')
     } catch { toast('No se pudo acceder a la cámara', 'error') }
   }
 
@@ -153,8 +153,8 @@ export default function Registro() {
       const entrada = descriptoresBD.find(d => d.personal._id === match.label)
       if (entrada) {
         setPersona({ ...entrada.personal, confianza: ((1 - match.distance) * 100).toFixed(1), metodo: 'facial' })
-        setEstadoCam('✓ Identificado')
-        toast(`✅ ${entrada.personal.nombres} ${entrada.personal.apellidos}`, 'ok')
+        setEstadoCam('Identificado')
+        toast(`${entrada.personal.nombres} ${entrada.personal.apellidos}`, 'ok')
       }
     } catch (e) { toast('Error en reconocimiento', 'error') }
   }
@@ -165,7 +165,7 @@ export default function Registro() {
     const encontrado = (res?.data || []).find(p => p.codigoEmpleado?.toUpperCase() === inputCodigo.toUpperCase())
     if (!encontrado) return toast('No se encontró empleado con ese código', 'error')
     setPersona({ ...encontrado, metodo: 'codigo' })
-    toast(`✅ ${encontrado.nombres} ${encontrado.apellidos}`, 'ok')
+    toast(`${encontrado.nombres} ${encontrado.apellidos}`, 'ok')
   }
 
   async function buscarIdentidad() {
@@ -173,7 +173,7 @@ export default function Registro() {
     const res = await api.get(`/personal/identidad/${encodeURIComponent(inputId)}`)
     if (!res?.ok) return toast(res?.mensaje || 'No encontrado', 'error')
     setPersona({ ...res.data, metodo: 'identidad' })
-    toast(`✅ ${res.data.nombres} ${res.data.apellidos}`, 'ok')
+    toast(`${res.data.nombres} ${res.data.apellidos}`, 'ok')
   }
 
   async function guardar() {
@@ -205,7 +205,7 @@ export default function Registro() {
         observaciones: obs, fecha
       })
       if (!res?.ok) return toast(res?.mensaje || 'Error al guardar', 'error')
-      toast(`✅ Guardado — L ${salario.toFixed(2)}`, 'ok')
+      toast(`Guardado — L ${salario.toFixed(2)}`, 'ok')
       setPersona(null)
       setCentro(''); setLabor(''); setDias(1); setValor(''); setObs(''); setFecha(hoy())
       setInputCodigo(''); setInputId(''); setLaborQuery('')
@@ -304,7 +304,7 @@ export default function Registro() {
                 background: 'rgba(0,0,0,.75)', padding: '.25rem .9rem', borderRadius: 20,
                 fontSize: '.75rem', fontFamily: 'DM Mono, monospace', whiteSpace: 'nowrap',
                 color: persona != null ? '#4ade80' : stream ? 'rgba(255,255,255,.8)' : 'var(--muted)' }}>
-                {persona != null ? `✓ ${persona.nombres} ${persona.apellidos}` : stream ? 'Centra el rostro en el óvalo' : 'Sin cámara'}
+                {persona != null ? `${persona.nombres} ${persona.apellidos}` : stream ? 'Centra el rostro en el óvalo' : 'Sin cámara'}
               </div>
             </div>
 
@@ -313,7 +313,7 @@ export default function Registro() {
               <button className="btn-primary" style={{ flex: 1, justifyContent: 'center' }} onClick={reconocer} disabled={!stream || !modelosCargados}>Reconocer</button>
             </div>
             {cargandoModelos && <div style={{ fontSize: '.78rem', color: 'var(--muted)', fontFamily: 'DM Mono, monospace' }}>⟳ Cargando modelos de IA...</div>}
-            {modelosCargados && <div style={{ fontSize: '.78rem', color: 'var(--verde)', fontFamily: 'DM Mono, monospace' }}>✅ {descriptoresBD.length} descriptores cargados</div>}
+            {modelosCargados && <div style={{ fontSize: '.78rem', color: 'var(--verde)', fontFamily: 'DM Mono, monospace' }}>{descriptoresBD.length} descriptores cargados</div>}
           </div>
 
           {/* Búsqueda por código */}
@@ -365,7 +365,7 @@ export default function Registro() {
                     </div>
                   )}
                 </div>
-                <button className="btn-ghost" onClick={() => setPersona(null)} style={{ color: 'var(--danger)' }}>✕</button>
+                <button className="btn-ghost" onClick={() => setPersona(null)} style={{ color: 'var(--danger)' }}>×</button>
               </div>
             </div>
           )}
@@ -487,7 +487,7 @@ export default function Registro() {
               />
               {laborSel.pideDias && (
                 <p style={{ fontSize: '.73rem', color: 'var(--muted)', marginTop: '.3rem' }}>
-                  💡 Se autocompleta con el precio del catálogo, puedes ajustarlo si varía
+                  Se autocompleta con el precio del catálogo, puedes ajustarlo si varía
                 </p>
               )}
             </div>

@@ -1,5 +1,6 @@
 // src/hooks/useToast.js
 import { createContext, useContext, useState, useCallback } from 'react'
+import { AlertTriangle, CheckCircle2, Info, XCircle } from 'lucide-react'
 
 const ToastContext = createContext(null)
 
@@ -12,7 +13,7 @@ export function ToastProvider({ children }) {
     setTimeout(() => setToasts(prev => prev.filter(t => t.id !== id)), 3500)
   }, [])
 
-  const iconos = { ok: '✅', error: '❌', info: 'ℹ️', warn: '⚠️' }
+  const iconos = { ok: CheckCircle2, error: XCircle, info: Info, warn: AlertTriangle }
 
   return (
     <ToastContext.Provider value={{ toast }}>
@@ -20,7 +21,7 @@ export function ToastProvider({ children }) {
       <div className="toast-container">
         {toasts.map(t => (
           <div key={t.id} className={`toast toast-${t.tipo}`}>
-            <span>{iconos[t.tipo]}</span>
+            {(() => { const I = iconos[t.tipo] || Info; return <I size={18} strokeWidth={2} style={{ flexShrink: 0 }} /> })()}
             <span>{t.msg}</span>
           </div>
         ))}

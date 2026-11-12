@@ -30,7 +30,7 @@ export default function CatalogoRutas({ onCambio }) {
     try {
       const res = await api.post('/estacion-sinclair/rutas', { nombre })
       if (!res?.ok) return toast(res?.mensaje || 'Error al guardar', 'error')
-      toast('✅ Ruta agregada', 'ok')
+      toast('Ruta agregada', 'ok')
       setNombre('')
       cargar()
       onCambio?.()
@@ -84,7 +84,7 @@ export default function CatalogoRutas({ onCambio }) {
                       <button type="button" onClick={() => toggleActiva(r)}
                         className={`badge ${r.activa ? 'badge-green' : 'badge-gray'}`}
                         style={{ cursor: 'pointer', border: 'none' }}>
-                        {r.activa ? '● Activa' : '○ Inactiva'}
+                        {r.activa ? 'Activa' : 'Inactiva'}
                       </button>
                     </td>
                   </tr>

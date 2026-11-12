@@ -40,7 +40,7 @@ export default function Historial() {
   async function exportar() {
     if (!desde || !hasta) return toast('Selecciona las fechas', 'warn')
     setExp(true)
-    toast('⏳ Generando planilla Excel...', 'info')
+    toast('Generando planilla Excel...', 'info')
     try {
       const BASE = import.meta.env.VITE_API_URL || '/api'
       const { token } = { token: localStorage.getItem('sinclair_token') }
@@ -65,7 +65,7 @@ export default function Historial() {
       a.click()
       document.body.removeChild(a)
       URL.revokeObjectURL(url)
-      toast('✅ Planilla Excel descargada', 'ok')
+      toast('Planilla Excel descargada', 'ok')
     } catch (e) {
       toast('Error al exportar: ' + e.message, 'error')
     } finally {

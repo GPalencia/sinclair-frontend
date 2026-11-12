@@ -1,6 +1,6 @@
 // src/components/CatalogoCultivos.jsx
 import { useState, useEffect } from 'react'
-import { Pencil, Plus } from 'lucide-react'
+import { Check, Pencil, Plus } from 'lucide-react'
 import { useApi } from '../hooks/useApi'
 import { useToast } from '../hooks/useToast'
 
@@ -32,7 +32,7 @@ export default function CatalogoCultivos({ onCambio }) {
     try {
       const res = await api.post('/produccion-finca/cultivos', { nombre })
       if (!res?.ok) return toast(res?.mensaje || 'Error al guardar', 'error')
-      toast('✅ Cultivo agregado', 'ok')
+      toast('Cultivo agregado', 'ok')
       setNombre('')
       cargar()
       onCambio?.()
@@ -101,13 +101,13 @@ export default function CatalogoCultivos({ onCambio }) {
                       <button type="button" onClick={() => toggleActivo(c)}
                         className={`badge ${c.activo ? 'badge-green' : 'badge-gray'}`}
                         style={{ cursor: 'pointer', border: 'none' }}>
-                        {c.activo ? '● Activo' : '○ Inactivo'}
+                        {c.activo ? 'Activo' : 'Inactivo'}
                       </button>
                     </td>
                     <td>
                       {editando === c._id ? (
                         <button className="btn-ghost" style={{ padding: '.35rem .6rem' }} onClick={() => guardarNombre(c)} title="Guardar nombre">
-                          ✓
+                          <Check size={14} />
                         </button>
                       ) : (
                         <button className="btn-ghost" style={{ padding: '.35rem .6rem' }}

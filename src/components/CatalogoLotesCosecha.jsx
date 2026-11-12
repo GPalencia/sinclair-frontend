@@ -48,7 +48,7 @@ export default function CatalogoLotesCosecha({ onCambio }) {
     try {
       const res = await api.post(`/produccion-finca/lotes/${lote._id}/nuevo-ciclo`, f)
       if (!res?.ok) return toast(res?.mensaje || 'Error al crear el ciclo', 'error')
-      toast(`✅ Nuevo ciclo de ${lote.finca} lote ${lote.lote} desde ${fechaCorta(f.fechaCalentamiento + 'T00:00:00Z')}`, 'ok')
+      toast(`Nuevo ciclo de ${lote.finca} lote ${lote.lote} desde ${fechaCorta(f.fechaCalentamiento + 'T00:00:00Z')}`, 'ok')
       setModalCiclo(null)
       cargar()
       onCambio?.()
@@ -74,7 +74,7 @@ export default function CatalogoLotesCosecha({ onCambio }) {
     try {
       const res = await api.post('/produccion-finca/lotes', form)
       if (!res?.ok) return toast(res?.mensaje || 'Error al guardar', 'error')
-      toast('✅ Lote de cosecha agregado', 'ok')
+      toast('Lote de cosecha agregado', 'ok')
       setForm(FORM_VACIO)
       cargar()
       onCambio?.()
@@ -164,7 +164,7 @@ export default function CatalogoLotesCosecha({ onCambio }) {
                       <button type="button" onClick={() => toggleActivo(l)}
                         className={`badge ${l.activo ? 'badge-green' : 'badge-gray'}`}
                         style={{ cursor: 'pointer', border: 'none' }}>
-                        {l.activo ? '● Activo' : '○ Inactivo'}
+                        {l.activo ? 'Activo' : 'Inactivo'}
                       </button>
                     </td>
                     <td>

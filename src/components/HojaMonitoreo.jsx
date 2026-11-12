@@ -156,7 +156,7 @@ export default function HojaMonitoreo({ lotesSembrados, plagas, onGuardada }) {
     if (!window.confirm(`¿Eliminar la hoja de ${h.loteSembrado?.loteSembrado} del ${fechaCorta(h.fecha)}? Se borran también sus lecturas del historial y del análisis.`)) return
     const res = await api.del(`/fitoproteccion/hojas/${h._id}`)
     if (!res?.ok) return toast(res?.mensaje || 'Error al eliminar', 'error')
-    toast('✅ Hoja eliminada', 'ok')
+    toast('Hoja eliminada', 'ok')
     buscar()
   }
 
@@ -241,7 +241,7 @@ export default function HojaMonitoreo({ lotesSembrados, plagas, onGuardada }) {
         <>
           {ultima && (
             <div className="card" style={{ borderColor: '#86efac', background: '#f0fdf4', display: 'flex', gap: '.75rem', alignItems: 'center', flexWrap: 'wrap', justifyContent: 'space-between' }}>
-              <span style={{ fontWeight: 600, color: '#15803d' }}>✅ Hoja de {ultima.lote} guardada</span>
+              <span style={{ fontWeight: 600, color: '#15803d' }}>Hoja de {ultima.lote} guardada</span>
               <div style={{ display: 'flex', gap: '.5rem' }}>
                 <button className="btn-secondary" onClick={() => abrirPDF(ultima.id)}><FileText size={15} /> Ver PDF</button>
                 <button className="btn-ghost" onClick={() => setUltima(null)}>Cerrar</button>

@@ -49,7 +49,7 @@ function Modal({ titulo, onClose, children }) {
       <div style={{ background: 'var(--card)', border: '1px solid var(--border)', borderRadius: 14, padding: '1.75rem', width: '100%', maxWidth: 460, maxHeight: 'calc(100dvh - 2rem)', overflowY: 'auto', animation: 'fadeUp .25s ease' }}>
         <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', flexWrap: 'wrap', gap: '.75rem', marginBottom: '1.25rem' }}>
           <h3 style={{ fontFamily: 'Inter, sans-serif', fontSize: '1rem', fontWeight: 700 }}>{titulo}</h3>
-          <button className="btn-ghost" onClick={onClose} style={{ fontSize: '1.1rem', padding: '.3rem .6rem' }}>✕</button>
+          <button className="btn-ghost" onClick={onClose} style={{ fontSize: '1.1rem', padding: '.3rem .6rem' }}>×</button>
         </div>
         {children}
       </div>
@@ -60,7 +60,7 @@ function Modal({ titulo, onClose, children }) {
 // ── Badge de rol ───────────────────────────────────────
 function BadgeRol({ rol }) {
   const claseColor = rol === 'admin' ? 'badge-yellow' : rol === 'guardia' ? 'badge-gray' : 'badge-blue'
-  const texto = rol === 'admin' ? '⭑ Admin' : rol === 'guardia' ? '🛡 Caseta' : '◈ Supervisor'
+  const texto = rol === 'admin' ? 'Admin' : rol === 'guardia' ? 'Caseta' : 'Supervisor'
   return (
     <span className={`badge ${claseColor}`}>
       {texto}
@@ -113,7 +113,7 @@ export default function Usuarios() {
     try {
       const res = await api.post('/usuarios', { nombre, email, password, rol, modulos })
       if (!res?.ok) return toast(res?.mensaje || 'Error al crear', 'error')
-      toast('✅ Usuario creado correctamente', 'ok')
+      toast('Usuario creado correctamente', 'ok')
       setModalNuevo(false)
       setFormNuevo({ nombre: '', email: '', password: '', rol: 'supervisor', modulos: [] })
       cargar()
@@ -127,7 +127,7 @@ export default function Usuarios() {
     try {
       const res = await api.put(`/usuarios/${modalEditar._id}`, formEditar)
       if (!res?.ok) return toast(res?.mensaje || 'Error al actualizar', 'error')
-      toast('✅ Usuario actualizado', 'ok')
+      toast('Usuario actualizado', 'ok')
       setModalEditar(null)
       cargar()
     } finally { setGuardando(false) }
@@ -145,7 +145,7 @@ export default function Usuarios() {
     try {
       const res = await api.put(`/usuarios/${modalPass._id}/password`, { passwordActual, passwordNuevo })
       if (!res?.ok) return toast(res?.mensaje || 'Error', 'error')
-      toast('✅ Contraseña actualizada', 'ok')
+      toast('Contraseña actualizada', 'ok')
       setModalPass(null)
       setFormPass({ passwordActual: '', passwordNuevo: '', confirmar: '' })
     } finally { setGuardando(false) }
@@ -276,7 +276,7 @@ export default function Usuarios() {
                       </td>
                       <td>
                         <span className={`badge ${u.activo ? 'badge-green' : 'badge-red'}`}>
-                          {u.activo ? '● Activo' : '○ Inactivo'}
+                          {u.activo ? 'Activo' : 'Inactivo'}
                         </span>
                       </td>
                       <td style={{ fontSize: '.78rem', color: 'var(--muted)', fontFamily: 'DM Mono, monospace', whiteSpace: 'nowrap' }}>
@@ -284,17 +284,17 @@ export default function Usuarios() {
                       </td>
                       <td>
                         <div style={{ display: 'flex', gap: '.4rem' }}>
-                          <button className="btn-ghost" style={{ fontSize: '.78rem' }} onClick={() => abrirEditar(u)}>
-                            ✎
+                          <button className="btn-ghost" style={{ fontSize: '.78rem' }} onClick={() => abrirEditar(u)} title="Editar">
+                            <Pencil size={14} />
                           </button>
                           <button className="btn-ghost" style={{ fontSize: '.78rem' }}
                             onClick={() => { setModalPass(u); setFormPass({ passwordActual: '', passwordNuevo: '', confirmar: '' }) }}>
-                            🔑
+                            <KeyRound size={14} />
                           </button>
                           {u._id !== (usuario?._id || usuario?.id) && u.activo && (
                             <button className="btn-ghost" style={{ fontSize: '.78rem', color: 'var(--danger)' }}
-                              onClick={() => desactivar(u)}>
-                              ✕
+                              onClick={() => desactivar(u)} title="Desactivar">
+                              <UserX size={14} />
                             </button>
                           )}
                         </div>
@@ -330,7 +330,7 @@ export default function Usuarios() {
             <div>
               <label className="lbl">Rol</label>
               <div style={{ display: 'flex', gap: '.5rem', marginTop: '.35rem' }}>
-                {[['supervisor','◈ Supervisor'],['admin','⭑ Administrador'],['guardia','🛡 Caseta']].map(([r, label]) => (
+                {[['supervisor','Supervisor'],['admin','Administrador'],['guardia','Caseta']].map(([r, label]) => (
                   <button key={r} type="button"
                     onClick={() => setFormNuevo(p => ({ ...p, rol: r }))}
                     style={{
@@ -346,7 +346,7 @@ export default function Usuarios() {
               </div>
               <p style={{ fontSize: '.73rem', color: 'var(--muted)', marginTop: '.4rem' }}>
                 Supervisor puede registrar planilla. Admin puede crear usuarios y gestionar catálogos.
-                Caseta es la cuenta del guardia — entra directo a la pantalla de Pases de Salida del día, sin ver nada más.
+                Caseta es la cuenta del guardia — entra directo a la pantalla de Salidas de Bodega del día, sin ver nada más.
               </p>
             </div>
             {formNuevo.rol === 'supervisor' && (
@@ -388,7 +388,7 @@ export default function Usuarios() {
                 <div>
                   <label className="lbl">Rol</label>
                   <div style={{ display: 'flex', gap: '.5rem', marginTop: '.35rem' }}>
-                    {[['supervisor','◈ Supervisor'],['admin','⭑ Admin'],['guardia','🛡 Caseta']].map(([r, label]) => (
+                    {[['supervisor','Supervisor'],['admin','Admin'],['guardia','Caseta']].map(([r, label]) => (
                       <button key={r} type="button"
                         onClick={() => setFormEditar(p => ({ ...p, rol: r }))}
                         style={{
@@ -409,7 +409,7 @@ export default function Usuarios() {
                     onClick={() => setFormEditar(p => ({ ...p, activo: !p.activo }))}
                     className={`badge ${formEditar.activo ? 'badge-green' : 'badge-red'}`}
                     style={{ cursor: 'pointer', border: 'none', padding: '.3rem .8rem' }}>
-                    {formEditar.activo ? '● Activo' : '○ Inactivo'}
+                    {formEditar.activo ? 'Activo' : 'Inactivo'}
                   </button>
                 </div>
                 {formEditar.rol === 'supervisor' && (
@@ -459,12 +459,12 @@ export default function Usuarios() {
                 onChange={e => setFormPass(p => ({ ...p, confirmar: e.target.value }))} />
               {formPass.confirmar && formPass.passwordNuevo !== formPass.confirmar && (
                 <p style={{ fontSize: '.75rem', color: 'var(--danger)', marginTop: '.3rem' }}>
-                  ✕ Las contraseñas no coinciden
+                  Las contraseñas no coinciden
                 </p>
               )}
               {formPass.confirmar && formPass.passwordNuevo === formPass.confirmar && formPass.passwordNuevo.length >= 6 && (
                 <p style={{ fontSize: '.75rem', color: 'var(--verde)', marginTop: '.3rem' }}>
-                  ✓ Las contraseñas coinciden
+                  Las contraseñas coinciden
                 </p>
               )}
             </div>

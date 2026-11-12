@@ -86,7 +86,7 @@ export default function RiegoTablet() {
         : await api.post('/riego/turnos', bodyTurno(modo, f))
       if (!res?.ok) return toast(res?.mensaje || 'Error al guardar', 'error')
       guardarEstacionero(f.estacionero)
-      toast(modo === 'iniciar' ? `💧 Regando lote ${f.lote}` : '✅ Turno finalizado', 'ok')
+      toast(modo === 'iniciar' ? `Regando lote ${f.lote}` : 'Turno finalizado', 'ok')
       cargarTodo()
       if (siguiente) setModal({ modo: 'iniciar', estacionId: f.estacion, prefill: prefillSiguiente(f, estaciones) })
       else setModal(null)

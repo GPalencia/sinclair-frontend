@@ -56,7 +56,7 @@ function Modal({ titulo, onClose, children }) {
       <div style={{ background: 'var(--card)', border: '1px solid var(--border)', borderRadius: 14, padding: '1.75rem', width: '100%', maxWidth: 460, maxHeight: 'calc(100dvh - 2rem)', overflowY: 'auto', animation: 'fadeUp .25s ease' }}>
         <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', flexWrap: 'wrap', gap: '.75rem', marginBottom: '1.25rem' }}>
           <h3 style={{ fontFamily: 'Inter, sans-serif', fontSize: '1rem', fontWeight: 700 }}>{titulo}</h3>
-          <button className="btn-ghost" onClick={onClose} style={{ fontSize: '1.1rem', padding: '.3rem .6rem' }}>✕</button>
+          <button className="btn-ghost" onClick={onClose} style={{ fontSize: '1.1rem', padding: '.3rem .6rem' }}>×</button>
         </div>
         {children}
       </div>
@@ -138,7 +138,7 @@ export default function ProduccionFinca() {
         empaque: form.empaque === '' ? null : Number(form.empaque),
       })
       if (!res?.ok) return toast(res?.mensaje || 'Error al guardar', 'error')
-      toast('✅ Cosecha registrada', 'ok')
+      toast('Cosecha registrada', 'ok')
       setForm(prev => ({ ...FORM_VACIO, loteCosecha: prev.loteCosecha, fecha: prev.fecha, cultivo: prev.cultivo }))
       setBuscado(false)
     } finally {
@@ -169,7 +169,7 @@ export default function ProduccionFinca() {
         empaque: formEditar.empaque === '' ? null : Number(formEditar.empaque),
       })
       if (!res?.ok) return toast(res?.mensaje || 'Error al actualizar', 'error')
-      toast('✅ Registro actualizado', 'ok')
+      toast('Registro actualizado', 'ok')
       setModalEditar(null)
       buscarHistorial()
     } finally {
@@ -183,7 +183,7 @@ export default function ProduccionFinca() {
     if (!window.confirm(`¿Eliminar el registro de ${nombreLote} del ${fechaTxt}? Esta acción no se puede deshacer.`)) return
     const res = await api.del(`/produccion-finca/registros/${r._id}`)
     if (!res?.ok) return toast(res?.mensaje || 'Error al eliminar', 'error')
-    toast('✅ Registro eliminado', 'ok')
+    toast('Registro eliminado', 'ok')
     buscarHistorial()
   }
 
@@ -338,12 +338,12 @@ export default function ProduccionFinca() {
                   <input className="inp" type="number" min="0" value={form.cestas} onChange={e => set('cestas', e.target.value)} />
                 </div>
                 <div style={{ flex: 1, minWidth: 140 }}>
-                  <label className="lbl">Peso Neto </label>
+                  <label className="lbl">Peso Neto (3 cestas)</label>
                   <input className="inp" type="number" step="0.01" min="0" value={form.totalKilos} onChange={e => set('totalKilos', e.target.value)} />
                 </div>
                 {form.totalKilos === '' && (
                   <div style={{ flex: 1, minWidth: 140 }}>
-                    <label className="lbl">Rend Aproximado</label>
+                    <label className="lbl">Rend. (solo si no hay peso)</label>
                     <input className="inp" type="number" step="0.01" min="0" value={form.rendAproximado} onChange={e => set('rendAproximado', e.target.value)} />
                   </div>
                 )}

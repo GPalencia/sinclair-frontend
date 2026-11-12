@@ -13,7 +13,7 @@ export function leerEstacionero() { try { return localStorage.getItem(KEY_ESTACI
 export function guardarEstacionero(n) { try { if (n) localStorage.setItem(KEY_ESTACIONERO, n) } catch { /* sin almacenamiento */ } }
 
 export function BadgeTipo({ t }) {
-  return <span className={`badge ${t.tipo === 'Fertirriego' ? 'badge-yellow' : 'badge-blue'}`}>{t.tipo === 'Fertirriego' ? '🧪 Fertirriego' : '💧 Riego'}</span>
+  return <span className={`badge ${t.tipo === 'Fertirriego' ? 'badge-yellow' : 'badge-blue'}`}>{t.tipo === 'Fertirriego' ? 'Fertirriego' : 'Riego'}</span>
 }
 
 // ── Tarjeta de una estación en el tablero de "Hoy" ─────────────
@@ -27,7 +27,7 @@ export function TarjetaEstacion({ estacion, turno, ahora, onIniciar, onFinalizar
           <div style={{ fontSize: '.72rem', color: 'var(--muted)' }}>{estacion.finca}</div>
           <div style={{ fontSize: '1.15rem', fontWeight: 700 }}>Estación {estacion.nombre}</div>
         </div>
-        <span className={`badge ${regando ? 'badge-green' : 'badge-gray'}`}>{regando ? '● Regando' : 'Libre'}</span>
+        <span className={`badge ${regando ? 'badge-green' : 'badge-gray'}`}>{regando ? 'Regando' : 'Libre'}</span>
       </div>
 
       {regando ? (

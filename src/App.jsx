@@ -19,6 +19,7 @@ import EstacionTablet     from './pages/EstacionTablet'
 import Riego              from './pages/Riego'
 import RiegoTablet        from './pages/RiegoTablet'
 import PasesSalida        from './pages/PasesSalida'
+import SolicitudesBodega  from './pages/SolicitudesBodega'
 import PasesTablet        from './pages/PasesTablet'
 import Caseta             from './pages/Caseta'
 import { puedeVerModulo } from './config/modulos'
@@ -62,6 +63,7 @@ export default function App() {
             <Route path="/dashboard" element={<InicioSegunRol><RutaProtegida><Dashboard /></RutaProtegida></InicioSegunRol>} />
             <Route path="/caseta" element={<RutaProtegida modulo="pasesSalida" sinLayout><Caseta /></RutaProtegida>} />
             <Route path="/pases-salida" element={<RutaProtegida modulo="pasesSalida"><PasesSalida /></RutaProtegida>} />
+            <Route path="/solicitudes-bodega" element={<RutaProtegida modulo="solicitudesBodega"><SolicitudesBodega /></RutaProtegida>} />
             <Route path="/pases-salida/tablet" element={<RutaProtegida modulo="pasesSalida" sinLayout><PasesTablet /></RutaProtegida>} />
             <Route path="/registro"  element={<RutaProtegida modulo="planillas"><Registro /></RutaProtegida>} />
             <Route path="/personal"  element={<RutaProtegida modulo="planillas"><Personal /></RutaProtegida>} />

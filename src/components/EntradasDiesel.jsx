@@ -53,7 +53,7 @@ export default function EntradasDiesel({ onCambio }) {
         precioUnitarioBruto: Number(form.precioUnitarioBruto),
       })
       if (!res?.ok) return toast(res?.mensaje || 'Error al guardar', 'error')
-      toast('✅ Entrada registrada', 'ok')
+      toast('Entrada registrada', 'ok')
       setForm(FORM_VACIO)
       cargar()
       onCambio?.()

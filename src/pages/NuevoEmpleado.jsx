@@ -36,7 +36,7 @@ export default function NuevoEmpleado() {
       const res = await api.postForm('/personal', fd)
       if (!res?.ok) return toast(res?.mensaje || 'Error al guardar', 'error')
 
-      toast('✅ Empleado registrado. Puedes asignar el Face ID desde la lista.', 'ok')
+      toast('Empleado registrado. Puedes asignar el Face ID desde la lista.', 'ok')
       navigate('/personal')
     } finally {
       setCargando(false)
@@ -108,10 +108,10 @@ export default function NuevoEmpleado() {
         <div style={{ marginTop: '1.25rem', padding: '.75rem 1rem', background: 'var(--surface)',
           borderRadius: 8, fontSize: '.8rem', color: 'var(--muted)', lineHeight: 1.6,
           borderLeft: '3px solid var(--verde)' }}>
-          <strong style={{ color: 'var(--text)' }}>ℹ️ Registro en lote</strong><br />
+          <strong style={{ color: 'var(--text)' }}>Registro en lote</strong><br />
           Puedes registrar varios empleados con nombre y código Sodisa, y luego asignar
           el <strong>Face ID</strong> individualmente desde la lista de personal usando el
-          botón <strong>🔍 Asignar Face ID</strong>.
+          botón <strong>Asignar Face ID</strong>.
         </div>
       </div>
 

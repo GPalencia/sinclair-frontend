@@ -1,5 +1,5 @@
 // src/pages/PasesTablet.jsx
-// Modo tablet de Pases de Salida: pantalla completa, todo con un toque.
+// Modo tablet de Salida de Bodega (antes Pases de Salida): pantalla completa, todo con un toque.
 //   1) Toca los artículos (botones grandes por categoría, o busca por nombre)
 //   2) Escribe la cantidad de cada uno en el teclado numérico
 //   3) "Continuar": elige bodega, tipo de movimiento y a quién se autoriza
@@ -184,7 +184,7 @@ export default function PasesTablet() {
   }
 
   function vaciar() {
-    if (carrito.length > 1 && !window.confirm('¿Quitar todos los artículos del pase?')) return
+    if (carrito.length > 1 && !window.confirm('¿Quitar todos los artículos de la salida?')) return
     setCarrito([]); setSelId(null)
   }
 
@@ -255,7 +255,7 @@ export default function PasesTablet() {
         entregadoPor: usuario?.nombre || '',
         items: carrito.map(l => ({ articulo: l.articulo, cantidad: Number(l.cantidad), unidadMedida: l.unidadMedida })),
       })
-      if (!res?.ok) return toast(res?.mensaje || 'No se pudo guardar el pase', 'error')
+      if (!res?.ok) return toast(res?.mensaje || 'No se pudo guardar la salida', 'error')
 
       setExito({
         folio: res.data.folio,
@@ -289,7 +289,7 @@ export default function PasesTablet() {
           </button>
           <img src={LOGO} alt="Sinclair" style={{ height: 38, width: 38, objectFit: 'contain' }} />
           <div style={{ minWidth: 0 }}>
-            <div style={{ fontSize: '1.1rem', fontWeight: 800, whiteSpace: 'nowrap' }}>Pase de Salida</div>
+            <div style={{ fontSize: '1.1rem', fontWeight: 800, whiteSpace: 'nowrap' }}>Salida de Bodega</div>
             <div style={{ fontSize: '.78rem', opacity: .85 }}>
               {new Date().toLocaleDateString('es-HN', { weekday: 'long', day: 'numeric', month: 'long' })}
             </div>
@@ -396,7 +396,7 @@ export default function PasesTablet() {
           <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', gap: '.5rem', marginBottom: '.7rem' }}>
             <div style={{ display: 'flex', alignItems: 'center', gap: '.5rem', fontWeight: 800, fontSize: '1.05rem' }}>
               <ShoppingBasket size={22} color="#16a34a" />
-              Pase actual
+              Salida actual
               {totalLineas > 0 && <span className="pt-contador">{totalLineas}</span>}
             </div>
             {totalLineas > 0 && (
@@ -472,7 +472,7 @@ export default function PasesTablet() {
       {/* Botón flotante: en pantalla angosta el panel queda debajo de los artículos */}
       {totalLineas > 0 && (
         <button className="pt-flotante" onClick={() => panelRef.current?.scrollIntoView({ behavior: 'smooth', block: 'start' })}>
-          <ShoppingBasket size={22} /> Ver pase ({totalLineas})
+          <ShoppingBasket size={22} /> Ver salida ({totalLineas})
         </button>
       )}
 
@@ -495,7 +495,7 @@ export default function PasesTablet() {
           </div>
         )}
         <button className="pos-hoy-barra" onClick={() => setVerHoy(v => !v)}>
-          <span>Hoy: <b>{hoyLista.length}</b> pase{hoyLista.length === 1 ? '' : 's'}</span>
+          <span>Hoy: <b>{hoyLista.length}</b> salida{hoyLista.length === 1 ? '' : 's'}</span>
           <span style={{ fontWeight: 800 }}>{porSalir > 0 ? `${porSalir} por salir` : 'Todos despachados'}</span>
           {verHoy ? <ChevronDown size={20} /> : <ChevronUp size={20} />}
         </button>
@@ -506,7 +506,7 @@ export default function PasesTablet() {
         <div className="pt-modal">
           <div className="pt-hoja">
             <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', gap: '.5rem' }}>
-              <div style={{ fontSize: '1.25rem', fontWeight: 800 }}>Datos del pase</div>
+              <div style={{ fontSize: '1.25rem', fontWeight: 800 }}>Datos de la salida</div>
               <button className="pos-icono-claro" onClick={() => setVerDatos(false)} aria-label="Cerrar"><X size={22} /></button>
             </div>
 
@@ -598,7 +598,7 @@ export default function PasesTablet() {
         <div className="pos-exito" onClick={() => setExito(null)}>
           <div className="pos-exito-caja" style={{ borderColor: '#16a34a' }} onClick={e => e.stopPropagation()}>
             <CheckCircle2 size={72} color="#16a34a" />
-            <div style={{ fontSize: '1.4rem', fontWeight: 800, marginTop: '.4rem' }}>Pase registrado</div>
+            <div style={{ fontSize: '1.4rem', fontWeight: 800, marginTop: '.4rem' }}>Salida registrada</div>
             <div style={{ fontFamily: 'DM Mono, monospace', fontSize: '2.6rem', fontWeight: 800, color: 'var(--verde-dark)', marginTop: '.2rem' }}>
               #{exito.folio}
             </div>

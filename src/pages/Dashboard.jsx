@@ -1,4 +1,5 @@
 // src/pages/Dashboard.jsx
+import { Banknote, Bug, ClipboardList, LayoutGrid, Sprout, Users, Wheat } from 'lucide-react'
 import { useState, useEffect } from 'react'
 import { useApi } from '../hooks/useApi'
 import {
@@ -17,7 +18,7 @@ function StatCard({ label, valor, sub, color = 'var(--verde)', icono }) {
         <span style={{ fontSize: '.78rem', color: 'var(--muted)', fontFamily: 'Inter, sans-serif', letterSpacing: '.06em', textTransform: 'uppercase' }}>
           {label}
         </span>
-        <span style={{ fontSize: '1.3rem' }}>{icono}</span>
+        <span style={{ color, opacity: .85, display: 'flex' }}>{icono}</span>
       </div>
       <div style={{ fontFamily: 'Inter, sans-serif', fontWeight: 700, fontSize: '1.6rem', color }}>
         {valor}
@@ -129,21 +130,21 @@ export default function Dashboard() {
               label="Lotes en producción"
               valor={general.lotesEnProduccion}
               sub={`${general.manzanasEnProduccion.toLocaleString('es-HN')} manzanas`}
-              icono="🌱"
+              icono={<Sprout size={20} />}
               color="var(--verde)"
             />
             <StatCard
               label="Lotes en siembra"
               valor={general.lotesEnSiembra}
               sub={`${general.manzanasEnSiembra.toLocaleString('es-HN')} manzanas sembradas`}
-              icono="🌾"
+              icono={<Wheat size={20} />}
               color="#f59e0b"
             />
             <StatCard
               label="Monitoreos de plagas"
               valor={general.totalMonitoreos}
               sub="registros en Fitoprotección"
-              icono="🐛"
+              icono={<Bug size={20} />}
               color="#60a5fa"
             />
           </div>
@@ -156,28 +157,28 @@ export default function Dashboard() {
           label="Registros hoy"
           valor={stats?.totalRegistros || 0}
           sub="entradas registradas"
-          icono="✦"
+          icono={<ClipboardList size={20} />}
           color="var(--verde)"
         />
         <StatCard
           label="Planilla hoy"
           valor={`L ${totalHoy.toLocaleString('es-HN', { minimumFractionDigits: 0 })}`}
           sub="salarios del día"
-          icono="◎"
+          icono={<Banknote size={20} />}
           color="#60a5fa"
         />
         <StatCard
           label="Empleados activos"
           valor={stats?.totalEmpleados || '—'}
           sub="en el sistema"
-          icono="◈"
+          icono={<Users size={20} />}
           color="#f59e0b"
         />
         <StatCard
           label="Centros activos"
           valor={porCentro.length}
           sub="últimos 7 días"
-          icono="⊞"
+          icono={<LayoutGrid size={20} />}
           color="#c084fc"
         />
       </div>
@@ -268,7 +269,7 @@ export default function Dashboard() {
       {alertas.length > 0 && (
         <div className="card fade-up" style={{ border: '1px solid rgba(239,68,68,.25)', background: 'rgba(239,68,68,.03)' }}>
           <h3 style={{ fontSize: '.9rem', fontWeight: 600, marginBottom: '1rem', color: '#ef4444' }}>
-            ⚠ CONTRATOS POR VENCER — PRÓXIMOS 7 DÍAS ({alertas.length})
+            CONTRATOS POR VENCER — PRÓXIMOS 7 DÍAS ({alertas.length})
           </h3>
           <div style={{ display: 'flex', flexDirection: 'column', gap: '.5rem' }}>
             {alertas.map(c => (

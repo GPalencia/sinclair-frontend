@@ -66,7 +66,7 @@ export default function CatalogoEstacionesRiego({ estaciones, onCambio, puedeEdi
       const body = { ...form, finca: form.finca.trim(), nombre: form.nombre.trim(), rpmHabitual: num(form.rpmHabitual) }
       const res = modal.id ? await api.put(`/riego/estaciones/${modal.id}`, body) : await api.post('/riego/estaciones', body)
       if (!res?.ok) return toast(res?.mensaje || 'Error al guardar', 'error')
-      toast('✅ Estación guardada', 'ok')
+      toast('Estación guardada', 'ok')
       setModal(null)
       onCambio()
     } finally {

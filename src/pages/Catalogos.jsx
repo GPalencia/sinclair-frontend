@@ -1,4 +1,5 @@
 // src/pages/Catalogos.jsx
+import { Save } from 'lucide-react'
 import { useState, useEffect } from 'react'
 import { useApi } from '../hooks/useApi'
 import { useToast } from '../hooks/useToast'
@@ -11,7 +12,7 @@ function Modal({ titulo, onClose, children }) {
       <div style={{ background: 'var(--card)', border: '1px solid var(--border)', borderRadius: 14, padding: '1.75rem', width: '100%', maxWidth: 480, maxHeight: 'calc(100dvh - 2rem)', overflowY: 'auto', animation: 'fadeUp .25s ease' }}>
         <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', flexWrap: 'wrap', gap: '.75rem', marginBottom: '1.25rem' }}>
           <h3 style={{ fontFamily: 'Inter, sans-serif', fontSize: '1rem', fontWeight: 700 }}>{titulo}</h3>
-          <button className="btn-ghost" onClick={onClose} style={{ fontSize: '1.1rem', padding: '.3rem .6rem' }}>✕</button>
+          <button className="btn-ghost" onClick={onClose} style={{ fontSize: '1.1rem', padding: '.3rem .6rem' }}>×</button>
         </div>
         {children}
       </div>
@@ -51,7 +52,7 @@ function FormLabor({ inicial, onGuardar, onCerrar, cargando }) {
       <div>
         <label className="lbl">Tipo de pago</label>
         <div style={{ display: 'flex', gap: '.5rem', marginTop: '.35rem' }}>
-          {[['dias','📅 Por día (valor fijo)'],['valor','✏ Destajo (valor libre)']].map(([t, label]) => (
+          {[['dias','Por día (valor fijo)'],['valor','Destajo (valor libre)']].map(([t, label]) => (
             <button key={t} type="button"
               onClick={() => handleTipo(t)}
               style={{
@@ -83,7 +84,7 @@ function FormLabor({ inicial, onGuardar, onCerrar, cargando }) {
             onClick={() => set('activa', !form.activa)}
             className={`badge ${form.activa ? 'badge-green' : 'badge-red'}`}
             style={{ cursor: 'pointer', border: 'none', padding: '.3rem .8rem' }}>
-            {form.activa ? '● Activa' : '○ Inactiva'}
+            {form.activa ? 'Activa' : 'Inactiva'}
           </button>
         </div>
       )}
@@ -91,7 +92,7 @@ function FormLabor({ inicial, onGuardar, onCerrar, cargando }) {
       <div style={{ display: 'flex', gap: '.75rem', marginTop: '.5rem' }}>
         <button className="btn-secondary" onClick={onCerrar} style={{ flex: 1 }}>Cancelar</button>
         <button className="btn-primary" onClick={() => onGuardar(form)} disabled={cargando} style={{ flex: 1, justifyContent: 'center' }}>
-          {cargando ? <span className="spinner" /> : '💾'} {inicial ? 'Actualizar' : 'Crear'}
+          {cargando ? <span className="spinner" /> : <Save size={15} />} {inicial ? 'Actualizar' : 'Crear'}
         </button>
       </div>
     </div>
@@ -128,7 +129,7 @@ function FormCentro({ inicial, onGuardar, onCerrar, cargando }) {
             onClick={() => set('activo', !form.activo)}
             className={`badge ${form.activo ? 'badge-green' : 'badge-red'}`}
             style={{ cursor: 'pointer', border: 'none', padding: '.3rem .8rem' }}>
-            {form.activo ? '● Activo' : '○ Inactivo'}
+            {form.activo ? 'Activo' : 'Inactivo'}
           </button>
         </div>
       )}
@@ -136,7 +137,7 @@ function FormCentro({ inicial, onGuardar, onCerrar, cargando }) {
       <div style={{ display: 'flex', gap: '.75rem', marginTop: '.5rem' }}>
         <button className="btn-secondary" onClick={onCerrar} style={{ flex: 1 }}>Cancelar</button>
         <button className="btn-primary" onClick={() => onGuardar(form)} disabled={cargando} style={{ flex: 1, justifyContent: 'center' }}>
-          {cargando ? <span className="spinner" /> : '💾'} {inicial ? 'Actualizar' : 'Crear'}
+          {cargando ? <span className="spinner" /> : <Save size={15} />} {inicial ? 'Actualizar' : 'Crear'}
         </button>
       </div>
     </div>
@@ -199,7 +200,7 @@ export default function Catalogos() {
       }
 
       if (!res?.ok) return toast(res?.mensaje || 'Error al guardar', 'error')
-      toast(modalLabor?._id ? '✅ Labor actualizada' : '✅ Labor creada', 'ok')
+      toast(modalLabor?._id ? 'Labor actualizada' : 'Labor creada', 'ok')
       setModalLabor(null)
       cargar()
     } finally { setGuardando(false) }
@@ -217,7 +218,7 @@ export default function Catalogos() {
         res = await api.post('/catalogos/centros-costo', form)
       }
       if (!res?.ok) return toast(res?.mensaje || 'Error al guardar', 'error')
-      toast(modalCentro?._id ? '✅ Centro actualizado' : '✅ Centro creado', 'ok')
+      toast(modalCentro?._id ? 'Centro actualizado' : 'Centro creado', 'ok')
       setModalCentro(null)
       cargar()
     } finally { setGuardando(false) }
@@ -249,7 +250,7 @@ export default function Catalogos() {
 
       {/* Sub-tabs */}
       <div style={{ display: 'flex', gap: '.5rem', flexWrap: 'wrap' }} className="fade-up">
-        {[['labores', `⚙ Labores (${labores.length})`], ['centros', `📍 Centros de Costo (${centros.length})`]].map(([t, label]) => (
+        {[['labores', `Labores (${labores.length})`], ['centros', `Centros de Costo (${centros.length})`]].map(([t, label]) => (
           <button key={t} onClick={() => setTab(t)} style={{
             padding: '.6rem 1.2rem', borderRadius: 8,
             border: tab === t ? '1px solid rgba(34,197,94,.3)' : '1px solid var(--border)',
@@ -275,8 +276,8 @@ export default function Catalogos() {
                   value={buscarL} onChange={e => setBuscarL(e.target.value)} />
                 <select className="inp" style={{ width: 'auto' }} value={tipoFiltro} onChange={e => setTipo(e.target.value)}>
                   <option value="">Todos los tipos</option>
-                  <option value="dias">📅 Por día</option>
-                  <option value="valor">✏ Destajo</option>
+                  <option value="dias">Por día</option>
+                  <option value="valor">Destajo</option>
                 </select>
                 <button className="btn-primary" onClick={() => setModalLabor('nuevo')}>
                   + Nueva Labor
@@ -312,8 +313,8 @@ export default function Catalogos() {
                           <td style={{ fontWeight: 500 }}>{l.nombre}</td>
                           <td>
                             {l.pideDias
-                              ? <span className="badge badge-blue">📅 Por día</span>
-                              : <span className="badge badge-yellow">✏ Destajo</span>}
+                              ? <span className="badge badge-blue">Por día</span>
+                              : <span className="badge badge-yellow">Destajo</span>}
                           </td>
                           <td>
                             {l.valorDiario != null
@@ -322,13 +323,13 @@ export default function Catalogos() {
                           </td>
                           <td>
                             <span className={`badge ${l.activa ? 'badge-green' : 'badge-gray'}`}>
-                              {l.activa ? '● Activa' : '○ Inactiva'}
+                              {l.activa ? 'Activa' : 'Inactiva'}
                             </span>
                           </td>
                           <td>
                             <button className="btn-ghost" style={{ fontSize: '.8rem' }}
                               onClick={() => setModalLabor(l)}>
-                              ✎ Editar
+                              Editar
                             </button>
                           </td>
                         </tr>
@@ -377,13 +378,13 @@ export default function Catalogos() {
                           <td style={{ color: 'var(--muted)', fontSize: '.85rem' }}>{c.finca || '—'}</td>
                           <td>
                             <span className={`badge ${c.activo ? 'badge-green' : 'badge-gray'}`}>
-                              {c.activo ? '● Activo' : '○ Inactivo'}
+                              {c.activo ? 'Activo' : 'Inactivo'}
                             </span>
                           </td>
                           <td>
                             <button className="btn-ghost" style={{ fontSize: '.8rem' }}
                               onClick={() => setModalCentro(c)}>
-                              ✎ Editar
+                              Editar
                             </button>
                           </td>
                         </tr>

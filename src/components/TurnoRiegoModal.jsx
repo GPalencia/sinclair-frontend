@@ -133,8 +133,8 @@ export default function TurnoRiegoModal({ modo, inline = false, estaciones, turn
           <div>
             <label className="lbl">Qué se está aplicando</label>
             <div style={{ display: 'flex', gap: '.5rem' }}>
-              <button type="button" style={{ ...chip(f.tipo === 'Riego'), flex: 1 }} onClick={() => set('tipo', 'Riego')}>💧 Solo riego</button>
-              <button type="button" style={{ ...chip(f.tipo === 'Fertirriego'), flex: 1 }} onClick={() => set('tipo', 'Fertirriego')}>🧪 Fertirriego</button>
+              <button type="button" style={{ ...chip(f.tipo === 'Riego'), flex: 1 }} onClick={() => set('tipo', 'Riego')}>Solo riego</button>
+              <button type="button" style={{ ...chip(f.tipo === 'Fertirriego'), flex: 1 }} onClick={() => set('tipo', 'Fertirriego')}>Fertirriego</button>
             </div>
           </div>
 

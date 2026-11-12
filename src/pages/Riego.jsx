@@ -118,7 +118,7 @@ export default function Riego() {
       const res = await api.post('/riego/turnos', bodyTurno('manual', f))
       if (!res?.ok) return toast(res?.mensaje || 'Error al guardar', 'error')
       guardarEstacionero(f.estacionero)
-      toast(`✅ Turno guardado — lote ${f.lote}${f.sector ? ` turno ${f.sector}` : ''}, ${f.horaInicio} a ${f.horaFin}`, 'ok')
+      toast(`Turno guardado — lote ${f.lote}${f.sector ? ` turno ${f.sector}` : ''}, ${f.horaInicio} a ${f.horaFin}`, 'ok')
       refrescar()
       // El formulario queda listo para el siguiente turno de la misma estación y fecha
       setPrefillReg({ ...prefillSiguiente(f, estaciones), fecha: f.fecha })
@@ -137,7 +137,7 @@ export default function Riego() {
       const res = await api.put(`/riego/turnos/${modal.turno._id}`, bodyTurno('editar', f))
       if (!res?.ok) return toast(res?.mensaje || 'Error al guardar', 'error')
       guardarEstacionero(f.estacionero)
-      toast('✅ Turno actualizado', 'ok')
+      toast('Turno actualizado', 'ok')
       setModal(null)
       refrescar()
       if (tab === 'historial') buscarHistorial()
@@ -148,7 +148,7 @@ export default function Riego() {
     if (!window.confirm(`¿Eliminar el turno del lote ${t.lote} (estación ${t.estacion?.nombre}) del ${fechaCorta(t.fecha)}? No se puede deshacer.`)) return
     const res = await api.del(`/riego/turnos/${t._id}`)
     if (!res?.ok) return toast(res?.mensaje || 'Error al eliminar', 'error')
-    toast('✅ Turno eliminado', 'ok')
+    toast('Turno eliminado', 'ok')
     refrescar()
     if (tab === 'historial') buscarHistorial()
   }
@@ -317,7 +317,7 @@ export default function Riego() {
                           <td style={{ whiteSpace: 'nowrap', fontFamily: 'DM Mono, monospace', fontSize: '.8rem' }}>{fechaCorta(d.fecha)} <span style={{ color: 'var(--muted2)', textTransform: 'capitalize' }}>{fechaCorta(d.fecha, { weekday: 'short' })}</span></td>
                           <td style={{ fontWeight: 600 }}>{d.estacion}</td>
                           <td style={{ textAlign: 'center' }}>{d.turnos}</td>
-                          <td style={{ fontSize: '.85rem' }}>{d.lotes.join(' · ')}{d.fertirriegos > 0 && <span className="badge badge-yellow" style={{ marginLeft: '.4rem' }}>🧪 {d.fertirriegos}</span>}</td>
+                          <td style={{ fontSize: '.85rem' }}>{d.lotes.join(' · ')}{d.fertirriegos > 0 && <span className="badge badge-yellow" style={{ marginLeft: '.4rem' }}>Fertirriego: {d.fertirriegos}</span>}</td>
                           <td style={{ fontFamily: 'DM Mono, monospace', fontWeight: 600 }}>{fmtHoras(d.horas)}</td>
                           <td style={{ fontFamily: 'DM Mono, monospace', color: 'var(--verde)', fontWeight: 600 }}>{d.galones != null ? fmtNum(d.galones) : '—'}</td>
                         </tr>
