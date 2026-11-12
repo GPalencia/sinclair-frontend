@@ -3,14 +3,15 @@ import { useState } from 'react'
 import CatalogoBodegas from './CatalogoBodegas'
 import CatalogoArticulosBodega from './CatalogoArticulosBodega'
 import CatalogoDepartamentos from './CatalogoDepartamentos'
+import CatalogoCentrosCosto from './CatalogoCentrosCosto'
 
 export default function CatalogosPases({ onCambioBodegas, onCambioArticulos }) {
-  const [sub, setSub] = useState('bodegas') // 'bodegas' | 'articulos' | 'departamentos'
+  const [sub, setSub] = useState('bodegas') // 'bodegas' | 'articulos' | 'departamentos' | 'centros'
 
   return (
     <div style={{ display: 'flex', flexDirection: 'column', gap: '1.25rem' }}>
       <div style={{ display: 'flex', gap: '.5rem', flexWrap: 'wrap' }}>
-        {[['bodegas', 'Bodegas'], ['articulos', 'Artículos'], ['departamentos', 'Departamentos']].map(([key, label]) => (
+        {[['bodegas', 'Bodegas'], ['articulos', 'Artículos'], ['departamentos', 'Departamentos'], ['centros', 'Centros de costo']].map(([key, label]) => (
           <button key={key} type="button" onClick={() => setSub(key)} className={sub === key ? 'btn-primary' : 'btn-secondary'}
             style={{ fontSize: '.8rem', padding: '.5rem .9rem' }}>
             {label}
@@ -20,6 +21,7 @@ export default function CatalogosPases({ onCambioBodegas, onCambioArticulos }) {
       {sub === 'bodegas' && <CatalogoBodegas onCambio={onCambioBodegas} />}
       {sub === 'articulos' && <CatalogoArticulosBodega onCambio={onCambioArticulos} />}
       {sub === 'departamentos' && <CatalogoDepartamentos />}
+      {sub === 'centros' && <CatalogoCentrosCosto />}
     </div>
   )
 }
