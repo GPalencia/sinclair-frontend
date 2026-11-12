@@ -16,9 +16,9 @@ export default function SolicitudResumen({ sol, acciones }) {
           </div>
           <div style={{ fontSize: '.82rem', color: 'var(--muted)', marginTop: '.15rem' }}>
             {sol.departamentoNombre || sol.departamento?.nombre} · {sol.solicitante} · {fechaCorta(sol.fecha)}
-            {sol.fechaRequerida && <> · para el {fechaCorta(sol.fechaRequerida)}</>}
+
           </div>
-          {sol.destino && <div style={{ fontSize: '.8rem', color: 'var(--text2)', marginTop: '.15rem' }}>Destino / uso: {sol.destino}</div>}
+          {sol.destino && <div style={{ fontSize: '.8rem', color: 'var(--text2)', marginTop: '.15rem' }}>Destino general: {sol.destino}</div>}
         </div>
         <span className={`badge ${COLOR_ESTADO_SOLICITUD[sol.estado] || 'badge-gray'}`}>{sol.estado}</span>
       </div>
@@ -26,7 +26,7 @@ export default function SolicitudResumen({ sol, acciones }) {
       <div style={{ overflowX: 'auto' }}>
         <table className="tbl" style={{ fontSize: '.82rem' }}>
           <thead>
-            <tr><th>Artículo</th><th>U/M</th><th style={{ textAlign: 'right' }}>Pedido</th>
+            <tr><th>C. Costo</th><th>Artículo</th><th>U/M</th><th style={{ textAlign: 'right' }}>Pedido</th>
               {revisada && <th style={{ textAlign: 'right' }}>A entregar</th>}
               <th style={{ textAlign: 'right' }}>Despachado</th><th>Uso / nota</th></tr>
           </thead>
@@ -36,6 +36,10 @@ export default function SolicitudResumen({ sol, acciones }) {
               const cambio = it.cantidadAprobada != null && it.cantidadAprobada !== it.cantidadSolicitada
               return (
                 <tr key={it._id}>
+                  <td style={{ fontSize: '.75rem', whiteSpace: 'nowrap' }} title={it.centroCostoNombre}>
+                    <span style={{ fontFamily: 'DM Mono, monospace', fontWeight: 600 }}>{it.centroCostoCodigo || '—'}</span>
+                    {it.centroCostoNombre && <div style={{ color: 'var(--muted)', maxWidth: 160, whiteSpace: 'normal' }}>{it.centroCostoNombre}</div>}
+                  </td>
                   <td style={{ fontWeight: 500 }}>
                     {it.descripcion}
                     {!it.articulo && <div style={{ fontSize: '.68rem', color: 'var(--muted2)' }}>fuera de catálogo</div>}

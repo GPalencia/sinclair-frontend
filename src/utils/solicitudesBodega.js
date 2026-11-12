@@ -1,5 +1,16 @@
 // src/utils/solicitudesBodega.js — mismas reglas que backend/utils/solicitudesBodega.js
 
+// Sugerencias para "Destino general" (se puede escribir otro)
+export const DESTINOS_GENERALES = [
+  'Finca 7 de Mayo', 'Finca San Juan', 'Finca Ojo de Agua', 'Finca Palmerola', 'Finca La Lujosa',
+  'Finca El Vado', 'Finca Palenque', 'Finca La Canoa', 'Invernadero', 'Empaque', 'Taller', 'Bodega', 'Administración',
+]
+
+// Opciones del combobox de centros de costo: "FSJ10A — Finca San Juan Lote 10A"
+export const opcionesCentros = (centros) => centros.map(c => ({
+  value: c._id, label: c.codigo ? `${c.codigo} — ${c.nombre}` : c.nombre, sublabel: c.abreviatura || c.finca || '',
+}))
+
 export const COLOR_ESTADO_SOLICITUD = {
   Pendiente: 'badge-yellow',
   Revisada: 'badge-blue',

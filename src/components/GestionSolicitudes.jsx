@@ -8,7 +8,7 @@ import { useApi } from '../hooks/useApi'
 import { useToast } from '../hooks/useToast'
 import ComboboxBuscable from './ComboboxBuscable'
 import SolicitudResumen from './SolicitudResumen'
-import { abrirPDFSolicitud, pendienteDe, fmtCant } from '../utils/solicitudesBodega'
+import { abrirPDFSolicitud, pendienteDe, fmtCant, opcionesCentros } from '../utils/solicitudesBodega'
 import { haceDiasLocal, hoyLocal } from '../utils/fecha'
 
 const FILTROS_ESTADO = [
@@ -16,11 +16,12 @@ const FILTROS_ESTADO = [
   ['Despachada', 'Despachadas'], ['Rechazada', 'Rechazadas'], ['', 'Todas'],
 ]
 
-function ModalRevisar({ sol, articulos, guardando, onGuardar, onClose }) {
+function ModalRevisar({ sol, articulos, centros, guardando, onGuardar, onClose }) {
   const [lineas, setLineas] = useState(() => sol.items.map(it => ({
     _id: it._id, articulo: it.articulo || '', descripcion: it.descripcion, unidadMedida: it.unidadMedida || '',
     cantidadSolicitada: it.cantidadSolicitada, cantidadDespachada: it.cantidadDespachada || 0, uso: it.uso || '',
     cantidadAprobada: it.cantidadAprobada ?? it.cantidadSolicitada, notaBodega: it.notaBodega || '',
+    centroCosto: it.centroCosto?._id || it.centroCosto || '',
   })))
   const opciones = articulos.map(a => ({ value: a._id, label: a.codigo ? `[${a.codigo}] ${a.nombre}` : a.nombre, sublabel: a.unidadMedida }))
   const setL = (i, patch) => setLineas(prev => prev.map((l, j) => (j === i ? { ...l, ...patch } : l)))
@@ -58,6 +59,10 @@ function ModalRevisar({ sol, articulos, guardando, onGuardar, onClose }) {
                   onChange={v => { const a = articulos.find(x => x._id === v); setL(i, { articulo: v, descripcion: a?.nombre || l.descripcion, unidadMedida: l.unidadMedida || a?.unidadMedida || '' }) }}
                   placeholder="Ligar con un artículo del catálogo..." />
               </div>
+              <div>
+                <label className="lbl" style={{ fontSize: '.68rem' }}>Centro de costo</label>
+                <ComboboxBuscable options={opcionesCentros(centros)} value={l.centroCosto} onChange={v => setL(i, { centroCosto: v })} placeholder="Centro de costo..." />
+              </div>
               <div style={{ display: 'flex', gap: '.5rem', flexWrap: 'wrap' }}>
                 <div style={{ flex: 1, minWidth: 110 }}>
                   <label className="lbl" style={{ fontSize: '.68rem' }}>A entregar</label>
@@ -76,7 +81,7 @@ function ModalRevisar({ sol, articulos, guardando, onGuardar, onClose }) {
             </div>
           ))}
           <button type="button" className="btn-secondary" style={{ alignSelf: 'flex-start' }}
-            onClick={() => setLineas(prev => [...prev, { articulo: '', descripcion: '', unidadMedida: '', cantidadSolicitada: 0, cantidadDespachada: 0, uso: '', cantidadAprobada: '', notaBodega: 'Agregado por bodega' }])}>
+            onClick={() => setLineas(prev => [...prev, { centroCosto: prev[prev.length - 1]?.centroCosto || '', articulo: '', descripcion: '', unidadMedida: '', cantidadSolicitada: 0, cantidadDespachada: 0, uso: '', cantidadAprobada: '', notaBodega: 'Agregado por bodega' }])}>
             <Plus size={15} /> Agregar línea (sustituto)
           </button>
           <div style={{ display: 'flex', gap: '.75rem', marginTop: '.25rem' }}>
@@ -102,11 +107,13 @@ export default function GestionSolicitudes({ onGenerarSalida, onCambio }) {
   const [lista, setLista] = useState([])
   const [cargando, setCargando] = useState(false)
   const [articulos, setArticulos] = useState([])
+  const [centros, setCentros] = useState([])
   const [revisando, setRevisando] = useState(null)
   const [guardando, setGuardando] = useState(false)
 
   useEffect(() => {
     api.get('/pases-salida/articulos').then(r => { if (r?.ok) setArticulos(r.data.filter(a => a.activo !== false)) })
+    api.get('/solicitudes-bodega/centros-costo').then(r => { if (r?.ok) setCentros(r.data) })
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [])
   useEffect(() => { buscar() }, [estado])
@@ -173,7 +180,7 @@ export default function GestionSolicitudes({ onGenerarSalida, onCambio }) {
       })}
 
       {revisando && (
-        <ModalRevisar sol={revisando} articulos={articulos} guardando={guardando} onGuardar={guardarRevision} onClose={() => setRevisando(null)} />
+        <ModalRevisar sol={revisando} articulos={articulos} centros={centros} guardando={guardando} onGuardar={guardarRevision} onClose={() => setRevisando(null)} />
       )}
     </div>
   )

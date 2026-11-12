@@ -9,16 +9,16 @@ import { useToast } from '../hooks/useToast'
 import { useAuth } from '../context/AuthContext'
 import ComboboxBuscable from '../components/ComboboxBuscable'
 import SolicitudResumen from '../components/SolicitudResumen'
-import { abrirPDFSolicitud } from '../utils/solicitudesBodega'
-import { fechaInput } from '../utils/fecha'
+import { abrirPDFSolicitud, DESTINOS_GENERALES, opcionesCentros } from '../utils/solicitudesBodega'
+import { fechaInput, hoyLocal } from '../utils/fecha'
 
-const ITEM_VACIO = { articulo: '', descripcion: '', manual: false, cantidadSolicitada: '', unidadMedida: '', uso: '' }
+const ITEM_VACIO = { articulo: '', descripcion: '', manual: false, cantidadSolicitada: '', unidadMedida: '', uso: '', centroCosto: '' }
 const KEY_DEP = 'solicitudes.ultimoDepartamento'
 const leerDep = () => { try { return localStorage.getItem(KEY_DEP) || '' } catch { return '' } }
 const guardarDep = (v) => { try { localStorage.setItem(KEY_DEP, v) } catch { /* sin almacenamiento */ } }
 
 const formVacio = (usuario) => ({
-  departamento: leerDep(), solicitante: usuario?.nombre || '', fechaRequerida: '', prioridad: 'Normal', destino: '', observaciones: '',
+  departamento: leerDep(), solicitante: usuario?.nombre || '', fecha: hoyLocal(), prioridad: 'Normal', destino: '', observaciones: '',
 })
 
 export default function SolicitudesBodega() {
@@ -29,6 +29,7 @@ export default function SolicitudesBodega() {
   const [tab, setTab] = useState('nueva') // 'nueva' | 'mias'
   const [departamentos, setDepartamentos] = useState([])
   const [articulos, setArticulos] = useState([])
+  const [centros, setCentros] = useState([])
   const [form, setForm] = useState(() => formVacio(usuario))
   const [items, setItems] = useState([{ ...ITEM_VACIO }])
   const [editandoId, setEditandoId] = useState(null) // editar una solicitud Pendiente
@@ -39,6 +40,7 @@ export default function SolicitudesBodega() {
   useEffect(() => {
     api.get('/solicitudes-bodega/departamentos').then(r => { if (r?.ok) setDepartamentos(r.data) })
     api.get('/pases-salida/articulos').then(r => { if (r?.ok) setArticulos(r.data.filter(a => a.activo !== false)) })
+    api.get('/solicitudes-bodega/centros-costo').then(r => { if (r?.ok) setCentros(r.data) })
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [])
   useEffect(() => { if (tab === 'mias') cargarMias() }, [tab])
@@ -68,12 +70,13 @@ export default function SolicitudesBodega() {
     setEditandoId(sol._id)
     setForm({
       departamento: sol.departamento?._id || sol.departamento, solicitante: sol.solicitante,
-      fechaRequerida: sol.fechaRequerida ? fechaInput(sol.fechaRequerida) : '', prioridad: sol.prioridad,
+      fecha: fechaInput(sol.fecha), prioridad: sol.prioridad,
       destino: sol.destino || '', observaciones: sol.observaciones || '',
     })
     setItems(sol.items.map(it => ({
       articulo: it.articulo || '', descripcion: it.descripcion, manual: !it.articulo,
       cantidadSolicitada: it.cantidadSolicitada, unidadMedida: it.unidadMedida || '', uso: it.uso || '',
+      centroCosto: it.centroCosto?._id || it.centroCosto || '',
     })))
     setTab('nueva')
   }
@@ -84,6 +87,8 @@ export default function SolicitudesBodega() {
     const validos = items.filter(i => (i.manual ? i.descripcion.trim() : i.articulo))
     if (!validos.length) return toast('Agrega al menos un artículo', 'error')
     if (validos.some(i => !(Number(i.cantidadSolicitada) > 0))) return toast('Cada artículo necesita una cantidad mayor a cero', 'error')
+    const sinCentro = validos.findIndex(i => !i.centroCosto)
+    if (sinCentro >= 0) return toast(`Indica el centro de costo del artículo ${items.indexOf(validos[sinCentro]) + 1}`, 'error')
 
     setGuardando(true)
     try {
@@ -92,6 +97,7 @@ export default function SolicitudesBodega() {
         items: validos.map(i => ({
           articulo: i.manual ? null : i.articulo, descripcion: i.descripcion,
           cantidadSolicitada: Number(i.cantidadSolicitada), unidadMedida: i.unidadMedida, uso: i.uso,
+          centroCosto: i.centroCosto,
         })),
       }
       const res = editandoId
@@ -159,8 +165,8 @@ export default function SolicitudesBodega() {
           </div>
           <div style={{ display: 'flex', gap: '1rem', flexWrap: 'wrap' }}>
             <div style={{ flex: 1, minWidth: 160 }}>
-              <label className="lbl">Lo necesito para</label>
-              <input className="inp" type="date" value={form.fechaRequerida} onChange={e => set('fechaRequerida', e.target.value)} />
+              <label className="lbl">Fecha de solicitud</label>
+              <input className="inp" type="date" value={form.fecha} onChange={e => set('fecha', e.target.value)} />
             </div>
             <div style={{ flex: 1, minWidth: 180 }}>
               <label className="lbl">Prioridad</label>
@@ -175,8 +181,9 @@ export default function SolicitudesBodega() {
             </div>
           </div>
           <div>
-            <label className="lbl">Destino / uso</label>
-            <input className="inp" placeholder="Ej. Finca 7 de Mayo, lotes 4 y 5 / Taller / Oficina" value={form.destino} onChange={e => set('destino', e.target.value)} />
+            <label className="lbl">Destino general</label>
+            <datalist id="lista-destinos-generales">{DESTINOS_GENERALES.map(d => <option key={d} value={d} />)}</datalist>
+            <input className="inp" list="lista-destinos-generales" placeholder="Finca 7 de Mayo, Finca San Juan, Empaque, Taller..." value={form.destino} onChange={e => set('destino', e.target.value)} />
           </div>
 
           <div>
@@ -207,7 +214,9 @@ export default function SolicitudesBodega() {
                     <input className="inp" style={{ flex: 1, minWidth: 0 }} placeholder="U/M (kg, L, unidad...)"
                       value={it.unidadMedida} onChange={e => setItem(i, { unidadMedida: e.target.value })} />
                   </div>
-                  <input className="inp" placeholder="Uso (opcional): lote, máquina, dosis..." value={it.uso} onChange={e => setItem(i, { uso: e.target.value })} />
+                  <ComboboxBuscable options={opcionesCentros(centros)} value={it.centroCosto} onChange={v => setItem(i, { centroCosto: v })}
+                    placeholder="Centro de costo * (lote, estación, tractor...)" />
+                  <input className="inp" placeholder="Uso (opcional): dosis, máquina, observación..." value={it.uso} onChange={e => setItem(i, { uso: e.target.value })} />
                 </div>
               ))}
             </div>

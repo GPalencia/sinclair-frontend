@@ -70,7 +70,7 @@ export default function PasesSalida() {
     }))
     setItems(lineas.map(it => ({
       articulo: it.articulo || '', cantidad: pendienteDe(it), unidadMedida: it.unidadMedida || '',
-      solicitudItem: it._id, descSolicitud: it.descripcion, maximo: pendienteDe(it),
+      solicitudItem: it._id, descSolicitud: it.descripcion, maximo: pendienteDe(it), centroCosto: it.centroCostoCodigo || '',
     })))
     setTab('registrar')
   }
@@ -202,7 +202,7 @@ export default function PasesSalida() {
       Destino: p.destino || '',
       'Autorizado Para': p.autorizadoPara,
       'Tipo de Movimiento': p.tipoMovimiento,
-      Artículos: p.items?.map(i => `${i.cantidad} ${i.unidadMedida} ${i.nombre}`).join('; '),
+      Artículos: p.items?.map(i => `${i.cantidad} ${i.unidadMedida} ${i.nombre}${i.centroCostoCodigo ? ` [C.C. ${i.centroCostoCodigo}]` : ''}`).join('; '),
       Estado: p.estado,
     }))
     exportarExcel(filas, `Historial_Salidas_Bodega_${desde}_a_${hasta}`)
@@ -314,7 +314,7 @@ export default function PasesSalida() {
                     <div key={i} style={{ display: 'flex', gap: '.5rem', alignItems: 'flex-start', flexWrap: 'wrap' }}>
                       {it.solicitudItem && (
                         <div style={{ flexBasis: '100%', fontSize: '.75rem', color: it.articulo ? 'var(--muted)' : '#b45309', marginBottom: '-.25rem' }}>
-                          Solicitado: {it.descSolicitud} · faltan {fmtCant(it.maximo)} {it.unidadMedida}{!it.articulo && ' — escoge el artículo del catálogo'}
+                          Solicitado: {it.descSolicitud}{it.centroCosto && ` · C.C. ${it.centroCosto}`} · faltan {fmtCant(it.maximo)} {it.unidadMedida}{!it.articulo && ' — escoge el artículo del catálogo'}
                         </div>
                       )}
                       <div style={{ flex: 3, minWidth: 220 }}>
