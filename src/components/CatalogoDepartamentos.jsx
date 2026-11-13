@@ -14,6 +14,7 @@ export default function CatalogoDepartamentos() {
   const [lista, setLista] = useState([])
   const [cargando, setCargando] = useState(true)
   const [nombre, setNombre] = useState('')
+  const [codigo, setCodigo] = useState('')
   const [guardando, setGuardando] = useState(false)
   const [editando, setEditando] = useState(null) // { id, nombre }
 
@@ -31,10 +32,10 @@ export default function CatalogoDepartamentos() {
     if (!nombre.trim()) return toast('Escribe el nombre del departamento', 'error')
     setGuardando(true)
     try {
-      const res = await api.post('/solicitudes-bodega/departamentos', { nombre: nombre.trim() })
+      const res = await api.post('/solicitudes-bodega/departamentos', { nombre: nombre.trim(), codigo: codigo.trim() })
       if (!res?.ok) return toast(res?.mensaje || 'Error', 'error')
       toast('Departamento agregado', 'ok')
-      setNombre('')
+      setNombre(''); setCodigo('')
       cargar()
     } finally { setGuardando(false) }
   }
@@ -51,6 +52,10 @@ export default function CatalogoDepartamentos() {
       {esAdmin ? (
         <div className="card">
           <div style={{ display: 'flex', gap: '.75rem', flexWrap: 'wrap', alignItems: 'flex-end' }}>
+            <div style={{ width: 120 }}>
+              <label className="lbl">Código SODISA</label>
+              <input className="inp" style={{ fontFamily: 'DM Mono, monospace' }} placeholder="009" value={codigo} onChange={e => setCodigo(e.target.value)} />
+            </div>
             <div style={{ flex: 1, minWidth: 220 }}>
               <label className="lbl">Nuevo departamento</label>
               <input className="inp" value={nombre} onChange={e => setNombre(e.target.value)} onKeyDown={e => e.key === 'Enter' && crear()} />
@@ -65,10 +70,17 @@ export default function CatalogoDepartamentos() {
       )}
       <div className="card" style={{ padding: 0, overflow: 'hidden' }}>
         <table className="tbl">
-          <thead><tr><th>Departamento</th><th>Estado</th>{esAdmin && <th></th>}</tr></thead>
+          <thead><tr><th>Código SODISA</th><th>Departamento</th><th>Estado</th>{esAdmin && <th></th>}</tr></thead>
           <tbody>
             {lista.map(d => (
               <tr key={d._id}>
+                <td style={{ width: 130 }}>
+                  {esAdmin ? (
+                    <input key={d.codigo || ''} className="inp" style={{ fontFamily: 'DM Mono, monospace', padding: '.3rem .5rem', width: 90 }} placeholder="—"
+                      defaultValue={d.codigo || ''} onKeyDown={e => e.key === 'Enter' && e.currentTarget.blur()}
+                      onBlur={e => { if ((d.codigo || '') !== e.target.value.trim()) actualizar(d, { codigo: e.target.value.trim() }) }} />
+                  ) : <span style={{ fontFamily: 'DM Mono, monospace' }}>{d.codigo || '—'}</span>}
+                </td>
                 <td style={{ fontWeight: 500 }}>
                   {editando?.id === d._id ? (
                     <input className="inp" autoFocus value={editando.nombre}
@@ -97,7 +109,7 @@ export default function CatalogoDepartamentos() {
                 )}
               </tr>
             ))}
-            {!cargando && !lista.length && <tr><td colSpan={3} style={{ textAlign: 'center', color: 'var(--muted)', padding: '1.5rem' }}>Sin departamentos. Corre seedDepartamentos.js o agrégalos aquí.</td></tr>}
+            {!cargando && !lista.length && <tr><td colSpan={4} style={{ textAlign: 'center', color: 'var(--muted)', padding: '1.5rem' }}>Sin departamentos. Corre seedDepartamentos.js o agrégalos aquí.</td></tr>}
           </tbody>
         </table>
       </div>

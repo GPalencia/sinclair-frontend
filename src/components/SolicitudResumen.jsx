@@ -4,7 +4,7 @@
 import { COLOR_ESTADO_SOLICITUD, cantidadObjetivo, fmtCant, fmtReq } from '../utils/solicitudesBodega'
 import { fechaCorta } from '../utils/fecha'
 
-export default function SolicitudResumen({ sol, acciones }) {
+export default function SolicitudResumen({ sol, acciones, extra }) {
   const revisada = sol.items.some(i => i.cantidadAprobada != null || i.notaBodega)
   return (
     <div className="card" style={{ display: 'flex', flexDirection: 'column', gap: '.75rem', borderLeft: sol.prioridad === 'Urgente' ? '4px solid #dc2626' : undefined }}>
@@ -15,12 +15,15 @@ export default function SolicitudResumen({ sol, acciones }) {
             {sol.prioridad === 'Urgente' && <span className="badge badge-red" style={{ marginLeft: '.5rem' }}>Urgente</span>}
           </div>
           <div style={{ fontSize: '.82rem', color: 'var(--muted)', marginTop: '.15rem' }}>
-            {sol.departamentoNombre || sol.departamento?.nombre} · {sol.solicitante} · {fechaCorta(sol.fecha)}
+            {sol.departamento?.codigo && `${sol.departamento.codigo} - `}{sol.departamentoNombre || sol.departamento?.nombre} · {sol.solicitanteCodigo && <span style={{ fontFamily: 'DM Mono, monospace' }}>{sol.solicitanteCodigo} </span>}{sol.solicitante} · {fechaCorta(sol.fecha)}
 
           </div>
           {sol.destino && <div style={{ fontSize: '.8rem', color: 'var(--text2)', marginTop: '.15rem' }}>Destino general: {sol.destino}</div>}
         </div>
-        <span className={`badge ${COLOR_ESTADO_SOLICITUD[sol.estado] || 'badge-gray'}`}>{sol.estado}</span>
+        <div style={{ display: 'flex', gap: '.35rem', flexWrap: 'wrap', justifyContent: 'flex-end' }}>
+          {sol.grabadaSodisa && <span className="badge badge-gray">Grabada en SODISA</span>}
+          <span className={`badge ${COLOR_ESTADO_SOLICITUD[sol.estado] || 'badge-gray'}`}>{sol.estado}</span>
+        </div>
       </div>
 
       <div style={{ overflowX: 'auto' }}>
@@ -79,6 +82,7 @@ export default function SolicitudResumen({ sol, acciones }) {
           {sol.revisadoPor?.nombre && <> · revisada por {sol.revisadoPor.nombre}{sol.fechaRevision ? ` el ${new Date(sol.fechaRevision).toLocaleDateString('es-HN')}` : ''}</>}
         </div>
       )}
+      {extra}
       {acciones && <div style={{ display: 'flex', gap: '.5rem', flexWrap: 'wrap' }}>{acciones}</div>}
     </div>
   )

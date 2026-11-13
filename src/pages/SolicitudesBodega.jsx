@@ -16,9 +16,14 @@ const ITEM_VACIO = { articulo: '', descripcion: '', manual: false, cantidadSolic
 const KEY_DEP = 'solicitudes.ultimoDepartamento'
 const leerDep = () => { try { return localStorage.getItem(KEY_DEP) || '' } catch { return '' } }
 const guardarDep = (v) => { try { localStorage.setItem(KEY_DEP, v) } catch { /* sin almacenamiento */ } }
+// Último empleado elegido en "Solicitado por" (casi siempre el jefe pide a su nombre)
+const KEY_EMP = 'solicitudes.ultimoSolicitante'
+const leerEmp = () => { try { return localStorage.getItem(KEY_EMP) || '' } catch { return '' } }
+const guardarEmp = (v) => { try { if (v) localStorage.setItem(KEY_EMP, v) } catch { /* sin almacenamiento */ } }
+const nombreEmp = (e) => `${e.nombres || ''} ${e.apellidos || ''}`.trim()
 
 const formVacio = (usuario) => ({
-  departamento: leerDep(), solicitante: usuario?.nombre || '', fecha: hoyLocal(), prioridad: 'Normal', destino: '', observaciones: '',
+  departamento: leerDep(), solicitantePersonal: leerEmp(), solicitanteManual: false, solicitante: usuario?.nombre || '', fecha: hoyLocal(), prioridad: 'Normal', destino: '', observaciones: '',
 })
 
 export default function SolicitudesBodega() {
@@ -30,6 +35,7 @@ export default function SolicitudesBodega() {
   const [departamentos, setDepartamentos] = useState([])
   const [articulos, setArticulos] = useState([])
   const [centros, setCentros] = useState([])
+  const [empleados, setEmpleados] = useState([])
   const [form, setForm] = useState(() => formVacio(usuario))
   const [items, setItems] = useState([{ ...ITEM_VACIO }])
   const [editandoId, setEditandoId] = useState(null) // editar una solicitud Pendiente
@@ -41,6 +47,7 @@ export default function SolicitudesBodega() {
     api.get('/solicitudes-bodega/departamentos').then(r => { if (r?.ok) setDepartamentos(r.data) })
     api.get('/pases-salida/articulos').then(r => { if (r?.ok) setArticulos(r.data.filter(a => a.activo !== false)) })
     api.get('/solicitudes-bodega/centros-costo').then(r => { if (r?.ok) setCentros(r.data) })
+    api.get('/solicitudes-bodega/empleados').then(r => { if (r?.ok) setEmpleados(r.data) })
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [])
   useEffect(() => { if (tab === 'mias') cargarMias() }, [tab])
@@ -70,6 +77,7 @@ export default function SolicitudesBodega() {
     setEditandoId(sol._id)
     setForm({
       departamento: sol.departamento?._id || sol.departamento, solicitante: sol.solicitante,
+      solicitantePersonal: sol.solicitantePersonal || '', solicitanteManual: !sol.solicitantePersonal,
       fecha: fechaInput(sol.fecha), prioridad: sol.prioridad,
       destino: sol.destino || '', observaciones: sol.observaciones || '',
     })
@@ -83,7 +91,8 @@ export default function SolicitudesBodega() {
 
   async function enviar() {
     if (!form.departamento) return toast('Selecciona el departamento', 'error')
-    if (!form.solicitante.trim()) return toast('Indica quién solicita', 'error')
+    const conEmpleado = !form.solicitanteManual && form.solicitantePersonal && empleados.some(e => e._id === form.solicitantePersonal)
+    if (!conEmpleado && (!form.solicitanteManual || !form.solicitante.trim())) return toast('Indica quién solicita (búscalo en la lista de empleados)', 'error')
     const validos = items.filter(i => (i.manual ? i.descripcion.trim() : i.articulo))
     if (!validos.length) return toast('Agrega al menos un artículo', 'error')
     if (validos.some(i => !(Number(i.cantidadSolicitada) > 0))) return toast('Cada artículo necesita una cantidad mayor a cero', 'error')
@@ -92,8 +101,10 @@ export default function SolicitudesBodega() {
 
     setGuardando(true)
     try {
+      const { solicitanteManual, ...cab } = form
       const body = {
-        ...form,
+        ...cab,
+        solicitantePersonal: conEmpleado ? form.solicitantePersonal : null,
         items: validos.map(i => ({
           articulo: i.manual ? null : i.articulo, descripcion: i.descripcion,
           cantidadSolicitada: Number(i.cantidadSolicitada), unidadMedida: i.unidadMedida, uso: i.uso,
@@ -105,6 +116,7 @@ export default function SolicitudesBodega() {
         : await api.post('/solicitudes-bodega/solicitudes', body)
       if (!res?.ok) return toast(res?.mensaje || 'Error al enviar', 'error')
       guardarDep(form.departamento)
+      if (conEmpleado) guardarEmp(form.solicitantePersonal)
       toast(res.mensaje, 'ok')
       limpiar()
       setTab('mias')
@@ -155,12 +167,22 @@ export default function SolicitudesBodega() {
               <label className="lbl">Departamento *</label>
               <select className="inp" value={form.departamento} onChange={e => set('departamento', e.target.value)}>
                 <option value="">Selecciona...</option>
-                {departamentos.map(d => <option key={d._id} value={d._id}>{d.nombre}</option>)}
+                {departamentos.map(d => <option key={d._id} value={d._id}>{d.codigo ? `${d.codigo} - ${d.nombre}` : d.nombre}</option>)}
               </select>
             </div>
             <div style={{ flex: 1, minWidth: 200 }}>
               <label className="lbl">Solicitado por *</label>
-              <input className="inp" value={form.solicitante} onChange={e => set('solicitante', e.target.value)} />
+              {form.solicitanteManual ? (
+                <input className="inp" placeholder="Nombre completo" value={form.solicitante} onChange={e => set('solicitante', e.target.value)} />
+              ) : (
+                <ComboboxBuscable
+                  options={empleados.map(e => ({ value: e._id, label: nombreEmp(e), sublabel: [e.codigoEmpleado, e.cargo].filter(Boolean).join(' - ') }))}
+                  value={form.solicitantePersonal} onChange={v => set('solicitantePersonal', v)} placeholder="Busca por nombre o código..." />
+              )}
+              <button type="button" className="btn-ghost" style={{ padding: '.2rem 0', fontSize: '.75rem', color: 'var(--muted)' }}
+                onClick={() => set('solicitanteManual', !form.solicitanteManual)}>
+                {form.solicitanteManual ? 'Elegir de la lista de empleados' : 'No aparece en la lista? Escribir el nombre'}
+              </button>
             </div>
           </div>
           <div style={{ display: 'flex', gap: '1rem', flexWrap: 'wrap' }}>

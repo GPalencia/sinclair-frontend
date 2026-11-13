@@ -3,18 +3,49 @@
 // "no hay", ligar con el catálogo), lo imprime y genera la Salida de Bodega.
 import { useState, useEffect } from 'react'
 import { createPortal } from 'react-dom'
-import { Ban, ClipboardCheck, PackageCheck, Plus, Printer, Save, Search, X } from 'lucide-react'
+import { Ban, Check, ClipboardCheck, FileSpreadsheet, PackageCheck, Plus, Printer, Save, Search, Undo2, X } from 'lucide-react'
 import { useApi } from '../hooks/useApi'
 import { useToast } from '../hooks/useToast'
 import ComboboxBuscable from './ComboboxBuscable'
 import SolicitudResumen from './SolicitudResumen'
-import { abrirPDFSolicitud, pendienteDe, fmtCant, opcionesCentros, fmtReq } from '../utils/solicitudesBodega'
+import { abrirPDFSolicitud, pendienteDe, fmtCant, opcionesCentros, fmtReq, filasSodisa } from '../utils/solicitudesBodega'
+import { exportarExcelHojas } from '../utils/exportExcel'
 import { haceDiasLocal, hoyLocal } from '../utils/fecha'
 
 const FILTROS_ESTADO = [
   ['abiertas', 'Por atender'], ['Pendiente', 'Pendientes'], ['Revisada', 'Revisadas'], ['Parcial', 'Parciales'],
   ['Despachada', 'Despachadas'], ['Rechazada', 'Rechazadas'], ['', 'Todas'],
+  ['sodisa', 'Por grabar en SODISA'],
 ]
+
+// Recuadro "SODISA" en cada requisición que ya tuvo salida: marca de grabada.
+function BloqueSodisa({ sol, onGuardar }) {
+  const [guardando, setGuardando] = useState(false)
+  const guardar = async (grabada) => { setGuardando(true); try { await onGuardar(sol, { grabada }) } finally { setGuardando(false) } }
+  return (
+    <div style={{ display: 'flex', alignItems: 'center', gap: '.75rem', flexWrap: 'wrap', padding: '.55rem .75rem', borderRadius: 8, background: 'var(--card2)', border: sol.grabadaSodisa ? '1px solid var(--border)' : '1px dashed var(--border)', fontSize: '.8rem' }}>
+      {sol.grabadaSodisa ? (
+        <>
+          <span className="badge badge-green">Grabada en SODISA</span>
+          <span style={{ color: 'var(--muted)' }}>
+            {sol.fechaGrabadaSodisa && new Date(sol.fechaGrabadaSodisa).toLocaleDateString('es-HN')}
+            {sol.grabadaSodisaPor?.nombre && ` por ${sol.grabadaSodisaPor.nombre}`}
+          </span>
+          <button type="button" className="btn-ghost" style={{ padding: '.2rem .5rem', fontSize: '.75rem', marginLeft: 'auto' }} disabled={guardando}
+            onClick={() => guardar(false)}><Undo2 size={13} /> Desmarcar</button>
+        </>
+      ) : (
+        <>
+          <span style={{ color: 'var(--muted)' }}>SODISA: por grabar</span>
+          <button type="button" className="btn-primary" style={{ fontSize: '.78rem', padding: '.45rem .8rem', marginLeft: 'auto' }} disabled={guardando}
+            onClick={() => guardar(true)}>
+            {guardando ? <span className="spinner" /> : <Check size={14} />} Marcar grabada en SODISA
+          </button>
+        </>
+      )}
+    </div>
+  )
+}
 
 function ModalRevisar({ sol, articulos, centros, guardando, onGuardar, onClose }) {
   const [lineas, setLineas] = useState(() => sol.items.map(it => ({
@@ -122,7 +153,8 @@ export default function GestionSolicitudes({ onGenerarSalida, onCambio }) {
     setCargando(true)
     try {
       const p = new URLSearchParams({ alcance: 'todas', desde, hasta })
-      if (estado) p.set('estado', estado)
+      if (estado === 'sodisa') p.set('sodisa', 'pendiente')
+      else if (estado) p.set('estado', estado)
       const res = await api.get(`/solicitudes-bodega/solicitudes?${p}`)
       if (!res?.ok) return toast(res?.mensaje || 'Error', 'error')
       setLista(res.data)
@@ -138,6 +170,22 @@ export default function GestionSolicitudes({ onGenerarSalida, onCambio }) {
       setRevisando(null)
       buscar(); onCambio?.()
     } finally { setGuardando(false) }
+  }
+
+  async function guardarSodisa(sol, datos) {
+    const res = await api.put(`/solicitudes-bodega/solicitudes/${sol._id}/sodisa`, datos)
+    if (!res?.ok) return toast(res?.mensaje || 'Error', 'error')
+    toast(res.mensaje, 'ok')
+    // En "Por grabar" la que se marca sale de la lista; en los demás filtros se actualiza
+    setLista(prev => (estado === 'sodisa' && res.data.grabadaSodisa ? prev.filter(x => x._id !== sol._id) : prev.map(x => (x._id === sol._id ? res.data : x))))
+    onCambio?.()
+  }
+
+  function excelSodisa() {
+    const conSalida = lista.filter(s => s.pases?.length)
+    if (!conSalida.length) return toast('No hay requisiciones con salida en esta lista', 'error')
+    const { resumen, detalle } = filasSodisa(conSalida)
+    exportarExcelHojas([{ nombre: 'Para SODISA', filas: resumen }, { nombre: 'Detalle articulos', filas: detalle }], `Requisiciones_SODISA_${desde}_a_${hasta}`)
   }
 
   async function rechazar(sol) {
@@ -162,6 +210,9 @@ export default function GestionSolicitudes({ onGenerarSalida, onCambio }) {
           <div style={{ flex: 1, minWidth: 140 }}><label className="lbl">Desde</label><input className="inp" type="date" value={desde} onChange={e => setDesde(e.target.value)} /></div>
           <div style={{ flex: 1, minWidth: 140 }}><label className="lbl">Hasta</label><input className="inp" type="date" value={hasta} onChange={e => setHasta(e.target.value)} /></div>
           <button className="btn-primary" onClick={buscar} disabled={cargando}>{cargando ? <span className="spinner" /> : <Search size={15} />} Buscar</button>
+          <button className="btn-secondary" onClick={excelSodisa} disabled={cargando || !lista.length} title="Una fila por requisición y centro de costo, en el orden de SODISA">
+            <FileSpreadsheet size={15} /> Exportar Excel
+          </button>
         </div>
       </div>
 
@@ -170,7 +221,9 @@ export default function GestionSolicitudes({ onGenerarSalida, onCambio }) {
         const abierta = ['Pendiente', 'Revisada', 'Parcial'].includes(sol.estado)
         const hayPendiente = sol.items.some(it => pendienteDe(it) > 0)
         return (
-          <SolicitudResumen key={sol._id} sol={sol} acciones={<>
+          <SolicitudResumen key={sol._id} sol={sol}
+            extra={sol.pases?.length > 0 && <BloqueSodisa sol={sol} onGuardar={guardarSodisa} />}
+            acciones={<>
             {abierta && <button className="btn-secondary" onClick={() => setRevisando(sol)}><ClipboardCheck size={15} /> Revisar / editar</button>}
             <button className="btn-secondary" onClick={() => abrirPDFSolicitud(api, toast, sol)}><Printer size={15} /> Imprimir</button>
             {abierta && hayPendiente && <button className="btn-primary" onClick={() => onGenerarSalida(sol)}><PackageCheck size={15} /> Generar salida</button>}

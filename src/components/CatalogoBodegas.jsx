@@ -11,6 +11,7 @@ export default function CatalogoBodegas({ onCambio }) {
   const [cargando, setCargando] = useState(true)
   const [nombre, setNombre]     = useState('')
   const [ubicacion, setUbicacion] = useState('')
+  const [codigo, setCodigo] = useState('')
   const [guardando, setGuardando] = useState(false)
 
   useEffect(() => { cargar() }, [])
@@ -29,15 +30,24 @@ export default function CatalogoBodegas({ onCambio }) {
     if (!nombre.trim()) return toast('El nombre de la bodega es obligatorio', 'error')
     setGuardando(true)
     try {
-      const res = await api.post('/pases-salida/bodegas', { nombre, ubicacion })
+      const res = await api.post('/pases-salida/bodegas', { nombre, ubicacion, codigo })
       if (!res?.ok) return toast(res?.mensaje || 'Error al guardar', 'error')
       toast('Bodega agregada', 'ok')
-      setNombre(''); setUbicacion('')
+      setNombre(''); setUbicacion(''); setCodigo('')
       cargar()
       onCambio?.()
     } finally {
       setGuardando(false)
     }
+  }
+
+  // Código SODISA editable en la tabla; se guarda al salir del campo
+  async function guardarCodigo(b, valor) {
+    if ((b.codigo || '') === valor.trim()) return
+    const res = await api.put(`/pases-salida/bodegas/${b._id}`, { codigo: valor })
+    if (!res?.ok) return toast(res?.mensaje || 'Error', 'error')
+    toast(`Código de ${b.nombre} guardado`, 'ok')
+    cargar()
   }
 
   async function toggleActivo(b) {
@@ -54,6 +64,11 @@ export default function CatalogoBodegas({ onCambio }) {
           Agregar bodega
         </h3>
         <div style={{ display: 'flex', gap: '1rem', flexWrap: 'wrap', alignItems: 'flex-end' }}>
+          <div style={{ width: 110 }}>
+            <label className="lbl">Código SODISA</label>
+            <input className="inp" style={{ fontFamily: 'DM Mono, monospace' }} placeholder="01" value={codigo}
+              onChange={e => setCodigo(e.target.value)} />
+          </div>
           <div style={{ flex: 1, minWidth: 180 }}>
             <label className="lbl">Nombre</label>
             <input className="inp" placeholder="Ej. Bodega Jícaro" value={nombre}
@@ -80,11 +95,16 @@ export default function CatalogoBodegas({ onCambio }) {
           <div style={{ overflowX: 'auto' }}>
             <table className="tbl">
               <thead>
-                <tr><th>Bodega</th><th>Ubicación</th><th>Estado</th></tr>
+                <tr><th>Código SODISA</th><th>Bodega</th><th>Ubicación</th><th>Estado</th></tr>
               </thead>
               <tbody>
                 {bodegas.map(b => (
                   <tr key={b._id}>
+                    <td style={{ width: 120 }}>
+                      <input key={b.codigo || ''} className="inp" style={{ fontFamily: 'DM Mono, monospace', padding: '.3rem .5rem', width: 90 }}
+                        placeholder="—" defaultValue={b.codigo || ''} onBlur={e => guardarCodigo(b, e.target.value)}
+                        onKeyDown={e => e.key === 'Enter' && e.currentTarget.blur()} />
+                    </td>
                     <td style={{ fontWeight: 500 }}>{b.nombre}</td>
                     <td style={{ fontSize: '.82rem', color: 'var(--muted)' }}>{b.ubicacion || '—'}</td>
                     <td>
@@ -97,7 +117,7 @@ export default function CatalogoBodegas({ onCambio }) {
                   </tr>
                 ))}
                 {!bodegas.length && (
-                  <tr><td colSpan={3} style={{ textAlign: 'center', color: 'var(--muted)', padding: '1.5rem' }}>Sin registros aún</td></tr>
+                  <tr><td colSpan={4} style={{ textAlign: 'center', color: 'var(--muted)', padding: '1.5rem' }}>Sin registros aún</td></tr>
                 )}
               </tbody>
             </table>
