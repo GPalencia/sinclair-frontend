@@ -10,8 +10,9 @@ import { useState, useEffect, useMemo, useRef } from 'react'
 import { useNavigate } from 'react-router-dom'
 import {
   ArrowLeft, CheckCircle2, ChevronDown, ChevronUp, ClipboardList, FileText, Maximize2,
-  Minimize2, PackageCheck, Search, ShoppingBasket, Trash2, X,
+  Minimize2, PackageCheck, PenLine, Search, ShoppingBasket, Trash2, X,
 } from 'lucide-react'
+import FirmarSalidaModal from '../components/FirmarSalidaModal'
 import LOGO from '../assets/logo'
 import { useApi } from '../hooks/useApi'
 import { useToast } from '../hooks/useToast'
@@ -77,7 +78,8 @@ export default function PasesTablet() {
   const [verMas, setVerMas]       = useState(false)
 
   const [guardando, setGuardando] = useState(false)
-  const [exito, setExito]         = useState(null)   // { folio, id, bodega, items }
+  const [exito, setExito]         = useState(null)   // { folio, id, bodega, items, pase }
+  const [firmando, setFirmando]   = useState(null)   // salida a la que se le toman las firmas
   const [pantallaCompleta, setPantallaCompleta] = useState(false)
 
   // ── Carga inicial ──────────────────────────────────────────────
@@ -263,6 +265,7 @@ export default function PasesTablet() {
         bodega: res.data.bodega?.nombre || bodegas.find(b => b._id === bodega)?.nombre || '',
         autorizadoPara: autorizadoPara.trim(),
         lineas: carrito.length,
+        pase: res.data,
       })
       setVerDatos(false)
       setCarrito([]); setSelId(null)
@@ -481,15 +484,18 @@ export default function PasesTablet() {
         {verHoy && (
           <div className="pos-hoy-lista">
             {!hoyLista.length ? (
-              <div style={{ padding: '1rem', textAlign: 'center', color: 'var(--muted)' }}>Todavía no hay pases hoy.</div>
+              <div style={{ padding: '1rem', textAlign: 'center', color: 'var(--muted)' }}>Todavía no hay salidas hoy.</div>
             ) : hoyLista.map(p => (
-              <div key={p._id} className="pos-hoy-fila" onClick={() => abrirPDF(p._id)} style={{ cursor: 'pointer' }}>
+              <div key={p._id} className="pos-hoy-fila" style={{ cursor: 'pointer' }}
+                onClick={() => (p.firmaEntrega?.fecha && p.firmaRecibe?.fecha) || p.estado === 'Despachado' ? abrirPDF(p._id) : setFirmando(p)}>
                 <span style={{ fontFamily: 'DM Mono, monospace', fontWeight: 800, color: 'var(--verde-dark)', minWidth: 52 }}>#{p.folio}</span>
                 <span style={{ flex: 1, minWidth: 0, overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>
                   {p.autorizadoPara} <span style={{ color: '#64748b' }}>· {p.items?.length || 0} art.</span>
                 </span>
-                <span className={`badge ${p.estado === 'Despachado' ? 'badge-green' : 'badge-yellow'}`}>{p.estado === 'Despachado' ? 'Salió' : 'Por salir'}</span>
-                <FileText size={18} color="#64748b" />
+                {p.estado !== 'Despachado' && !(p.firmaEntrega?.fecha && p.firmaRecibe?.fecha)
+                  ? <span className="badge badge-red">Falta firma</span>
+                  : <span className={`badge ${p.estado === 'Despachado' ? 'badge-green' : 'badge-yellow'}`}>{p.estado === 'Despachado' ? 'Salió' : 'Por salir'}</span>}
+                {p.estado !== 'Despachado' && !(p.firmaEntrega?.fecha && p.firmaRecibe?.fecha) ? <PenLine size={18} color="#dc2626" /> : <FileText size={18} color="#64748b" />}
               </div>
             ))}
           </div>
@@ -593,6 +599,10 @@ export default function PasesTablet() {
         </div>
       )}
 
+      {firmando && (
+        <FirmarSalidaModal pase={firmando} onClose={() => { setFirmando(null); cargarHoy() }} onVerPDF={p => abrirPDF(p._id)} />
+      )}
+
       {/* ── Confirmación grande ── */}
       {exito && (
         <div className="pos-exito" onClick={() => setExito(null)}>
@@ -609,11 +619,15 @@ export default function PasesTablet() {
               Ya aparece en la pantalla de Caseta
             </div>
             <div style={{ display: 'flex', flexDirection: 'column', gap: '.6rem', width: '100%', marginTop: '1.1rem' }}>
-              <button className="pt-volver" style={{ width: '100%', display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '.5rem' }} onClick={() => abrirPDF(exito.id)}>
-                <FileText size={20} /> Ver / imprimir PDF
+              <button className="pos-despachar" style={{ width: '100%', height: 64, display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '.6rem' }}
+                onClick={() => { setFirmando(exito.pase); setExito(null) }}>
+                <PenLine size={22} /> FIRMAR ENTREGA
               </button>
-              <button className="pos-despachar" style={{ width: '100%', height: 64 }} onClick={() => setExito(null)}>
-                NUEVO PASE
+              <button className="pt-volver" style={{ width: '100%', display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '.5rem' }} onClick={() => abrirPDF(exito.id)}>
+                <FileText size={20} /> Ver / imprimir pase
+              </button>
+              <button className="pt-volver" style={{ width: '100%' }} onClick={() => setExito(null)}>
+                Firmar después / nueva salida
               </button>
             </div>
           </div>

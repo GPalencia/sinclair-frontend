@@ -3,14 +3,15 @@
 // ahí se genera la salida ya llena y queda ligada a la solicitud (trazabilidad).
 import { useState, useEffect } from 'react'
 import { useNavigate } from 'react-router-dom'
-import { ClipboardList, FileDown, FileText, Inbox, Layers, Plus, Save, Search, Tablet, Trash2, X } from 'lucide-react'
+import { ClipboardList, FileDown, FileText, Inbox, Layers, PenLine, Plus, Save, Search, Tablet, Trash2, X } from 'lucide-react'
 import { useApi } from '../hooks/useApi'
 import { useToast } from '../hooks/useToast'
 import { useAuth } from '../context/AuthContext'
 import CatalogosPases from '../components/CatalogosPases'
 import ComboboxBuscable from '../components/ComboboxBuscable'
 import GestionSolicitudes from '../components/GestionSolicitudes'
-import { pendienteDe, fmtCant } from '../utils/solicitudesBodega'
+import FirmarSalidaModal from '../components/FirmarSalidaModal'
+import { pendienteDe, fmtCant, fmtReq } from '../utils/solicitudesBodega'
 import { exportarExcel } from '../utils/exportExcel'
 import { fechaCorta, hoyLocal, haceDiasLocal } from '../utils/fecha'
 
@@ -29,7 +30,8 @@ export default function PasesSalida() {
   const navigate   = useNavigate()
 
   const [tab, setTab] = useState('registrar') // 'registrar' | 'solicitudes' | 'historial' | 'catalogos'
-  const [solicitudOrigen, setSolicitudOrigen] = useState(null) // salida generada desde una solicitud
+  const [solicitudOrigen, setSolicitudOrigen] = useState(null) // salida generada desde una requisición
+  const [firmando, setFirmando] = useState(null) // salida a la que se le toman las firmas
   const [conteo, setConteo] = useState({ pendientes: 0, abiertas: 0 })
 
   // Catálogos
@@ -161,7 +163,8 @@ export default function PasesSalida() {
       setSolicitudOrigen(null)
       cargarConteo()
       setBuscado(false)
-      abrirPDF(res.data)
+      // Se toman las firmas en pantalla; desde ahí se imprime el pase
+      setFirmando(res.data)
     } finally {
       setGuardando(false)
     }
@@ -184,7 +187,7 @@ export default function PasesSalida() {
   }
 
   async function eliminarPase(p) {
-    if (!window.confirm(`¿Eliminar la Salida No. ${p.folio}?${p.solicitud ? ` Se le devolverá lo despachado a la Solicitud No. ${p.solicitud.folio}.` : ''} Esta acción no se puede deshacer.`)) return
+    if (!window.confirm(`¿Eliminar la Salida No. ${p.folio}?${p.solicitud ? ` Se le devolverá lo despachado a la requisición ${fmtReq(p.solicitud.folio)}.` : ''} Esta acción no se puede deshacer.`)) return
     const res = await api.del(`/pases-salida/pases/${p._id}`)
     if (!res?.ok) return toast(res?.mensaje || 'Error al eliminar', 'error')
     toast(res.mensaje || 'Salida eliminada', 'ok')
@@ -196,7 +199,7 @@ export default function PasesSalida() {
     const filas = pases.map(p => ({
       Folio: p.folio,
       Fecha: fechaCorta(p.fecha),
-      'Solicitud No.': p.solicitud?.folio ?? '',
+      Requisición: p.solicitud ? fmtReq(p.solicitud.folio) : '',
       Departamento: p.solicitud?.departamentoNombre ?? '',
       Bodega: p.bodega?.nombre ?? '',
       Destino: p.destino || '',
@@ -204,6 +207,9 @@ export default function PasesSalida() {
       'Tipo de Movimiento': p.tipoMovimiento,
       Artículos: p.items?.map(i => `${i.cantidad} ${i.unidadMedida} ${i.nombre}${i.centroCostoCodigo ? ` [C.C. ${i.centroCostoCodigo}]` : ''}`).join('; '),
       Estado: p.estado,
+      Firmas: p.firmaEntrega?.fecha && p.firmaRecibe?.fecha ? 'Firmada' : 'Pendiente de firma',
+      'Entregó (firma)': p.firmaEntrega?.nombre || '',
+      'Recibió (firma)': p.firmaRecibe?.nombre || '',
     }))
     exportarExcel(filas, `Historial_Salidas_Bodega_${desde}_a_${hasta}`)
   }
@@ -222,7 +228,7 @@ export default function PasesSalida() {
       </div>
 
       <div className="fade-up" style={{ display: 'flex', gap: '.5rem', borderBottom: '1px solid var(--border)', flexWrap: 'wrap' }}>
-        {[['registrar', 'Registrar Salida', ClipboardList], ['solicitudes', 'Solicitudes', Inbox], ['historial', 'Historial', Search], ['catalogos', 'Catálogos', Layers]].map(([key, label, Icon]) => (
+        {[['registrar', 'Registrar Salida', ClipboardList], ['solicitudes', 'Requisiciones', Inbox], ['historial', 'Historial', Search], ['catalogos', 'Catálogos', Layers]].map(([key, label, Icon]) => (
           <button key={key} type="button" onClick={() => setTab(key)}
             style={{
               display: 'flex', alignItems: 'center', gap: '.4rem',
@@ -253,12 +259,12 @@ export default function PasesSalida() {
               {solicitudOrigen && (
                 <div style={{ background: 'var(--verde-light)', border: '1px solid var(--verde)', borderRadius: 10, padding: '.7rem .9rem', display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', gap: '.75rem', fontSize: '.85rem' }}>
                   <div>
-                    <b>Salida para la Solicitud No. {solicitudOrigen.folio}</b> — {solicitudOrigen.departamentoNombre} · {solicitudOrigen.solicitante}
+                    <b>Salida para la requisición {fmtReq(solicitudOrigen.folio)}</b> — {solicitudOrigen.departamentoNombre} · {solicitudOrigen.solicitante}
                     <div style={{ fontSize: '.78rem', color: 'var(--text2)', marginTop: '.2rem' }}>
-                      Vienen las cantidades que faltan por entregar. Si algo sale de otra bodega, quita esa línea: queda pendiente en la solicitud para otra salida.
+                      Vienen las cantidades que faltan por entregar. Si algo sale de otra bodega, quita esa línea: queda pendiente en la requisición para otra salida.
                     </div>
                   </div>
-                  <button className="btn-ghost" style={{ padding: '.25rem .5rem', flexShrink: 0 }} onClick={cancelarSolicitudOrigen} title="Quitar la solicitud"><X size={16} /></button>
+                  <button className="btn-ghost" style={{ padding: '.25rem .5rem', flexShrink: 0 }} onClick={cancelarSolicitudOrigen} title="Quitar la requisición"><X size={16} /></button>
                 </div>
               )}
               <div style={{ display: 'flex', gap: '1rem', flexWrap: 'wrap' }}>
@@ -357,7 +363,7 @@ export default function PasesSalida() {
 
               <button className="btn-primary" style={{ justifyContent: 'center', marginTop: '.5rem' }}
                 onClick={guardar} disabled={guardando}>
-                {guardando ? <span className="spinner" /> : <Save size={15} />} {solicitudOrigen ? `Guardar salida de la Solicitud No. ${solicitudOrigen.folio}` : 'Guardar y ver PDF'}
+                {guardando ? <span className="spinner" /> : <Save size={15} />} {solicitudOrigen ? `Guardar salida de ${fmtReq(solicitudOrigen.folio)}` : 'Guardar y firmar'}
               </button>
             </div>
           )}
@@ -406,8 +412,8 @@ export default function PasesSalida() {
                 <table className="tbl">
                   <thead>
                     <tr>
-                      <th>Folio</th><th>Fecha</th><th>Bodega</th><th>Solicitud</th><th>Autorizado Para</th>
-                      <th>Tipo</th><th>Artículos</th><th>Estado</th>
+                      <th>Folio</th><th>Fecha</th><th>Bodega</th><th>Requisición</th><th>Autorizado Para</th>
+                      <th>Tipo</th><th>Artículos</th><th>Estado</th><th>Firmas</th>
                       <th style={{ position: 'sticky', right: 0, background: 'var(--card2)', boxShadow: '-4px 0 6px -4px rgba(0,0,0,.15)' }}></th>
                     </tr>
                   </thead>
@@ -420,7 +426,7 @@ export default function PasesSalida() {
                         </td>
                         <td style={{ whiteSpace: 'nowrap' }}>{p.bodega?.nombre}</td>
                         <td style={{ fontSize: '.8rem', whiteSpace: 'nowrap' }}>
-                          {p.solicitud ? <>No. {p.solicitud.folio}<div style={{ fontSize: '.7rem', color: 'var(--muted)' }}>{p.solicitud.departamentoNombre}</div></> : '—'}
+                          {p.solicitud ? <>{fmtReq(p.solicitud.folio)}<div style={{ fontSize: '.7rem', color: 'var(--muted)' }}>{p.solicitud.departamentoNombre}</div></> : '—'}
                         </td>
                         <td>{p.autorizadoPara}</td>
                         <td style={{ fontSize: '.82rem' }}>{p.tipoMovimiento}</td>
@@ -430,9 +436,19 @@ export default function PasesSalida() {
                         <td>
                           <span className={`badge ${COLOR_ESTADO[p.estado] || 'badge-gray'}`}>{p.estado}</span>
                         </td>
+                        <td>
+                          {p.firmaEntrega?.fecha && p.firmaRecibe?.fecha
+                            ? <span className="badge badge-green">Firmada</span>
+                            : <span className="badge badge-red">Pendiente de firma</span>}
+                        </td>
                         <td style={{ position: 'sticky', right: 0, background: 'var(--card)', boxShadow: '-4px 0 6px -4px rgba(0,0,0,.15)' }}>
                           <div style={{ display: 'flex', gap: '.25rem' }}>
-                            <button className="btn-ghost" style={{ padding: '.35rem .6rem' }} onClick={() => abrirPDF(p)} title="Ver PDF">
+                            {!(p.firmaEntrega?.fecha && p.firmaRecibe?.fecha) && p.estado !== 'Despachado' && (
+                              <button className="btn-ghost" style={{ padding: '.35rem .6rem', color: 'var(--verde)' }} onClick={() => setFirmando(p)} title="Firmar">
+                                <PenLine size={14} />
+                              </button>
+                            )}
+                            <button className="btn-ghost" style={{ padding: '.35rem .6rem' }} onClick={() => abrirPDF(p)} title="Ver / imprimir pase">
                               <FileText size={14} />
                             </button>
                             {usuario?.rol === 'admin' && (
@@ -452,7 +468,12 @@ export default function PasesSalida() {
         </>
       )}
 
-      {/* ── Solicitudes de los departamentos ── */}
+      {firmando && (
+        <FirmarSalidaModal pase={firmando} onClose={() => setFirmando(null)} onVerPDF={abrirPDF}
+          onFirmado={(p) => { setFirmando(prev => ({ ...prev, firmaEntrega: p.firmaEntrega, firmaRecibe: p.firmaRecibe })); setPases(prev => prev.map(x => x._id === p._id ? { ...x, firmaEntrega: p.firmaEntrega, firmaRecibe: p.firmaRecibe } : x)) }} />
+      )}
+
+      {/* ── Requisiciones de los departamentos ── */}
       {tab === 'solicitudes' && (
         <GestionSolicitudes onGenerarSalida={generarDesdeSolicitud} onCambio={cargarConteo} />
       )}

@@ -148,7 +148,7 @@ export default function CatalogoCentrosCosto() {
               </div>
               <label style={{ display: 'flex', alignItems: 'flex-start', gap: '.5rem', fontSize: '.88rem' }}>
                 <input type="checkbox" style={{ marginTop: '.2rem' }} checked={modal.form.enPlanilla} onChange={e => setForm({ enPlanilla: e.target.checked })} />
-                <span>Usar también en Planillas<div style={{ fontSize: '.75rem', color: 'var(--muted)' }}>Si no, solo aparece en Solicitudes a Bodega.</div></span>
+                <span>Usar también en Planillas<div style={{ fontSize: '.75rem', color: 'var(--muted)' }}>Si no, solo aparece en Requisiciones a Bodega.</div></span>
               </label>
               {modal.id && (
                 <label style={{ display: 'flex', alignItems: 'center', gap: '.5rem', fontSize: '.88rem' }}>

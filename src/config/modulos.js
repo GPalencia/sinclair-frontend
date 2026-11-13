@@ -54,7 +54,7 @@ export const MODULOS = [
   },
   {
     key: 'solicitudesBodega',
-    label: 'Solicitudes a Bodega',
+    label: 'Requisiciones a Bodega',
     icon: 'ClipboardPen',
     to: '/solicitudes-bodega',
   },

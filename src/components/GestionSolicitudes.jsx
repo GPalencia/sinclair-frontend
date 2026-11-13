@@ -8,7 +8,7 @@ import { useApi } from '../hooks/useApi'
 import { useToast } from '../hooks/useToast'
 import ComboboxBuscable from './ComboboxBuscable'
 import SolicitudResumen from './SolicitudResumen'
-import { abrirPDFSolicitud, pendienteDe, fmtCant, opcionesCentros } from '../utils/solicitudesBodega'
+import { abrirPDFSolicitud, pendienteDe, fmtCant, opcionesCentros, fmtReq } from '../utils/solicitudesBodega'
 import { haceDiasLocal, hoyLocal } from '../utils/fecha'
 
 const FILTROS_ESTADO = [
@@ -31,7 +31,7 @@ function ModalRevisar({ sol, articulos, centros, guardando, onGuardar, onClose }
       style={{ position: 'fixed', inset: 0, background: 'rgba(0,0,0,.75)', zIndex: 100, display: 'flex', alignItems: 'center', justifyContent: 'center', padding: '1rem' }}>
       <div style={{ background: 'var(--card)', border: '1px solid var(--border)', borderRadius: 14, padding: '1.5rem', width: '100%', maxWidth: 820, maxHeight: 'calc(100dvh - 2rem)', overflowY: 'auto' }}>
         <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '.5rem' }}>
-          <h3 style={{ fontFamily: 'Inter, sans-serif', fontSize: '1.05rem', fontWeight: 700 }}>Revisar Solicitud No. {sol.folio}</h3>
+          <h3 style={{ fontFamily: 'Inter, sans-serif', fontSize: '1.05rem', fontWeight: 700 }}>Revisar requisición {fmtReq(sol.folio)}</h3>
           <button className="btn-ghost" onClick={onClose} style={{ padding: '.3rem .6rem' }}><X size={18} /></button>
         </div>
         <p style={{ fontSize: '.82rem', color: 'var(--muted)', marginBottom: '1rem' }}>
@@ -141,7 +141,7 @@ export default function GestionSolicitudes({ onGenerarSalida, onCambio }) {
   }
 
   async function rechazar(sol) {
-    const motivo = window.prompt(`Motivo del rechazo de la Solicitud No. ${sol.folio}:`)
+    const motivo = window.prompt(`Motivo del rechazo de la requisición ${fmtReq(sol.folio)}:`)
     if (motivo === null) return
     const res = await api.put(`/solicitudes-bodega/solicitudes/${sol._id}/rechazar`, { motivo })
     if (!res?.ok) return toast(res?.mensaje || 'Error', 'error')
@@ -165,7 +165,7 @@ export default function GestionSolicitudes({ onGenerarSalida, onCambio }) {
         </div>
       </div>
 
-      {!cargando && !lista.length && <div className="card" style={{ textAlign: 'center', color: 'var(--muted)' }}>No hay solicitudes con ese filtro.</div>}
+      {!cargando && !lista.length && <div className="card" style={{ textAlign: 'center', color: 'var(--muted)' }}>No hay requisiciones con ese filtro.</div>}
       {lista.map(sol => {
         const abierta = ['Pendiente', 'Revisada', 'Parcial'].includes(sol.estado)
         const hayPendiente = sol.items.some(it => pendienteDe(it) > 0)

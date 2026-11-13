@@ -9,7 +9,7 @@ import { useToast } from '../hooks/useToast'
 import { useAuth } from '../context/AuthContext'
 import ComboboxBuscable from '../components/ComboboxBuscable'
 import SolicitudResumen from '../components/SolicitudResumen'
-import { abrirPDFSolicitud, DESTINOS_GENERALES, opcionesCentros } from '../utils/solicitudesBodega'
+import { abrirPDFSolicitud, DESTINOS_GENERALES, opcionesCentros, fmtReq } from '../utils/solicitudesBodega'
 import { fechaInput, hoyLocal } from '../utils/fecha'
 
 const ITEM_VACIO = { articulo: '', descripcion: '', manual: false, cantidadSolicitada: '', unidadMedida: '', uso: '', centroCosto: '' }
@@ -112,19 +112,19 @@ export default function SolicitudesBodega() {
   }
 
   async function anular(sol) {
-    if (!window.confirm(`¿Anular la Solicitud No. ${sol.folio}?`)) return
+    if (!window.confirm(`¿Anular la requisición ${fmtReq(sol.folio)}?`)) return
     const res = await api.put(`/solicitudes-bodega/solicitudes/${sol._id}/anular`, {})
     if (!res?.ok) return toast(res?.mensaje || 'Error', 'error')
     toast(res.mensaje, 'ok')
     cargarMias()
   }
 
-  const TABS = [['nueva', editandoId ? 'Editar solicitud' : 'Nueva solicitud', ClipboardPen], ['mias', 'Mis solicitudes', Inbox]]
+  const TABS = [['nueva', editandoId ? 'Editar requisición' : 'Nueva requisición', ClipboardPen], ['mias', 'Mis requisiciones', Inbox]]
 
   return (
     <div style={{ display: 'flex', flexDirection: 'column', gap: '1.25rem' }}>
       <div className="fade-up">
-        <h1 style={{ fontSize: '1.4rem', fontWeight: 700, marginBottom: '.25rem' }}>Solicitudes a Bodega</h1>
+        <h1 style={{ fontSize: '1.4rem', fontWeight: 700, marginBottom: '.25rem' }}>Requisiciones a Bodega</h1>
         <p style={{ color: 'var(--muted)', fontSize: '.88rem' }}>Pide insumos, repuestos, herramientas o mobiliario a Bodega</p>
       </div>
 
@@ -146,7 +146,7 @@ export default function SolicitudesBodega() {
         <div className="card" style={{ display: 'flex', flexDirection: 'column', gap: '1rem', maxWidth: 760 }}>
           {editandoId && (
             <div style={{ fontSize: '.82rem', background: 'var(--card2)', border: '1px solid var(--border)', borderRadius: 10, padding: '.6rem .85rem', display: 'flex', justifyContent: 'space-between', alignItems: 'center', gap: '.5rem' }}>
-              <span>Editando una solicitud pendiente.</span>
+              <span>Editando una requisición pendiente.</span>
               <button className="btn-ghost" style={{ padding: '.25rem .5rem' }} onClick={limpiar}><X size={15} /> Cancelar</button>
             </div>
           )}
@@ -165,7 +165,7 @@ export default function SolicitudesBodega() {
           </div>
           <div style={{ display: 'flex', gap: '1rem', flexWrap: 'wrap' }}>
             <div style={{ flex: 1, minWidth: 160 }}>
-              <label className="lbl">Fecha de solicitud</label>
+              <label className="lbl">Fecha</label>
               <input className="inp" type="date" value={form.fecha} onChange={e => set('fecha', e.target.value)} />
             </div>
             <div style={{ flex: 1, minWidth: 180 }}>
@@ -239,7 +239,7 @@ export default function SolicitudesBodega() {
       {tab === 'mias' && (
         <div style={{ display: 'flex', flexDirection: 'column', gap: '1rem' }}>
           {cargandoMias && <div className="card" style={{ textAlign: 'center' }}><span className="spinner" /></div>}
-          {!cargandoMias && !mias.length && <div className="card" style={{ textAlign: 'center', color: 'var(--muted)' }}>Todavía no has hecho solicitudes.</div>}
+          {!cargandoMias && !mias.length && <div className="card" style={{ textAlign: 'center', color: 'var(--muted)' }}>Todavía no has hecho requisiciones.</div>}
           {mias.map(sol => (
             <SolicitudResumen key={sol._id} sol={sol} acciones={<>
               <button className="btn-secondary" onClick={() => abrirPDFSolicitud(api, toast, sol)}><Printer size={15} /> Imprimir</button>

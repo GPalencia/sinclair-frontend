@@ -1,5 +1,8 @@
 // src/utils/solicitudesBodega.js — mismas reglas que backend/utils/solicitudesBodega.js
 
+// Correlativo de requisición: 15 -> "REQ-000015" (igual que el backend)
+export const fmtReq = (folio) => `REQ-${String(folio ?? '').padStart(6, '0')}`
+
 // Sugerencias para "Destino general" (se puede escribir otro)
 export const DESTINOS_GENERALES = [
   'Finca 7 de Mayo', 'Finca San Juan', 'Finca Ojo de Agua', 'Finca Palmerola', 'Finca La Lujosa',

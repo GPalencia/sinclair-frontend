@@ -1,7 +1,7 @@
 // src/components/SolicitudResumen.jsx
 // Tarjeta de una Solicitud a Bodega: encabezado, estado y líneas con
 // Pedido / A entregar / Despachado. La usan el jefe (Mis solicitudes) y Bodega.
-import { COLOR_ESTADO_SOLICITUD, cantidadObjetivo, fmtCant } from '../utils/solicitudesBodega'
+import { COLOR_ESTADO_SOLICITUD, cantidadObjetivo, fmtCant, fmtReq } from '../utils/solicitudesBodega'
 import { fechaCorta } from '../utils/fecha'
 
 export default function SolicitudResumen({ sol, acciones }) {
@@ -11,7 +11,7 @@ export default function SolicitudResumen({ sol, acciones }) {
       <div style={{ display: 'flex', justifyContent: 'space-between', gap: '.75rem', flexWrap: 'wrap', alignItems: 'flex-start' }}>
         <div>
           <div style={{ fontSize: '1.05rem', fontWeight: 700 }}>
-            Solicitud No. {sol.folio}
+            Requisición {fmtReq(sol.folio)}
             {sol.prioridad === 'Urgente' && <span className="badge badge-red" style={{ marginLeft: '.5rem' }}>Urgente</span>}
           </div>
           <div style={{ fontSize: '.82rem', color: 'var(--muted)', marginTop: '.15rem' }}>

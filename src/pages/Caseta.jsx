@@ -105,6 +105,14 @@ export default function Caseta() {
                     {p.items?.map(i => `${i.cantidad} ${i.unidadMedida} ${i.nombre}`).join(' · ')}
                   </div>
                 </div>
+                {!(p.firmaEntrega?.fecha && p.firmaRecibe?.fecha) ? (
+                  <div style={{ border: '2px solid #dc2626', color: '#dc2626', borderRadius: 12, padding: '.9rem 1.2rem', fontWeight: 700, textAlign: 'center', maxWidth: 260 }}>
+                    PENDIENTE DE FIRMA
+                    <div style={{ fontSize: '.78rem', fontWeight: 500, marginTop: '.2rem' }}>
+                      Falta: {[!p.firmaEntrega?.fecha && 'Bodega', !p.firmaRecibe?.fecha && 'quien recibe'].filter(Boolean).join(' y ')}. No puede salir todavía.
+                    </div>
+                  </div>
+                ) : (
                 <button
                   onClick={() => despachar(p)}
                   disabled={despachando === p._id}
@@ -116,6 +124,7 @@ export default function Caseta() {
                   {despachando === p._id ? <span className="spinner" /> : <PackageCheck size={22} />}
                   Despachar
                 </button>
+                )}
               </div>
             ))}
           </div>
