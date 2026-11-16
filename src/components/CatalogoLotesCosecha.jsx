@@ -1,10 +1,10 @@
 // src/components/CatalogoLotesCosecha.jsx
 import { useState, useEffect, useMemo } from 'react'
 import { createPortal } from 'react-dom'
-import { Plus, RefreshCcw, X } from 'lucide-react'
+import { Pencil, Plus, RefreshCcw, Save, X } from 'lucide-react'
 import { useApi } from '../hooks/useApi'
 import { useToast } from '../hooks/useToast'
-import { fechaCorta, hoyLocal } from '../utils/fecha'
+import { fechaCorta, fechaInput, hoyLocal } from '../utils/fecha'
 
 // Cada fila del catálogo es UN CICLO de cosecha. Un mismo Finca+Lote puede
 // tener varios ciclos (solo uno activo); el botón "Nuevo ciclo" cierra el
@@ -24,6 +24,7 @@ export default function CatalogoLotesCosecha({ onCambio }) {
   const [guardando, setGuardando] = useState(false)
   const [modalCiclo, setModalCiclo] = useState(null)   // { lote, form }
   const [guardandoCiclo, setGuardandoCiclo] = useState(false)
+  const [modalEditar, setModalEditar] = useState(null)  // { lote, form } — corregir fecha de calentamiento, variedad, área
 
   // Número de ciclo (1, 2, 3...) y cuál es el último de cada Finca+Lote
   const infoCiclos = useMemo(() => {
@@ -50,6 +51,24 @@ export default function CatalogoLotesCosecha({ onCambio }) {
       if (!res?.ok) return toast(res?.mensaje || 'Error al crear el ciclo', 'error')
       toast(`Nuevo ciclo de ${lote.finca} lote ${lote.lote} desde ${fechaCorta(f.fechaCalentamiento + 'T00:00:00Z')}`, 'ok')
       setModalCiclo(null)
+      cargar()
+      onCambio?.()
+    } finally { setGuardandoCiclo(false) }
+  }
+
+  function abrirEditar(l) {
+    setModalEditar({ lote: l, form: { fechaCalentamiento: fechaInput(l.fechaCalentamiento), variedad: l.variedad || '', area: l.area ?? '' } })
+  }
+
+  async function guardarEdicion() {
+    const { lote, form: f } = modalEditar
+    if (!f.fechaCalentamiento) return toast('La fecha de calentamiento es obligatoria', 'error')
+    setGuardandoCiclo(true)
+    try {
+      const res = await api.put(`/produccion-finca/lotes/${lote._id}`, f)
+      if (!res?.ok) return toast(res?.mensaje || 'Error al guardar', 'error')
+      toast(`${lote.finca} lote ${lote.lote} actualizado`, 'ok')
+      setModalEditar(null)
       cargar()
       onCambio?.()
     } finally { setGuardandoCiclo(false) }
@@ -167,7 +186,11 @@ export default function CatalogoLotesCosecha({ onCambio }) {
                         {l.activo ? 'Activo' : 'Inactivo'}
                       </button>
                     </td>
-                    <td>
+                    <td style={{ whiteSpace: 'nowrap' }}>
+                      <button type="button" className="btn-ghost" style={{ padding: '.35rem .5rem', marginRight: '.35rem' }}
+                        title="Editar fecha de calentamiento, variedad o área" onClick={() => abrirEditar(l)}>
+                        <Pencil size={14} />
+                      </button>
                       {infoCiclos[l._id]?.esUltimo && (
                         <button type="button" className="btn-secondary" style={{ padding: '.35rem .7rem', fontSize: '.78rem', whiteSpace: 'nowrap' }}
                           onClick={() => abrirNuevoCiclo(l)} title="El lote vuelve a cosecha: cierra este ciclo y abre uno nuevo">
@@ -224,6 +247,51 @@ export default function CatalogoLotesCosecha({ onCambio }) {
                 <button className="btn-secondary" style={{ flex: 1 }} onClick={() => setModalCiclo(null)}>Cancelar</button>
                 <button className="btn-primary" style={{ flex: 2, justifyContent: 'center' }} onClick={guardarNuevoCiclo} disabled={guardandoCiclo}>
                   {guardandoCiclo ? <span className="spinner" /> : <RefreshCcw size={15} />} Crear nuevo ciclo
+                </button>
+              </div>
+            </div>
+          </div>
+        </div>,
+        document.body
+      )}
+
+      {modalEditar && createPortal(
+        <div onClick={e => e.target === e.currentTarget && setModalEditar(null)}
+          style={{ position: 'fixed', inset: 0, background: 'rgba(0,0,0,.75)', zIndex: 100, display: 'flex', alignItems: 'center', justifyContent: 'center', padding: '1rem' }}>
+          <div style={{ background: 'var(--card)', border: '1px solid var(--border)', borderRadius: 14, padding: '1.5rem', width: '100%', maxWidth: 460, maxHeight: 'calc(100dvh - 2rem)', overflowY: 'auto' }}>
+            <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '1rem' }}>
+              <h3 style={{ fontFamily: 'Inter, sans-serif', fontSize: '1rem', fontWeight: 700 }}>
+                Editar ciclo — {modalEditar.lote.finca} lote {modalEditar.lote.lote}
+              </h3>
+              <button className="btn-ghost" onClick={() => setModalEditar(null)} style={{ padding: '.3rem .6rem' }}><X size={18} /></button>
+            </div>
+            <div style={{ display: 'flex', flexDirection: 'column', gap: '.9rem' }}>
+              <div>
+                <label className="lbl">Fecha de calentamiento *</label>
+                <input className="inp" type="date" value={modalEditar.form.fechaCalentamiento}
+                  onChange={e => setModalEditar(m => ({ ...m, form: { ...m.form, fechaCalentamiento: e.target.value } }))} />
+                {modalEditar.form.fechaCalentamiento !== fechaInput(modalEditar.lote.fechaCalentamiento) && (
+                  <div style={{ fontSize: '.74rem', color: 'var(--muted)', marginTop: '.3rem' }}>
+                    Antes: {fechaCorta(modalEditar.lote.fechaCalentamiento)}. Los días de cosecha y la etapa de todas las remisiones de este ciclo se recalculan con la fecha nueva.
+                  </div>
+                )}
+              </div>
+              <div style={{ display: 'flex', gap: '1rem' }}>
+                <div style={{ flex: 1 }}>
+                  <label className="lbl">Variedad</label>
+                  <input className="inp" value={modalEditar.form.variedad}
+                    onChange={e => setModalEditar(m => ({ ...m, form: { ...m.form, variedad: e.target.value } }))} />
+                </div>
+                <div style={{ flex: 1 }}>
+                  <label className="lbl">Área (Mz)</label>
+                  <input className="inp" type="number" step="0.01" min="0" value={modalEditar.form.area}
+                    onChange={e => setModalEditar(m => ({ ...m, form: { ...m.form, area: e.target.value } }))} />
+                </div>
+              </div>
+              <div style={{ display: 'flex', gap: '.75rem' }}>
+                <button className="btn-secondary" style={{ flex: 1 }} onClick={() => setModalEditar(null)}>Cancelar</button>
+                <button className="btn-primary" style={{ flex: 2, justifyContent: 'center' }} onClick={guardarEdicion} disabled={guardandoCiclo}>
+                  {guardandoCiclo ? <span className="spinner" /> : <Save size={15} />} Guardar
                 </button>
               </div>
             </div>

@@ -132,7 +132,7 @@ export default function ProduccionFinca() {
         cestas: form.cestas === '' ? null : Number(form.cestas),
         totalKilos: form.totalKilos === '' ? null : Number(form.totalKilos),
         // Con peso neto el rendimiento se calcula solo; el manual solo vale si no hay peso
-        rendAproximado: form.totalKilos !== '' || form.rendAproximado === '' ? null : Number(form.rendAproximado),
+        rendAproximado: null,
         cultivo: form.cultivo || null,
         tamano: form.tamano,
         empaque: form.empaque === '' ? null : Number(form.empaque),
@@ -166,7 +166,7 @@ export default function ProduccionFinca() {
         caporales: Number(formEditar.caporales || 0),
         cestas: formEditar.cestas === '' ? null : Number(formEditar.cestas),
         totalKilos: formEditar.totalKilos === '' ? null : Number(formEditar.totalKilos),
-        rendAproximado: formEditar.totalKilos !== '' || formEditar.rendAproximado === '' ? null : Number(formEditar.rendAproximado),
+        ...(formEditar.totalKilos !== '' ? { rendAproximado: null } : {}),
         cultivo: formEditar.cultivo || null,
         tamano: formEditar.tamano,
         empaque: formEditar.empaque === '' ? null : Number(formEditar.empaque),
@@ -344,14 +344,8 @@ export default function ProduccionFinca() {
                   <label className="lbl">Peso Neto (3 cestas)</label>
                   <input className="inp" type="number" step="0.01" min="0" value={form.totalKilos} onChange={e => set('totalKilos', e.target.value)} />
                 </div>
-                {form.totalKilos === '' && (
-                  <div style={{ flex: 1, minWidth: 140 }}>
-                    <label className="lbl">Rend. (solo si no hay peso)</label>
-                    <input className="inp" type="number" step="0.01" min="0" value={form.rendAproximado} onChange={e => set('rendAproximado', e.target.value)} />
-                  </div>
-                )}
               </div>
-              <PreviaEmpaque pesoNeto={form.totalKilos} cestas={form.cestas} rendManual={form.rendAproximado}
+              <PreviaEmpaque pesoNeto={form.totalKilos} cestas={form.cestas}
                 variedad={lotes.find(l => l._id === form.loteCosecha)?.variedad} />
 
               {/* Para remisiones de Invernadero (Willy) — opcionales, no aplican a okra */}
@@ -445,7 +439,7 @@ export default function ProduccionFinca() {
                   <thead>
                     <tr>
                       <th>Fecha</th><th>Finca / Lote</th><th>Cultivo</th><th>Tamaño</th><th>Personal Laborado</th>
-                      <th>Cestas</th><th>Empaque</th><th>Peso Neto</th><th>Peso x Cesta</th><th>Rend.</th>
+                      <th>Cestas</th><th>Empaque</th><th>Peso Neto</th><th>Peso x Cesta</th><th>Rendimiento</th>
                       <th>Cajas 7kg</th><th>Cajas 4kg</th><th>Cajas 5kg</th>
                       <th>Cestas/Jornal</th><th>Personal Proy.</th><th>Días Cosecha</th><th>Estado</th>
                       <th style={{ position: 'sticky', right: 0, background: 'var(--card2)', boxShadow: '-4px 0 6px -4px rgba(0,0,0,.15)' }}></th>
@@ -588,14 +582,7 @@ export default function ProduccionFinca() {
               <input className="inp" type="number" step="0.01" min="0" value={formEditar.totalKilos}
                 onChange={e => setFormEditar(p => ({ ...p, totalKilos: e.target.value }))} />
             </div>
-            {formEditar.totalKilos === '' && (
-              <div>
-                <label className="lbl">Rend. (solo si no hay peso)</label>
-                <input className="inp" type="number" step="0.01" min="0" value={formEditar.rendAproximado}
-                  onChange={e => setFormEditar(p => ({ ...p, rendAproximado: e.target.value }))} />
-              </div>
-            )}
-            <PreviaEmpaque pesoNeto={formEditar.totalKilos} cestas={formEditar.cestas} rendManual={formEditar.rendAproximado}
+            <PreviaEmpaque pesoNeto={formEditar.totalKilos} cestas={formEditar.cestas} rendManual={formEditar.totalKilos === '' ? formEditar.rendAproximado : ''}
               variedad={modalEditar?.loteCosecha?.variedad} />
             <div style={{ display: 'flex', gap: '1rem', flexWrap: 'wrap' }}>
               <div style={{ flex: 1, minWidth: 160 }}>
