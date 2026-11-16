@@ -18,6 +18,7 @@ import TecladoNumerico, { aplicarTecla } from '../components/TecladoNumerico'
 import { hoyLocal, fechaCorta } from '../utils/fecha'
 
 import { medidorDe } from '../utils/medidor'
+import { LUGARES_CARGA, nombreLugar, lugarSugerido } from '../utils/lugarCarga'
 const LLAVE_ENCARGADO = 'sinclair_encargado_bomba'
 
 const CATEGORIAS = [
@@ -74,6 +75,7 @@ export default function EstacionTablet() {
   const [fechaManual, setFechaManual] = useState('')     // vacío = hoy
   const [requisicion, setRequisicion] = useState('')
   const [ruta, setRuta]             = useState('')
+  const [lugar, setLugar]           = useState('')   // '' = automático (EL si la unidad es de línea)
   const [encargado, setEncargado]   = useState(() => localStorage.getItem(LLAVE_ENCARGADO) || '')
 
   const [guardando, setGuardando]   = useState(false)
@@ -122,7 +124,8 @@ export default function EstacionTablet() {
   }
   async function cargarHoy() {
     const hoy = hoyLocal()
-    const res = await api.get(`/estacion-sinclair/despachos?desde=${hoy}&hasta=${hoy}&limite=200`)
+    // Solo lo que salió del tanque (las cargas en gasolinera externa se registran en la oficina)
+    const res = await api.get(`/estacion-sinclair/despachos?desde=${hoy}&hasta=${hoy}&limite=200&lugarCarga=interno`)
     if (res?.ok) setHoyLista(res.data)
   }
   async function cargarInventario() {
@@ -167,6 +170,7 @@ export default function EstacionTablet() {
 
   // Kilometraje/horómetro según el catálogo; las estaciones de riego siempre llevan horómetro
   const requiereLectura = !!medidorDe(seleccionada)
+  const lugarUsado = lugar || lugarSugerido(seleccionada)
   const ultimaLectura = seleccionada ? stats.ultima[seleccionada._id]?.lectura : null
   const galonesNum = Number(galones)
   const puedeDespachar = !!seleccionada && galonesNum > 0 && !guardando
@@ -176,6 +180,7 @@ export default function EstacionTablet() {
   // ── Acciones ───────────────────────────────────────────────────
   function elegirUnidad(m) {
     setSeleccionada(m)
+    setLugar('')
     setGalones('')
     setLectura('')
     setCampoActivo('galones')
@@ -241,6 +246,7 @@ export default function EstacionTablet() {
         cantidadDieselGalones: galonesNum,
         encargadoBomba: encargado,
         ruta,
+        lugarCarga: lugarUsado,
       })
       if (!res?.ok) return toast(res?.mensaje || 'No se pudo guardar el despacho', 'error')
 
@@ -256,6 +262,7 @@ export default function EstacionTablet() {
       soltarUnidad()
       setRequisicion('')
       setRuta('')
+      setLugar('')
       setFechaManual('')
       cargarInventario()
       cargarHoy()
@@ -442,13 +449,18 @@ export default function EstacionTablet() {
               <button className="pos-extras-toggle" onClick={() => setVerExtras(v => !v)}>
                 <span>
                   Más datos <span style={{ color: 'var(--muted)', fontWeight: 500 }}>
-                    · {encargado || 'sin encargado'}{ruta ? ` · ${ruta}` : ''}
+                    · {nombreLugar(lugarUsado)} · {encargado || 'sin encargado'}{ruta ? ` · ${ruta}` : ''}
                   </span>
                 </span>
                 {verExtras ? <ChevronUp size={18} /> : <ChevronDown size={18} />}
               </button>
               {verExtras && (
                 <div className="pos-extras">
+                  <label>Estación
+                    <select className="inp" value={lugarUsado} onChange={e => setLugar(e.target.value)}>
+                      {LUGARES_CARGA.filter(([k]) => k !== 'EXT').map(([k, n]) => <option key={k} value={k}>{k} — {n}</option>)}
+                    </select>
+                  </label>
                   <label>Encargado de bomba
                     <input className="inp" value={encargado} onChange={e => cambiarEncargado(e.target.value)} />
                   </label>

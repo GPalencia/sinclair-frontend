@@ -15,9 +15,11 @@ function hoy() { return hoyLocal() }
 const FORM_VACIO = {
   maquinaria: '', fecha: hoy(), numeroRequisicion: '', lecturaActual: '',
   cantidadDieselGalones: '', encargadoBomba: '', ruta: '',
+  lugarCarga: '', conductor: '', gasolinera: '', facturaExterna: '', precioGalonExterno: '', totalExterno: '',
 }
 
 import { medidorDe } from '../utils/medidor'
+import { LUGARES_CARGA, nombreLugar, lugarSugerido } from '../utils/lugarCarga'
 
 const COLOR_ALERTA = {
   'Bajo rendimiento':     'badge-red',
@@ -43,6 +45,7 @@ export default function EstacionSinclair() {
   const [desde, setDesde]             = useState(hoy())
   const [hasta, setHasta]             = useState(hoy())
   const [maquinaFiltro, setMaquinaFiltro] = useState('')
+  const [lugarFiltro, setLugarFiltro] = useState('')
   const [despachos, setDespachos]     = useState([])
   const [cargandoHist, setCH]         = useState(false)
   const [buscado, setBuscado]         = useState(false)
@@ -78,11 +81,18 @@ export default function EstacionSinclair() {
   // Kilometraje/horómetro según el catálogo; las estaciones de riego siempre llevan horómetro
   const medidorSel = medidorDe(maquinaSel)
   const requiereLectura = !!medidorSel
+  // '' = automático: EL si la unidad es camión de línea, si no EF
+  const lugarUsado = form.lugarCarga || lugarSugerido(maquinaSel)
+  const externo = lugarUsado === 'EXT'
+  const totalTicketCalc = externo && form.precioGalonExterno !== '' && form.cantidadDieselGalones !== ''
+    ? Math.round(Number(form.precioGalonExterno) * Number(form.cantidadDieselGalones) * 100) / 100 : null
   const opcionesMaquinas = maquinas.map(m => ({ value: m._id, label: `${m.codigo} — ${m.unidadDestino}`, sublabel: m.tipo }))
 
   async function guardar() {
     if (!form.maquinaria)                return toast('Selecciona la máquina', 'error')
     if (!form.cantidadDieselGalones)     return toast('La cantidad de diesel es obligatoria', 'error')
+    if (externo && !form.gasolinera.trim()) return toast('Indica la gasolinera donde cargó', 'error')
+    if (externo && form.precioGalonExterno === '' && form.totalExterno === '') return toast('Indica el precio por galón o el total del ticket', 'error')
     setGuardando(true)
     try {
       const res = await api.post('/estacion-sinclair/despachos', {
@@ -93,10 +103,16 @@ export default function EstacionSinclair() {
         cantidadDieselGalones: Number(form.cantidadDieselGalones),
         encargadoBomba: form.encargadoBomba,
         ruta: form.ruta,
+        lugarCarga: lugarUsado,
+        conductor: form.conductor,
+        gasolinera: form.gasolinera,
+        facturaExterna: form.facturaExterna,
+        precioGalonExterno: form.precioGalonExterno === '' ? null : Number(form.precioGalonExterno),
+        totalExterno: form.totalExterno === '' ? null : Number(form.totalExterno),
       })
       if (!res?.ok) return toast(res?.mensaje || 'Error al guardar', 'error')
-      toast('Despacho registrado', 'ok')
-      setForm(prev => ({ ...FORM_VACIO, fecha: prev.fecha, encargadoBomba: prev.encargadoBomba }))
+      toast(externo ? 'Carga externa registrada (no afecta el inventario)' : 'Despacho registrado', 'ok')
+      setForm(prev => ({ ...FORM_VACIO, fecha: prev.fecha, encargadoBomba: prev.encargadoBomba, lugarCarga: prev.lugarCarga, gasolinera: prev.gasolinera }))
       setBuscado(false)
       cargarInventario()
     } finally {
@@ -110,6 +126,7 @@ export default function EstacionSinclair() {
     try {
       const params = new URLSearchParams({ desde, hasta, limite: 300 })
       if (maquinaFiltro) params.set('maquinaria', maquinaFiltro)
+      if (lugarFiltro) params.set('lugarCarga', lugarFiltro)
       const res = await api.get(`/estacion-sinclair/despachos?${params.toString()}`)
       if (!res?.ok) return toast(res?.mensaje || 'Error', 'error')
       setDespachos(res.data)
@@ -124,6 +141,12 @@ export default function EstacionSinclair() {
     const filas = despachos.map(d => ({
       Fecha: fechaCorta(d.fecha),
       Máquina: `${d.maquinaria?.codigo ?? ''} — ${d.maquinaria?.unidadDestino ?? ''}`,
+      'Lugar de carga': `${d.lugarCarga || 'EF'} - ${nombreLugar(d.lugarCarga)}`,
+      Gasolinera: d.gasolinera || '',
+      'Factura / ticket': d.facturaExterna || '',
+      Conductor: d.conductor || '',
+      Ruta: d.ruta || '',
+      Requisición: d.numeroRequisicion || '',
       Galones: d.cantidadDieselGalones ?? '',
       'Precio/Gal': d.calculado?.precioGalon ?? '',
       Total: d.calculado?.total ?? '',
@@ -164,6 +187,12 @@ export default function EstacionSinclair() {
             <div className="card">
               <div style={{ fontSize: '.75rem', color: 'var(--muted)', fontFamily: 'Inter, sans-serif', textTransform: 'uppercase', letterSpacing: '.05em' }}>Dados de baja</div>
               <div style={{ fontSize: '1.3rem', fontWeight: 700, fontFamily: 'DM Mono, monospace', marginTop: '.3rem' }}>{inventario.totalBajasGalones} gal</div>
+            </div>
+          )}
+          {inventario.totalExternosGalones > 0 && (
+            <div className="card" title="Cargado en gasolineras externas: no entra ni sale del tanque">
+              <div style={{ fontSize: '.75rem', color: 'var(--muted)', fontFamily: 'Inter, sans-serif', textTransform: 'uppercase', letterSpacing: '.05em' }}>Cargas externas</div>
+              <div style={{ fontSize: '1.3rem', fontWeight: 700, fontFamily: 'DM Mono, monospace', marginTop: '.3rem' }}>{inventario.totalExternosGalones} gal</div>
             </div>
           )}
           <div className="card">
@@ -208,6 +237,47 @@ export default function EstacionSinclair() {
               </div>
 
               <div style={{ display: 'flex', gap: '1rem', flexWrap: 'wrap' }}>
+                <div style={{ flex: 1, minWidth: 220 }}>
+                  <label className="lbl">Lugar de carga</label>
+                  <select className="inp" value={lugarUsado} onChange={e => set('lugarCarga', e.target.value)}>
+                    {LUGARES_CARGA.map(([k, n]) => <option key={k} value={k}>{k} — {n}</option>)}
+                  </select>
+                </div>
+                <div style={{ flex: 1, minWidth: 160 }}>
+                  <label className="lbl">Conductor / operador</label>
+                  <input className="inp" value={form.conductor} onChange={e => set('conductor', e.target.value)} />
+                </div>
+              </div>
+              {externo && (
+                <div style={{ display: 'flex', flexDirection: 'column', gap: '.85rem', padding: '.9rem 1rem', border: '1px solid var(--border)', borderRadius: 10, background: 'var(--card2)' }}>
+                  <div style={{ fontSize: '.78rem', color: 'var(--muted)' }}>
+                    Carga en gasolinera externa: queda en el historial y en el rendimiento de la unidad, pero no descuenta del tanque.
+                  </div>
+                  <div style={{ display: 'flex', gap: '1rem', flexWrap: 'wrap' }}>
+                    <div style={{ flex: 2, minWidth: 180 }}>
+                      <label className="lbl">Gasolinera *</label>
+                      <input className="inp" placeholder="Ej. Puma Choluteca" value={form.gasolinera} onChange={e => set('gasolinera', e.target.value)} />
+                    </div>
+                    <div style={{ flex: 1, minWidth: 140 }}>
+                      <label className="lbl">Factura / ticket</label>
+                      <input className="inp" value={form.facturaExterna} onChange={e => set('facturaExterna', e.target.value)} />
+                    </div>
+                  </div>
+                  <div style={{ display: 'flex', gap: '1rem', flexWrap: 'wrap' }}>
+                    <div style={{ flex: 1, minWidth: 140 }}>
+                      <label className="lbl">Precio por galón (L)</label>
+                      <input className="inp" type="number" step="0.01" min="0" value={form.precioGalonExterno} onChange={e => set('precioGalonExterno', e.target.value)} />
+                    </div>
+                    <div style={{ flex: 1, minWidth: 140 }}>
+                      <label className="lbl">Total del ticket (L)</label>
+                      <input className="inp" type="number" step="0.01" min="0" value={form.totalExterno}
+                        placeholder={totalTicketCalc != null ? String(totalTicketCalc) : ''} onChange={e => set('totalExterno', e.target.value)} />
+                    </div>
+                  </div>
+                </div>
+              )}
+
+              <div style={{ display: 'flex', gap: '1rem', flexWrap: 'wrap' }}>
                 <div style={{ flex: 1, minWidth: 160 }}>
                   <label className="lbl">Fecha</label>
                   <input className="inp" type="date" value={form.fecha} onChange={e => set('fecha', e.target.value)} />
@@ -232,10 +302,12 @@ export default function EstacionSinclair() {
                   <input className="inp" type="number" step="0.01" min="0" value={form.cantidadDieselGalones}
                     onChange={e => set('cantidadDieselGalones', e.target.value)} />
                 </div>
-                <div style={{ flex: 1, minWidth: 160 }}>
-                  <label className="lbl">Encargado de bomba</label>
-                  <input className="inp" value={form.encargadoBomba} onChange={e => set('encargadoBomba', e.target.value)} />
-                </div>
+                {!externo && (
+                  <div style={{ flex: 1, minWidth: 160 }}>
+                    <label className="lbl">Encargado de bomba</label>
+                    <input className="inp" value={form.encargadoBomba} onChange={e => set('encargadoBomba', e.target.value)} />
+                  </div>
+                )}
               </div>
 
               <div>
@@ -250,7 +322,7 @@ export default function EstacionSinclair() {
 
               <button className="btn-primary" style={{ justifyContent: 'center', marginTop: '.5rem' }}
                 onClick={guardar} disabled={guardando}>
-                {guardando ? <span className="spinner" /> : <Save size={15} />} Guardar Despacho
+                {guardando ? <span className="spinner" /> : <Save size={15} />} {externo ? 'Guardar carga externa' : 'Guardar Despacho'}
               </button>
             </div>
           )}
@@ -279,6 +351,14 @@ export default function EstacionSinclair() {
                   placeholder="Busca por código o nombre..."
                 />
               </div>
+              <div style={{ flex: 1, minWidth: 180 }}>
+                <label className="lbl">Lugar de carga</label>
+                <select className="inp" value={lugarFiltro} onChange={e => setLugarFiltro(e.target.value)}>
+                  <option value="">Todos</option>
+                  <option value="interno">Del tanque (EF + EL)</option>
+                  {LUGARES_CARGA.map(([k, n]) => <option key={k} value={k}>{k} — {n}</option>)}
+                </select>
+              </div>
               <button className="btn-primary" onClick={buscarHistorial} disabled={cargandoHist}>
                 {cargandoHist ? <span className="spinner" /> : <Search size={15} />} Buscar
               </button>
@@ -299,7 +379,7 @@ export default function EstacionSinclair() {
                 <table className="tbl">
                   <thead>
                     <tr>
-                      <th>Fecha</th><th>Máquina</th><th>Galones</th><th>Precio/Gal</th><th>Total</th>
+                      <th>Fecha</th><th>Máquina</th><th>Lugar</th><th>Galones</th><th>Precio/Gal</th><th>Total</th>
                       <th>Lectura</th><th>Recorrido</th><th>Rendimiento</th><th>Alerta</th>
                     </tr>
                   </thead>
@@ -311,6 +391,11 @@ export default function EstacionSinclair() {
                         </td>
                         <td style={{ fontWeight: 500, whiteSpace: 'nowrap' }}>
                           {d.maquinaria?.codigo} — {d.maquinaria?.unidadDestino}
+                          {d.conductor && <div style={{ fontSize: '.72rem', color: 'var(--muted)', fontWeight: 400 }}>{d.conductor}</div>}
+                        </td>
+                        <td style={{ fontSize: '.8rem', whiteSpace: 'nowrap' }} title={nombreLugar(d.lugarCarga)}>
+                          <b>{d.lugarCarga || 'EF'}</b>
+                          {d.lugarCarga === 'EXT' && <div style={{ fontSize: '.72rem', color: 'var(--muted)' }}>{d.gasolinera}{d.facturaExterna ? ` · ${d.facturaExterna}` : ''}</div>}
                         </td>
                         <td style={{ fontFamily: 'DM Mono, monospace', fontSize: '.82rem' }}>{d.cantidadDieselGalones}</td>
                         <td style={{ fontFamily: 'DM Mono, monospace', fontSize: '.82rem' }}>{d.calculado?.precioGalon ?? '—'}</td>
@@ -329,7 +414,7 @@ export default function EstacionSinclair() {
                   {despachos.length > 0 && (
                     <tfoot>
                       <tr style={{ background: 'var(--card2)', fontWeight: 700, borderTop: '2px solid var(--border)' }}>
-                        <td colSpan={2} style={{ textAlign: 'right', fontFamily: 'Inter, sans-serif', fontSize: '.85rem' }}>
+                        <td colSpan={3} style={{ textAlign: 'right', fontFamily: 'Inter, sans-serif', fontSize: '.85rem' }}>
                           Total Galones
                         </td>
                         <td style={{ fontFamily: 'DM Mono, monospace', fontSize: '.88rem', color: 'var(--verde-dark)' }}>
