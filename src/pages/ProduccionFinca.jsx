@@ -148,6 +148,7 @@ export default function ProduccionFinca() {
 
   function abrirEditar(r) {
     setFormEditar({
+      fecha: fechaInput(r.fecha),
       cestas: r.cestas ?? '', totalKilos: r.totalKilos ?? '', rendAproximado: r.rendAproximado ?? '',
       jornales: r.jornales ?? '', caporales: r.caporales ?? '',
       cultivo: r.cultivo?._id || '', tamano: r.tamano || '', empaque: r.empaque ?? '',
@@ -158,7 +159,9 @@ export default function ProduccionFinca() {
   async function guardarEdicion() {
     setGE(true)
     try {
+      if (!formEditar.fecha) { toast('La fecha es obligatoria', 'error'); return }
       const res = await api.put(`/produccion-finca/registros/${modalEditar._id}`, {
+        fecha: formEditar.fecha,
         jornales: formEditar.jornales === '' ? null : Number(formEditar.jornales),
         caporales: Number(formEditar.caporales || 0),
         cestas: formEditar.cestas === '' ? null : Number(formEditar.cestas),
@@ -553,8 +556,15 @@ export default function ProduccionFinca() {
           onClose={() => setModalEditar(null)}
         >
           <div style={{ display: 'flex', flexDirection: 'column', gap: '1rem' }}>
-            <div style={{ fontSize: '.8rem', color: 'var(--muted)' }}>
-              {fechaCorta(modalEditar.fecha)}
+            <div>
+              <label className="lbl">Fecha</label>
+              <input className="inp" type="date" value={formEditar.fecha} max={hoy()}
+                onChange={e => setFormEditar(p => ({ ...p, fecha: e.target.value }))} />
+              {formEditar.fecha !== fechaInput(modalEditar.fecha) && (
+                <div style={{ fontSize: '.74rem', color: 'var(--muted)', marginTop: '.3rem' }}>
+                  Antes: {fechaCorta(modalEditar.fecha)}. Los días de cosecha y la etapa se recalculan con la fecha nueva.
+                </div>
+              )}
             </div>
             <div style={{ display: 'flex', gap: '1rem', flexWrap: 'wrap' }}>
               <div style={{ flex: 1 }}>

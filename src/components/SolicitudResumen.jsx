@@ -21,8 +21,7 @@ export default function SolicitudResumen({ sol, acciones, extra }) {
           {sol.destino && <div style={{ fontSize: '.8rem', color: 'var(--text2)', marginTop: '.15rem' }}>Destino general: {sol.destino}</div>}
         </div>
         <div style={{ display: 'flex', gap: '.35rem', flexWrap: 'wrap', justifyContent: 'flex-end' }}>
-          {sol.grabadaSodisa && <span className="badge badge-gray">Grabada en SODISA</span>}
-          <span className={`badge ${COLOR_ESTADO_SOLICITUD[sol.estado] || 'badge-gray'}`}>{sol.estado}</span>
+          <span className={`badge ${COLOR_ESTADO_SOLICITUD[sol.estado] || 'badge-gray'}`}>{sol.estado}{sol.grabadaSodisa && ' · Grabada en SODISA'}</span>
         </div>
       </div>
 
