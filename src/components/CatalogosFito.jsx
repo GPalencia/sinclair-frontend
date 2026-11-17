@@ -53,7 +53,7 @@ function PanelPlagas({ onCambio }) {
   return (
     <div style={{ display: 'flex', flexDirection: 'column', gap: '1.25rem' }}>
       <div className="card">
-        <h3 style={{ fontFamily: 'Inter, sans-serif', fontSize: '.85rem', color: 'var(--muted)', marginBottom: '1rem', textTransform: 'uppercase', letterSpacing: '.06em' }}>
+        <h3 style={{ fontSize: '.85rem', color: 'var(--muted)', marginBottom: '1rem', textTransform: 'uppercase', letterSpacing: '.06em' }}>
           Agregar plaga o enfermedad
         </h3>
         <div style={{ display: 'flex', gap: '1rem', flexWrap: 'wrap', alignItems: 'flex-end' }}>
@@ -81,7 +81,7 @@ function PanelPlagas({ onCambio }) {
       </div>
 
       <div className="card" style={{ padding: 0, overflow: 'hidden' }}>
-        <div style={{ padding: '1rem 1.5rem', borderBottom: '1px solid var(--border)', fontFamily: 'Inter, sans-serif', fontSize: '.85rem', fontWeight: 600 }}>
+        <div style={{ padding: '1rem 1.5rem', borderBottom: '1px solid var(--border)', fontSize: '.85rem', fontWeight: 600 }}>
           Catálogo de plagas y enfermedades
         </div>
         {cargando ? (
@@ -170,7 +170,7 @@ function PanelLotesSembrados({ onCambio }) {
   return (
     <div style={{ display: 'flex', flexDirection: 'column', gap: '1.25rem' }}>
       <div className="card">
-        <h3 style={{ fontFamily: 'Inter, sans-serif', fontSize: '.85rem', color: 'var(--muted)', marginBottom: '1rem', textTransform: 'uppercase', letterSpacing: '.06em' }}>
+        <h3 style={{ fontSize: '.85rem', color: 'var(--muted)', marginBottom: '1rem', textTransform: 'uppercase', letterSpacing: '.06em' }}>
           Agregar lote sembrado
         </h3>
         <div style={{ display: 'flex', flexDirection: 'column', gap: '.85rem', maxWidth: 560 }}>
@@ -215,7 +215,7 @@ function PanelLotesSembrados({ onCambio }) {
       </div>
 
       <div className="card" style={{ padding: 0, overflow: 'hidden' }}>
-        <div style={{ padding: '1rem 1.5rem', borderBottom: '1px solid var(--border)', fontFamily: 'Inter, sans-serif', fontSize: '.85rem', fontWeight: 600 }}>
+        <div style={{ padding: '1rem 1.5rem', borderBottom: '1px solid var(--border)', fontSize: '.85rem', fontWeight: 600 }}>
           Catálogo de lotes sembrados
         </div>
         {cargando ? (
@@ -232,7 +232,7 @@ function PanelLotesSembrados({ onCambio }) {
                     <td style={{ fontWeight: 500 }}>{l.loteSembrado}</td>
                     <td style={{ fontSize: '.82rem', color: 'var(--muted)' }}>{l.cultivo || '—'}</td>
                     <td style={{ fontSize: '.82rem', color: 'var(--muted)' }}>{l.variedad || '—'}</td>
-                    <td style={{ fontFamily: 'DM Mono, monospace', fontSize: '.82rem' }}>{l.manzanasSembradas}</td>
+                    <td style={{ fontVariantNumeric: 'tabular-nums', fontSize: '.82rem' }}>{l.manzanasSembradas}</td>
                     <td>
                       <button type="button" onClick={() => toggleActivo(l)}
                         className={`badge ${l.activo ? 'badge-green' : 'badge-gray'}`}

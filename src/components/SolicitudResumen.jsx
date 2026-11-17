@@ -15,7 +15,7 @@ export default function SolicitudResumen({ sol, acciones, extra }) {
             {sol.prioridad === 'Urgente' && <span className="badge badge-red" style={{ marginLeft: '.5rem' }}>Urgente</span>}
           </div>
           <div style={{ fontSize: '.82rem', color: 'var(--muted)', marginTop: '.15rem' }}>
-            {sol.departamento?.codigo && `${sol.departamento.codigo} - `}{sol.departamentoNombre || sol.departamento?.nombre} · {sol.solicitanteCodigo && <span style={{ fontFamily: 'DM Mono, monospace' }}>{sol.solicitanteCodigo} </span>}{sol.solicitante} · {fechaCorta(sol.fecha)}
+            {sol.departamento?.codigo && `${sol.departamento.codigo} - `}{sol.departamentoNombre || sol.departamento?.nombre} · {sol.solicitanteCodigo && <span style={{ fontVariantNumeric: 'tabular-nums' }}>{sol.solicitanteCodigo} </span>}{sol.solicitante} · {fechaCorta(sol.fecha)}
 
           </div>
           {sol.destino && <div style={{ fontSize: '.8rem', color: 'var(--text2)', marginTop: '.15rem' }}>Destino general: {sol.destino}</div>}
@@ -39,7 +39,7 @@ export default function SolicitudResumen({ sol, acciones, extra }) {
               return (
                 <tr key={it._id}>
                   <td style={{ fontSize: '.75rem', whiteSpace: 'nowrap' }} title={it.centroCostoNombre}>
-                    <span style={{ fontFamily: 'DM Mono, monospace', fontWeight: 600 }}>{it.centroCostoCodigo || '—'}</span>
+                    <span style={{ fontVariantNumeric: 'tabular-nums', fontWeight: 600 }}>{it.centroCostoCodigo || '—'}</span>
                     {it.centroCostoNombre && <div style={{ color: 'var(--muted)', maxWidth: 160, whiteSpace: 'normal' }}>{it.centroCostoNombre}</div>}
                   </td>
                   <td style={{ fontWeight: 500 }}>
@@ -47,13 +47,13 @@ export default function SolicitudResumen({ sol, acciones, extra }) {
                     {!it.articulo && <div style={{ fontSize: '.68rem', color: 'var(--muted2)' }}>fuera de catálogo</div>}
                   </td>
                   <td>{it.unidadMedida || '—'}</td>
-                  <td style={{ textAlign: 'right', fontFamily: 'DM Mono, monospace' }}>{fmtCant(it.cantidadSolicitada)}</td>
+                  <td style={{ textAlign: 'right', fontVariantNumeric: 'tabular-nums' }}>{fmtCant(it.cantidadSolicitada)}</td>
                   {revisada && (
-                    <td style={{ textAlign: 'right', fontFamily: 'DM Mono, monospace', fontWeight: 600, color: cambio ? '#b45309' : undefined }}>
+                    <td style={{ textAlign: 'right', fontVariantNumeric: 'tabular-nums', fontWeight: 600, color: cambio ? '#b45309' : undefined }}>
                       {fmtCant(objetivo)}
                     </td>
                   )}
-                  <td style={{ textAlign: 'right', fontFamily: 'DM Mono, monospace', color: (it.cantidadDespachada || 0) >= objetivo && objetivo > 0 ? 'var(--verde)' : undefined }}>
+                  <td style={{ textAlign: 'right', fontVariantNumeric: 'tabular-nums', color: (it.cantidadDespachada || 0) >= objetivo && objetivo > 0 ? 'var(--verde)' : undefined }}>
                     {fmtCant(it.cantidadDespachada || 0)}
                   </td>
                   <td style={{ fontSize: '.78rem', color: 'var(--text2)' }}>

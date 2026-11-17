@@ -48,7 +48,7 @@ export default function Caseta() {
   const despachados = pases.filter(p => p.estado === 'Despachado')
 
   return (
-    <div style={{ minHeight: '100vh', background: '#f8fafc', fontFamily: 'Inter, sans-serif' }}>
+    <div style={{ minHeight: '100vh', background: '#f8fafc' }}>
       {/* Header */}
       <div style={{ background: 'var(--verde)', color: '#fff', padding: '1rem 1.5rem', display: 'flex', alignItems: 'center', justifyContent: 'space-between', flexWrap: 'wrap', gap: '.75rem' }}>
         <div style={{ display: 'flex', alignItems: 'center', gap: '.75rem' }}>
@@ -87,7 +87,7 @@ export default function Caseta() {
               <div key={p._id} style={{ background: '#fff', border: '2px solid var(--verde-mid)', borderRadius: 14, padding: '1.25rem 1.5rem', display: 'flex', justifyContent: 'space-between', alignItems: 'center', flexWrap: 'wrap', gap: '1rem' }}>
                 <div style={{ flex: 1, minWidth: 260 }}>
                   <div style={{ display: 'flex', alignItems: 'center', gap: '.75rem', marginBottom: '.4rem' }}>
-                    <span style={{ fontFamily: 'DM Mono, monospace', fontWeight: 800, fontSize: '1.3rem', color: 'var(--verde-dark)' }}>#{p.folio}</span>
+                    <span style={{ fontVariantNumeric: 'tabular-nums', fontWeight: 800, fontSize: '1.3rem', color: 'var(--verde-dark)' }}>#{p.folio}</span>
                     <span style={{ fontSize: '.85rem', color: 'var(--muted)' }}>{p.bodega?.nombre}</span>
                   </div>
                   <div style={{ fontSize: '1.4rem', fontWeight: 700, color: 'var(--text)', marginBottom: '.2rem' }}>
@@ -139,7 +139,7 @@ export default function Caseta() {
               {despachados.map(p => (
                 <div key={p._id} style={{ background: '#fff', border: '1px solid var(--border)', borderRadius: 10, padding: '.75rem 1.25rem', display: 'flex', alignItems: 'center', gap: '.75rem', opacity: .7 }}>
                   <CheckCircle2 size={18} color="var(--verde)" />
-                  <span style={{ fontFamily: 'DM Mono, monospace', fontWeight: 700, color: 'var(--verde-dark)' }}>#{p.folio}</span>
+                  <span style={{ fontVariantNumeric: 'tabular-nums', fontWeight: 700, color: 'var(--verde-dark)' }}>#{p.folio}</span>
                   <span style={{ fontWeight: 600 }}>{p.autorizadoPara}</span>
                   <span style={{ fontSize: '.85rem', color: 'var(--muted)' }}>— {p.bodega?.nombre}</span>
                 </div>

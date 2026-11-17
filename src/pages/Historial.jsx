@@ -114,7 +114,7 @@ export default function Historial() {
             { label: 'Total Planilla', valor: `L ${stats.salarios.toLocaleString('es-HN', { minimumFractionDigits: 2 })}`, color: '#f59e0b' },
           ].map(s => (
             <div key={s.label} className="card" style={{ textAlign: 'center' }}>
-              <div style={{ fontFamily: 'Inter, sans-serif', fontSize: '1.4rem', fontWeight: 700, color: s.color }}>{s.valor}</div>
+              <div style={{ fontSize: '1.4rem', fontWeight: 700, color: s.color }}>{s.valor}</div>
               <div style={{ fontSize: '.78rem', color: 'var(--muted)', marginTop: '.25rem' }}>{s.label}</div>
             </div>
           ))}
@@ -124,7 +124,7 @@ export default function Historial() {
       {/* Tabla */}
       {buscado && (
         <div className="card fade-up" style={{ padding: 0, overflow: 'hidden' }}>
-          <div style={{ padding: '1rem 1.5rem', borderBottom: '1px solid var(--border)', fontFamily: 'Inter, sans-serif', fontSize: '.85rem', fontWeight: 600 }}>
+          <div style={{ padding: '1rem 1.5rem', borderBottom: '1px solid var(--border)', fontSize: '.85rem', fontWeight: 600 }}>
             {registros.length} registros encontrados
           </div>
           <div style={{ overflowX: 'auto' }}>
@@ -143,10 +143,10 @@ export default function Historial() {
               <tbody>
                 {registros.map(r => (
                   <tr key={r._id}>
-                    <td style={{ fontFamily: 'DM Mono, monospace', fontSize: '.8rem', color: 'var(--muted)', whiteSpace: 'nowrap' }}>
+                    <td style={{ fontVariantNumeric: 'tabular-nums', fontSize: '.8rem', color: 'var(--muted)', whiteSpace: 'nowrap' }}>
                       {fechaCorta(r.fecha)}
                     </td>
-                    <td style={{ fontFamily: 'DM Mono, monospace', fontSize: '.8rem' }}>
+                    <td style={{ fontVariantNumeric: 'tabular-nums', fontSize: '.8rem' }}>
                       {r.codigoEmpleado || '—'}
                     </td>
                     <td style={{ fontWeight: 500, whiteSpace: 'nowrap' }}>
@@ -156,12 +156,12 @@ export default function Historial() {
                       {r.centroCosto?.nombre || '—'}
                     </td>
                     <td style={{ fontSize: '.82rem' }}>
-                      <span style={{ fontFamily: 'DM Mono, monospace', color: 'var(--muted)', fontSize: '.75rem' }}>{r.labor?.codigo}</span>
+                      <span style={{ fontVariantNumeric: 'tabular-nums', color: 'var(--muted)', fontSize: '.75rem' }}>{r.labor?.codigo}</span>
                       {' '}{r.labor?.nombre || '—'}
                     </td>
                     <td style={{ textAlign: 'center' }}>{r.dias || 1}</td>
                     <td>
-                      <span style={{ fontFamily: 'DM Mono, monospace', color: 'var(--verde)', fontWeight: 600, fontSize: '.88rem' }}>
+                      <span style={{ fontVariantNumeric: 'tabular-nums', color: 'var(--verde)', fontWeight: 600, fontSize: '.88rem' }}>
                         L {(r.salario || 0).toFixed(2)}
                       </span>
                     </td>

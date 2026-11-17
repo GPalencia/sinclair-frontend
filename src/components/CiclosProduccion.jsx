@@ -67,7 +67,7 @@ export default function CiclosProduccion({ fincas }) {
 
       <div className="card fade-up" style={{ padding: 0, overflow: 'hidden' }}>
         <div style={{ padding: '1rem 1.5rem', borderBottom: '1px solid var(--border)', display: 'flex', justifyContent: 'space-between', alignItems: 'center', flexWrap: 'wrap', gap: '.75rem' }}>
-          <span style={{ fontFamily: 'Inter, sans-serif', fontSize: '.85rem', fontWeight: 600 }}>{visibles.length} ciclos</span>
+          <span style={{ fontSize: '.85rem', fontWeight: 600 }}>{visibles.length} ciclos</span>
           <button className="btn-secondary" onClick={exportar} disabled={!visibles.length}><FileDown size={15} /> Exportar Excel</button>
         </div>
         <div style={{ overflowX: 'auto' }}>
@@ -95,17 +95,17 @@ export default function CiclosProduccion({ fincas }) {
                     <span className={`badge ${c.activo ? 'badge-green' : 'badge-gray'}`}>{c.activo ? 'Activo' : 'Cerrado'}</span>
                     {c.ciclo?.de > 1 && <div style={{ fontSize: '.7rem', color: 'var(--muted)', marginTop: '.2rem' }}>ciclo {c.ciclo.n} de {c.ciclo.de}</div>}
                   </td>
-                  <td style={{ fontFamily: 'DM Mono, monospace', fontSize: '.8rem' }}>{fechaCorta(c.fechaCalentamiento)}</td>
-                  <td style={{ fontFamily: 'DM Mono, monospace', fontSize: '.8rem', color: 'var(--muted)' }}>{c.fechaCierre ? fechaCorta(c.fechaCierre) : '—'}</td>
+                  <td style={{ fontVariantNumeric: 'tabular-nums', fontSize: '.8rem' }}>{fechaCorta(c.fechaCalentamiento)}</td>
+                  <td style={{ fontVariantNumeric: 'tabular-nums', fontSize: '.8rem', color: 'var(--muted)' }}>{c.fechaCierre ? fechaCorta(c.fechaCierre) : '—'}</td>
                   <td style={{ textAlign: 'center' }}>{c.diasCosechando ?? '—'}</td>
                   <td style={{ textAlign: 'center' }}>{c.registros}</td>
-                  <td style={{ fontFamily: 'DM Mono, monospace', fontWeight: 700, color: 'var(--verde)' }}>{fmt(c.cestas)}</td>
-                  <td style={{ fontFamily: 'DM Mono, monospace' }}>{fmt(c.kilosPromedio)}</td>
-                  <td style={{ fontFamily: 'DM Mono, monospace' }}>{fmt(c.rendPromedio)}</td>
-                  <td style={{ fontFamily: 'DM Mono, monospace' }}>{fmt(c.cestasPorPersonaPromedio)}</td>
-                  <td style={{ fontFamily: 'DM Mono, monospace', fontWeight: 600 }}>{fmt(c.cajas7kg)}</td>
-                  <td style={{ fontFamily: 'DM Mono, monospace' }}>{fmt(c.cajas4kg)}</td>
-                  <td style={{ fontFamily: 'DM Mono, monospace' }}>{fmt(c.cajas5kg)}</td>
+                  <td style={{ fontVariantNumeric: 'tabular-nums', fontWeight: 700, color: 'var(--verde)' }}>{fmt(c.cestas)}</td>
+                  <td style={{ fontVariantNumeric: 'tabular-nums' }}>{fmt(c.kilosPromedio)}</td>
+                  <td style={{ fontVariantNumeric: 'tabular-nums' }}>{fmt(c.rendPromedio)}</td>
+                  <td style={{ fontVariantNumeric: 'tabular-nums' }}>{fmt(c.cestasPorPersonaPromedio)}</td>
+                  <td style={{ fontVariantNumeric: 'tabular-nums', fontWeight: 600 }}>{fmt(c.cajas7kg)}</td>
+                  <td style={{ fontVariantNumeric: 'tabular-nums' }}>{fmt(c.cajas4kg)}</td>
+                  <td style={{ fontVariantNumeric: 'tabular-nums' }}>{fmt(c.cajas5kg)}</td>
                 </tr>
               ))}
               {!visibles.length && <tr><td colSpan={13} style={{ textAlign: 'center', color: 'var(--muted)', padding: '1.5rem' }}>{cargando ? 'Cargando...' : 'Sin ciclos'}</td></tr>}

@@ -47,7 +47,7 @@ function formInicial(modo, { estaciones, turno, estacionId, estacioneroGuardado,
 
 const chip = (activo) => ({
   padding: '.55rem 1rem', borderRadius: 999, cursor: 'pointer', fontSize: '.9rem', fontWeight: activo ? 700 : 500,
-  fontFamily: 'Inter, sans-serif', minHeight: 40,
+  minHeight: 40,
   border: `1.5px solid ${activo ? 'var(--verde)' : 'var(--border)'}`,
   background: activo ? 'var(--verde)' : 'var(--card)', color: activo ? '#fff' : 'var(--text2)',
 })
@@ -242,7 +242,7 @@ export default function TurnoRiegoModal({ modo, inline = false, estaciones, turn
       style={{ position: 'fixed', inset: 0, background: 'rgba(0,0,0,.75)', zIndex: 100, display: 'flex', alignItems: 'center', justifyContent: 'center', padding: '1rem' }}>
       <div style={{ background: 'var(--card)', border: '1px solid var(--border)', borderRadius: 14, padding: '1.5rem', width: '100%', maxWidth: 520, maxHeight: 'calc(100dvh - 2rem)', overflowY: 'auto', animation: 'fadeUp .25s ease' }}>
         <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '1.1rem' }}>
-          <h3 style={{ fontFamily: 'Inter, sans-serif', fontSize: '1.05rem', fontWeight: 700 }}>
+          <h3 style={{ fontSize: '1.05rem', fontWeight: 700 }}>
             {TITULO[modo]}{est ? ` — Estación ${est.nombre}` : ''}
           </h3>
           <button className="btn-ghost" onClick={onClose} style={{ padding: '.3rem .6rem' }}><X size={18} /></button>

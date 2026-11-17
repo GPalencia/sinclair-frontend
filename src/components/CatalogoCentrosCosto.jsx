@@ -91,9 +91,9 @@ export default function CatalogoCentrosCosto() {
             <tbody>
               {visibles.map(c => (
                 <tr key={c._id}>
-                  <td style={{ fontFamily: 'DM Mono, monospace', fontWeight: 700, whiteSpace: 'nowrap' }}>{c.codigo || <span style={{ color: '#b45309', fontWeight: 500 }}>sin código</span>}</td>
+                  <td style={{ fontVariantNumeric: 'tabular-nums', fontWeight: 700, whiteSpace: 'nowrap' }}>{c.codigo || <span style={{ color: '#b45309', fontWeight: 500 }}>sin código</span>}</td>
                   <td style={{ fontWeight: 500 }}>{c.nombre}</td>
-                  <td style={{ fontFamily: 'DM Mono, monospace', fontSize: '.8rem', color: 'var(--muted)' }}>{c.abreviatura || '—'}</td>
+                  <td style={{ fontVariantNumeric: 'tabular-nums', fontSize: '.8rem', color: 'var(--muted)' }}>{c.abreviatura || '—'}</td>
                   <td style={{ fontSize: '.82rem', color: 'var(--muted)' }}>{c.finca || '—'}</td>
                   <td>{c.enPlanilla !== false ? <span className="badge badge-blue">Sí</span> : <span style={{ fontSize: '.8rem', color: 'var(--muted2)' }}>No</span>}</td>
                   <td>
@@ -124,14 +124,14 @@ export default function CatalogoCentrosCosto() {
           style={{ position: 'fixed', inset: 0, background: 'rgba(0,0,0,.75)', zIndex: 100, display: 'flex', alignItems: 'center', justifyContent: 'center', padding: '1rem' }}>
           <div style={{ background: 'var(--card)', border: '1px solid var(--border)', borderRadius: 14, padding: '1.5rem', width: '100%', maxWidth: 480, maxHeight: 'calc(100dvh - 2rem)', overflowY: 'auto' }}>
             <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '1rem' }}>
-              <h3 style={{ fontFamily: 'Inter, sans-serif', fontSize: '1rem', fontWeight: 700 }}>{modal.id ? 'Editar centro de costo' : 'Nuevo centro de costo'}</h3>
+              <h3 style={{ fontSize: '1rem', fontWeight: 700 }}>{modal.id ? 'Editar centro de costo' : 'Nuevo centro de costo'}</h3>
               <button className="btn-ghost" onClick={() => setModal(null)} style={{ padding: '.3rem .6rem' }}><X size={18} /></button>
             </div>
             <div style={{ display: 'flex', flexDirection: 'column', gap: '.9rem' }}>
               <div style={{ display: 'flex', gap: '1rem' }}>
                 <div style={{ flex: 1 }}>
                   <label className="lbl">Código (SODISA) *</label>
-                  <input className="inp" style={{ textTransform: 'uppercase', fontFamily: 'DM Mono, monospace' }} placeholder="FSJ012" value={modal.form.codigo} onChange={e => setForm({ codigo: e.target.value })} />
+                  <input className="inp" style={{ textTransform: 'uppercase', fontVariantNumeric: 'tabular-nums' }} placeholder="FSJ012" value={modal.form.codigo} onChange={e => setForm({ codigo: e.target.value })} />
                 </div>
                 <div style={{ flex: 1 }}>
                   <label className="lbl">Abreviatura</label>

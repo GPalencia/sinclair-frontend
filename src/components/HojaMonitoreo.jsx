@@ -241,7 +241,7 @@ export default function HojaMonitoreo({ lotesSembrados, plagas, onGuardada }) {
         <>
           {ultima && (
             <div className="card" style={{ borderColor: '#86efac', background: '#f0fdf4', display: 'flex', gap: '.75rem', alignItems: 'center', flexWrap: 'wrap', justifyContent: 'space-between' }}>
-              <span style={{ fontWeight: 600, color: '#15803d' }}>Hoja de {ultima.lote} guardada</span>
+              <span style={{ fontWeight: 600, color: '#186328' }}>Hoja de {ultima.lote} guardada</span>
               <div style={{ display: 'flex', gap: '.5rem' }}>
                 <button className="btn-secondary" onClick={() => abrirPDF(ultima.id)}><FileText size={15} /> Ver PDF</button>
                 <button className="btn-ghost" onClick={() => setUltima(null)}>Cerrar</button>
@@ -353,7 +353,7 @@ export default function HojaMonitoreo({ lotesSembrados, plagas, onGuardada }) {
                       <div style={{ fontWeight: 700 }}>{h.loteSembrado?.loteSembrado || '—'}
                         <span style={{ fontWeight: 500, color: 'var(--muted)', fontSize: '.85rem' }}> · {h.loteSembrado?.cultivo}</span>
                       </div>
-                      <div style={{ fontSize: '.8rem', color: 'var(--muted)', fontFamily: 'DM Mono, monospace' }}>
+                      <div style={{ fontSize: '.8rem', color: 'var(--muted)', fontVariantNumeric: 'tabular-nums' }}>
                         {fechaCorta(h.fecha)}{h.monitor ? ` · ${h.monitor}` : ''}
                       </div>
                     </div>
@@ -394,14 +394,14 @@ const ESTILOS = `
 .hm-cab-n { text-align: center; }
 .hm-fila { padding: 3px .3rem; border-bottom: 1px solid var(--border); }
 .hm-fila[data-datos="true"] { background: #f0fdf4; }
-.hm-nombre { background: none; border: none; text-align: left; font-family: Inter, sans-serif; font-size: .83rem; font-weight: 600; color: var(--text); padding: .35rem .2rem; cursor: default; display: flex; justify-content: space-between; gap: .5rem; }
+.hm-nombre { background: none; border: none; text-align: left; font-family: inherit; font-size: .83rem; font-weight: 600; color: var(--text); padding: .35rem .2rem; cursor: default; display: flex; justify-content: space-between; gap: .5rem; }
 .hm-movil { display: none; }
 .hm-celdas { display: contents; }
 .hm-celda { text-align: center; padding: .35rem 0 !important; min-height: 34px; }
 .hm-check { height: 34px; border: 1.5px solid var(--border); border-radius: 8px; background: #fff; cursor: pointer; display: flex; align-items: center; justify-content: center; color: #fff; padding: 0; }
 .hm-check[data-on="true"] { background: var(--verde); border-color: var(--verde); }
-.hm-num { color: #94a3b8; font-size: .72rem; font-family: 'DM Mono', monospace; }
-.hm-res { text-align: center; font-family: 'DM Mono', monospace; font-weight: 800; font-size: .85rem; color: var(--verde-dark); }
+.hm-num { color: #94a3b8; font-size: .72rem; font-variant-numeric: tabular-nums; }
+.hm-res { text-align: center; font-variant-numeric: tabular-nums; font-weight: 800; font-size: .85rem; color: var(--verde-dark); }
 
 /* Celular: cada plaga es una tarjeta que se despliega (5 muestras por fila) */
 @media (max-width: 899px) {
@@ -409,7 +409,7 @@ const ESTILOS = `
   .hm-fila { display: block; border: 1px solid var(--border); border-radius: 10px; padding: 0; margin-bottom: .45rem; overflow: hidden; }
   .hm-nombre { width: 100%; min-height: 50px; align-items: center; padding: .5rem .8rem; font-size: .92rem; cursor: pointer; }
   .hm-movil { display: flex; align-items: center; gap: .5rem; color: var(--muted); }
-  .hm-pildora { background: #dcfce7; color: #15803d; border-radius: 999px; padding: .15rem .6rem; font-size: .72rem; white-space: nowrap; }
+  .hm-pildora { background: #dcfce7; color: #186328; border-radius: 999px; padding: .15rem .6rem; font-size: .72rem; white-space: nowrap; }
   .hm-pildora-enf { background: #ede9fe; color: #6d28d9; }
   .hm-fila .hm-res { display: none; }
   .hm-celdas { display: none; }

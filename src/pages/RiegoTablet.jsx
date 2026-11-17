@@ -16,7 +16,7 @@ import {
 import { hoyLocal } from '../utils/fecha'
 
 const ESTILOS = `
-.rt-raiz { min-height: 100vh; background: #f1f5f9; font-family: Inter, sans-serif; padding-bottom: 2rem; }
+.rt-raiz { min-height: 100vh; background: #f1f5f9; font-family: inherit; padding-bottom: 2rem; }
 .rt-raiz button { touch-action: manipulation; -webkit-tap-highlight-color: transparent; font-family: inherit; }
 .rt-header { background: var(--verde); color: #fff; padding: .75rem 1rem; display: flex; align-items: center; justify-content: space-between; gap: .75rem; position: sticky; top: 0; z-index: 20; }
 .rt-icono { background: rgba(255,255,255,.16); border: none; color: #fff; width: 48px; height: 48px; border-radius: 12px; display: flex; align-items: center; justify-content: center; cursor: pointer; flex-shrink: 0; }

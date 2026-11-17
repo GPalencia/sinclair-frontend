@@ -33,7 +33,7 @@ export function TarjetaEstacion({ estacion, turno, ahora, onIniciar, onFinalizar
       {regando ? (
         <>
           <div>
-            <div style={{ fontSize: '1.6rem', fontWeight: 800, fontFamily: 'DM Mono, monospace', color: 'var(--verde)' }}>
+            <div style={{ fontSize: '1.6rem', fontWeight: 800, fontVariantNumeric: 'tabular-nums', color: 'var(--verde)' }}>
               Lote {turno.lote}{turno.sector && <span style={{ fontSize: '1rem', color: 'var(--text2)', fontWeight: 600 }}> · turno {turno.sector}</span>}
             </div>
             <div style={{ display: 'flex', gap: '.5rem', alignItems: 'center', flexWrap: 'wrap', marginTop: '.25rem' }}>
@@ -80,11 +80,11 @@ export function TablaTurnos({ turnos, onEditar, onEliminar, esAdmin, conTotales 
           {turnos.map(t => (
             <tr key={t._id}>
               <td style={{ whiteSpace: 'nowrap', fontSize: '.8rem' }}>
-                <span style={{ fontFamily: 'DM Mono, monospace', color: 'var(--muted)' }}>{fechaCorta(t.fecha)}</span>
+                <span style={{ fontVariantNumeric: 'tabular-nums', color: 'var(--muted)' }}>{fechaCorta(t.fecha)}</span>
                 <div style={{ fontSize: '.7rem', color: 'var(--muted2)', textTransform: 'capitalize' }}>{fechaCorta(t.fecha, { weekday: 'long' })}</div>
               </td>
               <td style={{ fontWeight: 600, whiteSpace: 'nowrap' }}>{t.estacion?.nombre ?? '—'}</td>
-              <td style={{ fontFamily: 'DM Mono, monospace', fontWeight: 600, whiteSpace: 'nowrap' }}>
+              <td style={{ fontVariantNumeric: 'tabular-nums', fontWeight: 600, whiteSpace: 'nowrap' }}>
                 {t.lote}
                 {t.sector && <div style={{ fontSize: '.7rem', color: 'var(--muted)', fontWeight: 500 }}>turno {t.sector}</div>}
               </td>
@@ -92,18 +92,18 @@ export function TablaTurnos({ turnos, onEditar, onEliminar, esAdmin, conTotales 
                 <BadgeTipo t={t} />
                 {t.productos?.length > 0 && <div style={{ fontSize: '.7rem', color: 'var(--muted)', marginTop: '.2rem' }}>{textoProductos(t)}</div>}
               </td>
-              <td style={{ fontFamily: 'DM Mono, monospace', fontSize: '.82rem' }}>{t.horaInicio}</td>
-              <td style={{ fontFamily: 'DM Mono, monospace', fontSize: '.82rem' }}>
+              <td style={{ fontVariantNumeric: 'tabular-nums', fontSize: '.82rem' }}>{t.horaInicio}</td>
+              <td style={{ fontVariantNumeric: 'tabular-nums', fontSize: '.82rem' }}>
                 {t.horaFin || <span className="badge badge-green">En curso</span>}
               </td>
-              <td style={{ fontFamily: 'DM Mono, monospace', fontSize: '.82rem', fontWeight: 600 }}>{fmtHoras(t.calculado?.horasTurno)}</td>
-              <td style={{ fontFamily: 'DM Mono, monospace', fontSize: '.78rem', color: 'var(--muted)', whiteSpace: 'nowrap' }}>
+              <td style={{ fontVariantNumeric: 'tabular-nums', fontSize: '.82rem', fontWeight: 600 }}>{fmtHoras(t.calculado?.horasTurno)}</td>
+              <td style={{ fontVariantNumeric: 'tabular-nums', fontSize: '.78rem', color: 'var(--muted)', whiteSpace: 'nowrap' }}>
                 {t.horometroInicial != null || t.horometroFinal != null ? `${t.horometroInicial ?? '—'} → ${t.horometroFinal ?? '—'}` : '—'}
               </td>
-              <td style={{ fontFamily: 'DM Mono, monospace', fontSize: '.78rem', color: 'var(--muted)', whiteSpace: 'nowrap' }}>
+              <td style={{ fontVariantNumeric: 'tabular-nums', fontSize: '.78rem', color: 'var(--muted)', whiteSpace: 'nowrap' }}>
                 {t.combustibleInicial != null || t.combustibleFinal != null ? `${t.combustibleInicial ?? '—'} → ${t.combustibleFinal ?? '—'}` : '—'}
               </td>
-              <td style={{ fontFamily: 'DM Mono, monospace', fontSize: '.82rem', fontWeight: 600, color: 'var(--verde)' }}>
+              <td style={{ fontVariantNumeric: 'tabular-nums', fontSize: '.82rem', fontWeight: 600, color: 'var(--verde)' }}>
                 {t.calculado?.galonesGastados != null ? fmtNum(t.calculado.galonesGastados) : '—'}
               </td>
               <td style={{ fontSize: '.82rem' }}>
@@ -129,9 +129,9 @@ export function TablaTurnos({ turnos, onEditar, onEliminar, esAdmin, conTotales 
           <tfoot>
             <tr style={{ background: 'var(--card2)', borderTop: '2px solid var(--border2)', fontWeight: 700 }}>
               <td colSpan={6} style={{ fontSize: '.75rem', textTransform: 'uppercase', color: 'var(--muted)' }}>Totales ({turnos.length} turnos)</td>
-              <td style={{ fontFamily: 'DM Mono, monospace', fontSize: '.85rem' }}>{fmtHoras(horas)}</td>
+              <td style={{ fontVariantNumeric: 'tabular-nums', fontSize: '.85rem' }}>{fmtHoras(horas)}</td>
               <td></td><td></td>
-              <td style={{ fontFamily: 'DM Mono, monospace', fontSize: '.85rem', color: 'var(--verde)' }}>
+              <td style={{ fontVariantNumeric: 'tabular-nums', fontSize: '.85rem', color: 'var(--verde)' }}>
                 {conGalones.length ? fmtNum(galones) : '—'}
                 {horasConGalones > 0 && <div style={{ fontSize: '.65rem', color: 'var(--muted)', fontWeight: 500 }}>{fmtNum(galones / horasConGalones)} gal/h</div>}
               </td>

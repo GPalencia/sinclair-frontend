@@ -24,7 +24,7 @@ const LLAVE_BODEGA = 'sinclair_pases_bodega'
 const PASO_LISTA = 120   // cuántos botones de artículo se dibujan por tanda
 
 const PALETA = ['#2563eb', '#ca8a04', '#0891b2', '#7c3aed', '#dc2626', '#475569', '#db2777', '#ea580c', '#0d9488', '#4f46e5', '#65a30d', '#9333ea']
-const COLOR_FRECUENTES = '#16a34a'
+const COLOR_FRECUENTES = '#1f7a33'
 const COLOR_TODAS = '#0f172a'
 const SIN_CATEGORIA = 'Sin categoría'
 
@@ -376,7 +376,7 @@ export default function PasesTablet() {
                       }}
                     >
                       <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', gap: '.4rem' }}>
-                        <span style={{ fontFamily: 'DM Mono, monospace', fontSize: '.74rem', color: '#64748b', fontWeight: 600 }}>{a.codigo || '—'}</span>
+                        <span style={{ fontVariantNumeric: 'tabular-nums', fontSize: '.74rem', color: '#64748b', fontWeight: 600 }}>{a.codigo || '—'}</span>
                         <span className="pos-medidor">{a.unidadMedida}</span>
                       </div>
                       <div className="pos-tile-nombre">{a.nombre}</div>
@@ -398,7 +398,7 @@ export default function PasesTablet() {
         <div className="pos-panel" ref={panelRef}>
           <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', gap: '.5rem', marginBottom: '.7rem' }}>
             <div style={{ display: 'flex', alignItems: 'center', gap: '.5rem', fontWeight: 800, fontSize: '1.05rem' }}>
-              <ShoppingBasket size={22} color="#16a34a" />
+              <ShoppingBasket size={22} color="#1f7a33" />
               Salida actual
               {totalLineas > 0 && <span className="pt-contador">{totalLineas}</span>}
             </div>
@@ -409,7 +409,7 @@ export default function PasesTablet() {
 
           {!totalLineas ? (
             <div style={{ textAlign: 'center', padding: '2.2rem 1rem', color: 'var(--muted)' }}>
-              <PackageCheck size={46} color="#16a34a" style={{ marginBottom: '.75rem' }} />
+              <PackageCheck size={46} color="#1f7a33" style={{ marginBottom: '.75rem' }} />
               <div style={{ fontSize: '1.15rem', fontWeight: 700, color: 'var(--text)' }}>Toca un artículo para empezar</div>
               <div style={{ fontSize: '.88rem', marginTop: '.3rem' }}>Después escribe la cantidad y toca Continuar</div>
             </div>
@@ -424,10 +424,10 @@ export default function PasesTablet() {
                       style={{ borderColor: activa ? 'var(--verde)' : '#e2e8f0', background: activa ? '#f0fdf4' : '#fff' }}>
                       <div style={{ flex: 1, minWidth: 0 }}>
                         <div className="pt-linea-nombre">{l.nombre}</div>
-                        <div style={{ fontSize: '.72rem', color: '#64748b', fontFamily: 'DM Mono, monospace' }}>{l.codigo}</div>
+                        <div style={{ fontSize: '.72rem', color: '#64748b', fontVariantNumeric: 'tabular-nums' }}>{l.codigo}</div>
                       </div>
                       <div style={{ textAlign: 'right', flexShrink: 0 }}>
-                        <div style={{ fontFamily: 'DM Mono, monospace', fontWeight: 800, fontSize: '1.15rem', color: Number(l.cantidad) > 0 ? '#0f172a' : '#dc2626' }}>{l.cantidad || '0'}</div>
+                        <div style={{ fontVariantNumeric: 'tabular-nums', fontWeight: 800, fontSize: '1.15rem', color: Number(l.cantidad) > 0 ? '#0f172a' : '#dc2626' }}>{l.cantidad || '0'}</div>
                         <div style={{ fontSize: '.7rem', color: '#64748b' }}>{l.unidadMedida}</div>
                       </div>
                       <button className="pos-icono-claro" style={{ width: 40, height: 40, flexShrink: 0 }} aria-label={`Quitar ${l.nombre}`}
@@ -488,7 +488,7 @@ export default function PasesTablet() {
             ) : hoyLista.map(p => (
               <div key={p._id} className="pos-hoy-fila" style={{ cursor: 'pointer' }}
                 onClick={() => (p.firmaEntrega?.fecha && p.firmaRecibe?.fecha) || p.estado === 'Despachado' ? abrirPDF(p._id) : setFirmando(p)}>
-                <span style={{ fontFamily: 'DM Mono, monospace', fontWeight: 800, color: 'var(--verde-dark)', minWidth: 52 }}>#{p.folio}</span>
+                <span style={{ fontVariantNumeric: 'tabular-nums', fontWeight: 800, color: 'var(--verde-dark)', minWidth: 52 }}>#{p.folio}</span>
                 <span style={{ flex: 1, minWidth: 0, overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>
                   {p.autorizadoPara} <span style={{ color: '#64748b' }}>· {p.items?.length || 0} art.</span>
                 </span>
@@ -520,7 +520,7 @@ export default function PasesTablet() {
               {carrito.map(l => (
                 <div key={l.articulo} style={{ display: 'flex', justifyContent: 'space-between', gap: '.75rem' }}>
                   <span style={{ minWidth: 0, overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>{l.nombre}</span>
-                  <b style={{ fontFamily: 'DM Mono, monospace', whiteSpace: 'nowrap' }}>{fmt(l.cantidad)} {l.unidadMedida}</b>
+                  <b style={{ fontVariantNumeric: 'tabular-nums', whiteSpace: 'nowrap' }}>{fmt(l.cantidad)} {l.unidadMedida}</b>
                 </div>
               ))}
             </div>
@@ -606,10 +606,10 @@ export default function PasesTablet() {
       {/* ── Confirmación grande ── */}
       {exito && (
         <div className="pos-exito" onClick={() => setExito(null)}>
-          <div className="pos-exito-caja" style={{ borderColor: '#16a34a' }} onClick={e => e.stopPropagation()}>
-            <CheckCircle2 size={72} color="#16a34a" />
+          <div className="pos-exito-caja" style={{ borderColor: '#1f7a33' }} onClick={e => e.stopPropagation()}>
+            <CheckCircle2 size={72} color="#1f7a33" />
             <div style={{ fontSize: '1.4rem', fontWeight: 800, marginTop: '.4rem' }}>Salida registrada</div>
-            <div style={{ fontFamily: 'DM Mono, monospace', fontSize: '2.6rem', fontWeight: 800, color: 'var(--verde-dark)', marginTop: '.2rem' }}>
+            <div style={{ fontVariantNumeric: 'tabular-nums', fontSize: '2.6rem', fontWeight: 800, color: 'var(--verde-dark)', marginTop: '.2rem' }}>
               #{exito.folio}
             </div>
             <div style={{ fontSize: '.95rem', color: '#475569', marginTop: '.2rem' }}>
@@ -657,7 +657,7 @@ function ChipCategoria({ activa, color, onClick, label, n }) {
 
 // Estilos propios de esta pantalla (prefijos pos- y pt-). Todo lo táctil mide >= 48px.
 const ESTILOS = `
-.pos-raiz { min-height: 100vh; background: #f1f5f9; font-family: Inter, sans-serif; padding-bottom: 4.5rem; }
+.pos-raiz { min-height: 100vh; background: #f1f5f9; font-family: inherit; padding-bottom: 4.5rem; }
 .pos-raiz button { touch-action: manipulation; -webkit-tap-highlight-color: transparent; font-family: inherit; }
 .pos-header { background: var(--verde); color: #fff; padding: .75rem 1rem; display: flex; align-items: center; justify-content: space-between; gap: .75rem; position: sticky; top: 0; z-index: 20; }
 .pos-icono { background: rgba(255,255,255,.16); border: none; color: #fff; width: 48px; height: 48px; border-radius: 12px; display: flex; align-items: center; justify-content: center; cursor: pointer; flex-shrink: 0; }
@@ -687,11 +687,11 @@ const ESTILOS = `
 .pos-tile:active { transform: scale(.97); }
 .pos-tile-nombre { font-size: .92rem; font-weight: 700; color: #0f172a; line-height: 1.2; overflow-wrap: anywhere; display: -webkit-box; -webkit-line-clamp: 3; -webkit-box-orient: vertical; overflow: hidden; }
 .pos-medidor { background: #e2e8f0; color: #334155; border-radius: 6px; font-size: .68rem; font-weight: 800; padding: .1rem .4rem; white-space: nowrap; }
-.pt-insignia { position: absolute; top: -9px; right: -9px; background: #16a34a; color: #fff; border-radius: 999px; min-width: 30px; height: 30px; padding: 0 .45rem; display: flex; align-items: center; justify-content: center; font-family: 'DM Mono', monospace; font-weight: 800; font-size: .85rem; border: 2px solid #fff; }
+.pt-insignia { position: absolute; top: -9px; right: -9px; background: #1f7a33; color: #fff; border-radius: 999px; min-width: 30px; height: 30px; padding: 0 .45rem; display: flex; align-items: center; justify-content: center; font-variant-numeric: tabular-nums; font-weight: 800; font-size: .85rem; border: 2px solid #fff; }
 .pt-mas { width: 100%; margin-top: .8rem; min-height: 56px; background: #fff; border: 2px dashed #94a3b8; border-radius: 14px; font-size: .95rem; font-weight: 700; color: #334155; cursor: pointer; }
 
 .pos-panel { background: #fff; border: 1px solid #e2e8f0; border-radius: 18px; padding: 1rem; }
-.pt-contador { background: #16a34a; color: #fff; border-radius: 999px; font-size: .8rem; padding: .05rem .55rem; font-weight: 800; }
+.pt-contador { background: #1f7a33; color: #fff; border-radius: 999px; font-size: .8rem; padding: .05rem .55rem; font-weight: 800; }
 .pt-link { background: none; border: none; color: #dc2626; font-weight: 700; font-size: .85rem; display: flex; align-items: center; gap: .3rem; cursor: pointer; min-height: 44px; padding: 0 .4rem; }
 .pt-lineas { display: flex; flex-direction: column; gap: .45rem; max-height: 220px; overflow-y: auto; }
 .pt-linea { display: flex; align-items: center; gap: .6rem; border: 2px solid #e2e8f0; border-radius: 12px; padding: .45rem .6rem; min-height: 58px; cursor: pointer; }
@@ -702,10 +702,10 @@ const ESTILOS = `
 
 .pos-campo { width: 100%; background: #f8fafc; border: 3px solid #e2e8f0; border-radius: 14px; padding: .55rem .9rem; display: flex; flex-direction: column; align-items: flex-end; cursor: default; min-height: 64px; }
 .pos-campo-etiqueta { align-self: flex-start; font-size: .72rem; font-weight: 800; color: #64748b; letter-spacing: .06em; }
-.pos-campo-valor { font-family: 'DM Mono', monospace; font-weight: 800; color: #0f172a; line-height: 1.1; }
+.pos-campo-valor { font-variant-numeric: tabular-nums; font-weight: 800; color: #0f172a; line-height: 1.1; }
 
 .pos-tecla { height: 60px; background: #fff; border: 2px solid #cbd5e1; border-radius: 14px; font-size: 1.7rem; font-weight: 700; color: #0f172a; cursor: pointer; display: flex; align-items: center; justify-content: center; user-select: none; }
-.pos-tecla:active { background: #dcfce7; border-color: #16a34a; }
+.pos-tecla:active { background: #dcfce7; border-color: #1f7a33; }
 .pos-tecla-limpiar { height: 48px; font-size: 1rem; color: #64748b; }
 
 .pos-despachar { height: 72px; background: var(--verde); color: #fff; border: none; border-radius: 16px; font-size: 1.2rem; font-weight: 800; display: flex; align-items: center; justify-content: center; gap: .7rem; cursor: pointer; width: 100%; }

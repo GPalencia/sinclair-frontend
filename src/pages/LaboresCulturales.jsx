@@ -28,7 +28,7 @@ function Modal({ titulo, onClose, children }) {
     >
       <div style={{ background: 'var(--card)', border: '1px solid var(--border)', borderRadius: 14, padding: '1.75rem', width: '100%', maxWidth: 460, maxHeight: 'calc(100dvh - 2rem)', overflowY: 'auto', animation: 'fadeUp .25s ease' }}>
         <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', flexWrap: 'wrap', gap: '.75rem', marginBottom: '1.25rem' }}>
-          <h3 style={{ fontFamily: 'Inter, sans-serif', fontSize: '1rem', fontWeight: 700 }}>{titulo}</h3>
+          <h3 style={{ fontSize: '1rem', fontWeight: 700 }}>{titulo}</h3>
           <button className="btn-ghost" onClick={onClose} style={{ fontSize: '1.1rem', padding: '.3rem .6rem' }}>×</button>
         </div>
         {children}
@@ -238,7 +238,7 @@ export default function LaboresCulturales() {
             style={{
               display: 'flex', alignItems: 'center', gap: '.4rem',
               padding: '.65rem 1rem', border: 'none', background: 'none', cursor: 'pointer',
-              fontFamily: 'Inter, sans-serif', fontSize: '.85rem', fontWeight: tab === key ? 700 : 400,
+              fontSize: '.85rem', fontWeight: tab === key ? 700 : 400,
               color: tab === key ? 'var(--verde)' : 'var(--muted)',
               borderBottom: tab === key ? '2px solid var(--verde)' : '2px solid transparent',
               marginBottom: '-1px', transition: 'all .15s',
@@ -367,7 +367,7 @@ export default function LaboresCulturales() {
           {buscado && (
             <div className="card fade-up" style={{ padding: 0, overflow: 'hidden' }}>
               <div style={{ padding: '1rem 1.5rem', borderBottom: '1px solid var(--border)', display: 'flex', justifyContent: 'space-between', alignItems: 'center', flexWrap: 'wrap', gap: '.75rem' }}>
-                <span style={{ fontFamily: 'Inter, sans-serif', fontSize: '.85rem', fontWeight: 600 }}>
+                <span style={{ fontSize: '.85rem', fontWeight: 600 }}>
                   {registros.length} registros encontrados
                 </span>
                 <button className="btn-secondary" onClick={exportarHistorial} disabled={!registros.length}>
@@ -386,19 +386,19 @@ export default function LaboresCulturales() {
                   <tbody>
                     {registros.map(r => (
                       <tr key={r._id}>
-                        <td style={{ fontFamily: 'DM Mono, monospace', fontSize: '.8rem', color: 'var(--muted)', whiteSpace: 'nowrap' }}>
+                        <td style={{ fontVariantNumeric: 'tabular-nums', fontSize: '.8rem', color: 'var(--muted)', whiteSpace: 'nowrap' }}>
                           {fechaCorta(r.fecha)}
                         </td>
                         <td style={{ fontWeight: 500, whiteSpace: 'nowrap' }}>{r.lote?.finca} — {r.lote?.lote}</td>
                         <td>{r.tipoLabor?.nombre}</td>
                         <td style={{ textAlign: 'center' }}>{r.personal}</td>
-                        <td style={{ fontFamily: 'DM Mono, monospace', fontSize: '.82rem' }}>{r.avanceMz}</td>
+                        <td style={{ fontVariantNumeric: 'tabular-nums', fontSize: '.82rem' }}>{r.avanceMz}</td>
                         <td style={{ fontSize: '.82rem' }}>{r.cultivo || '—'}</td>
                         <td style={{ fontSize: '.82rem', color: 'var(--muted)' }}>{r.variedad || '—'}</td>
-                        <td style={{ fontFamily: 'DM Mono, monospace', fontSize: '.82rem', color: 'var(--verde)', fontWeight: 600 }}>
+                        <td style={{ fontVariantNumeric: 'tabular-nums', fontSize: '.82rem', color: 'var(--verde)', fontWeight: 600 }}>
                           {r.calculado?.avanceAcumulado} / {r.lote?.areaMz}
                         </td>
-                        <td style={{ fontFamily: 'DM Mono, monospace', fontSize: '.82rem' }}>{r.calculado?.porcentaje}%</td>
+                        <td style={{ fontVariantNumeric: 'tabular-nums', fontSize: '.82rem' }}>{r.calculado?.porcentaje}%</td>
                         <td>
                           <span className={`badge ${COLOR_ESTADO[r.calculado?.estado] || 'badge-gray'}`}>
                             {r.calculado?.estado}
@@ -429,7 +429,7 @@ export default function LaboresCulturales() {
       {/* ── Progreso ── */}
       {tab === 'progreso' && (
         <div className="card fade-up" style={{ padding: 0, overflow: 'hidden' }}>
-          <div style={{ padding: '1rem 1.5rem', borderBottom: '1px solid var(--border)', fontFamily: 'Inter, sans-serif', fontSize: '.85rem', fontWeight: 600 }}>
+          <div style={{ padding: '1rem 1.5rem', borderBottom: '1px solid var(--border)', fontSize: '.85rem', fontWeight: 600 }}>
             Progreso por lote
           </div>
           {cargandoProgreso ? (
@@ -445,13 +445,13 @@ export default function LaboresCulturales() {
                     <tr key={i}>
                       <td style={{ fontWeight: 500 }}>{p.lote}</td>
                       <td>{p.tipoLabor}</td>
-                      <td style={{ fontFamily: 'DM Mono, monospace', fontSize: '.82rem' }}>{p.avanceAcumulado}</td>
-                      <td style={{ fontFamily: 'DM Mono, monospace', fontSize: '.82rem' }}>{p.areaMz}</td>
-                      <td style={{ fontFamily: 'DM Mono, monospace', fontSize: '.82rem' }}>{p.porcentaje}%</td>
+                      <td style={{ fontVariantNumeric: 'tabular-nums', fontSize: '.82rem' }}>{p.avanceAcumulado}</td>
+                      <td style={{ fontVariantNumeric: 'tabular-nums', fontSize: '.82rem' }}>{p.areaMz}</td>
+                      <td style={{ fontVariantNumeric: 'tabular-nums', fontSize: '.82rem' }}>{p.porcentaje}%</td>
                       <td>
                         <span className={`badge ${COLOR_ESTADO[p.estado] || 'badge-gray'}`}>{p.estado}</span>
                       </td>
-                      <td style={{ fontFamily: 'DM Mono, monospace', fontSize: '.8rem', color: 'var(--muted)', whiteSpace: 'nowrap' }}>
+                      <td style={{ fontVariantNumeric: 'tabular-nums', fontSize: '.8rem', color: 'var(--muted)', whiteSpace: 'nowrap' }}>
                         {p.ultimaFecha ? fechaCorta(p.ultimaFecha) : '—'}
                       </td>
                     </tr>

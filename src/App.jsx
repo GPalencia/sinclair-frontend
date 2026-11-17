@@ -27,7 +27,7 @@ import { puedeVerModulo } from './config/modulos'
 function RutaProtegida({ children, modulo, soloAdmin, sinLayout }) {
   const { usuario, cargando } = useAuth()
   if (cargando) return (
-    <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', height: '100vh', gap: '1rem', color: 'var(--muted)', fontFamily: 'DM Mono, monospace', fontSize: '.9rem' }}>
+    <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', height: '100vh', gap: '1rem', color: 'var(--muted)', fontVariantNumeric: 'tabular-nums', fontSize: '.9rem' }}>
       <span className="spinner" /> Iniciando SinclairApp...
     </div>
   )

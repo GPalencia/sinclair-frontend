@@ -128,7 +128,7 @@ export default function MedidorAreaGPS({ onGuardar, onCerrar }) {
     >
       <div style={{ background: 'var(--card)', border: '1px solid var(--border)', borderRadius: 14, padding: '1.25rem', width: '100%', maxWidth: 560, animation: 'fadeUp .25s ease' }}>
         <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '1rem' }}>
-          <h3 style={{ fontFamily: 'Inter, sans-serif', fontSize: '1rem', fontWeight: 700 }}>Marcar área con GPS</h3>
+          <h3 style={{ fontSize: '1rem', fontWeight: 700 }}>Marcar área con GPS</h3>
           <button className="btn-ghost" onClick={onCerrar} style={{ fontSize: '1.1rem', padding: '.3rem .6rem' }}><X size={18} /></button>
         </div>
 
@@ -139,7 +139,7 @@ export default function MedidorAreaGPS({ onGuardar, onCerrar }) {
         <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginTop: '1rem', flexWrap: 'wrap', gap: '.5rem' }}>
           <div>
             <div style={{ fontSize: '.75rem', color: 'var(--muted)' }}>{puntos.length} punto{puntos.length === 1 ? '' : 's'} marcado{puntos.length === 1 ? '' : 's'}</div>
-            <div style={{ fontSize: '1.3rem', fontWeight: 700, fontFamily: 'DM Mono, monospace', color: 'var(--verde)' }}>
+            <div style={{ fontSize: '1.3rem', fontWeight: 700, fontVariantNumeric: 'tabular-nums', color: 'var(--verde)' }}>
               {areaMz.toFixed(3)} Mz
             </div>
           </div>

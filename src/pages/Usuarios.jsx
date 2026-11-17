@@ -48,7 +48,7 @@ function Modal({ titulo, onClose, children }) {
     >
       <div style={{ background: 'var(--card)', border: '1px solid var(--border)', borderRadius: 14, padding: '1.75rem', width: '100%', maxWidth: 460, maxHeight: 'calc(100dvh - 2rem)', overflowY: 'auto', animation: 'fadeUp .25s ease' }}>
         <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', flexWrap: 'wrap', gap: '.75rem', marginBottom: '1.25rem' }}>
-          <h3 style={{ fontFamily: 'Inter, sans-serif', fontSize: '1rem', fontWeight: 700 }}>{titulo}</h3>
+          <h3 style={{ fontSize: '1rem', fontWeight: 700 }}>{titulo}</h3>
           <button className="btn-ghost" onClick={onClose} style={{ fontSize: '1.1rem', padding: '.3rem .6rem' }}>×</button>
         </div>
         {children}
@@ -193,7 +193,7 @@ export default function Usuarios() {
             background: 'rgba(34,197,94,.15)',
             border: '2px solid rgba(34,197,94,.3)',
             display: 'flex', alignItems: 'center', justifyContent: 'center',
-            fontFamily: 'Inter, sans-serif', fontWeight: 700, fontSize: '1.2rem', color: 'var(--verde)',
+            fontWeight: 700, fontSize: '1.2rem', color: 'var(--verde)',
             flexShrink: 0
           }}>
             {usuario?.nombre?.charAt(0).toUpperCase()}
@@ -220,7 +220,7 @@ export default function Usuarios() {
       {esAdmin && (
         <div className="card fade-up" style={{ padding: 0, overflow: 'hidden' }}>
           <div style={{ padding: '1rem 1.5rem', borderBottom: '1px solid var(--border)', display: 'flex', justifyContent: 'space-between', alignItems: 'center', flexWrap: 'wrap', gap: '.75rem' }}>
-            <span style={{ fontFamily: 'Inter, sans-serif', fontSize: '.85rem', fontWeight: 600 }}>
+            <span style={{ fontSize: '.85rem', fontWeight: 600 }}>
               Todos los usuarios ({usuarios.length})
             </span>
           </div>
@@ -249,7 +249,7 @@ export default function Usuarios() {
                             width: 34, height: 34, borderRadius: '50%',
                             background: u.rol === 'admin' ? 'rgba(245,158,11,.15)' : 'rgba(59,130,246,.15)',
                             display: 'flex', alignItems: 'center', justifyContent: 'center',
-                            fontFamily: 'Inter, sans-serif', fontWeight: 700, fontSize: '.85rem',
+                            fontWeight: 700, fontSize: '.85rem',
                             color: u.rol === 'admin' ? '#fbbf24' : '#60a5fa',
                             flexShrink: 0
                           }}>
@@ -261,7 +261,7 @@ export default function Usuarios() {
                           )}
                         </div>
                       </td>
-                      <td style={{ color: 'var(--muted)', fontSize: '.85rem', fontFamily: 'DM Mono, monospace' }}>
+                      <td style={{ color: 'var(--muted)', fontSize: '.85rem', fontVariantNumeric: 'tabular-nums' }}>
                         {u.email}
                       </td>
                       <td>
@@ -279,7 +279,7 @@ export default function Usuarios() {
                           {u.activo ? 'Activo' : 'Inactivo'}
                         </span>
                       </td>
-                      <td style={{ fontSize: '.78rem', color: 'var(--muted)', fontFamily: 'DM Mono, monospace', whiteSpace: 'nowrap' }}>
+                      <td style={{ fontSize: '.78rem', color: 'var(--muted)', fontVariantNumeric: 'tabular-nums', whiteSpace: 'nowrap' }}>
                         {new Date(u.createdAt).toLocaleDateString('es-HN')}
                       </td>
                       <td>
@@ -338,7 +338,7 @@ export default function Usuarios() {
                       border: formNuevo.rol === r ? '1px solid rgba(34,197,94,.4)' : '1px solid var(--border)',
                       background: formNuevo.rol === r ? 'rgba(34,197,94,.08)' : 'transparent',
                       color: formNuevo.rol === r ? 'var(--verde)' : 'var(--muted)',
-                      fontFamily: 'Inter, sans-serif', fontSize: '.82rem', cursor: 'pointer', transition: 'all .18s'
+                      fontSize: '.82rem', cursor: 'pointer', transition: 'all .18s'
                     }}>
                     {label}
                   </button>
@@ -396,7 +396,7 @@ export default function Usuarios() {
                           border: formEditar.rol === r ? '1px solid rgba(34,197,94,.4)' : '1px solid var(--border)',
                           background: formEditar.rol === r ? 'rgba(34,197,94,.08)' : 'transparent',
                           color: formEditar.rol === r ? 'var(--verde)' : 'var(--muted)',
-                          fontFamily: 'Inter, sans-serif', fontSize: '.82rem', cursor: 'pointer', transition: 'all .18s'
+                          fontSize: '.82rem', cursor: 'pointer', transition: 'all .18s'
                         }}>
                         {label}
                       </button>

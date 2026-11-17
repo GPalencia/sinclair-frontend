@@ -233,7 +233,7 @@ export default function PasesSalida() {
             style={{
               display: 'flex', alignItems: 'center', gap: '.4rem',
               padding: '.65rem 1rem', border: 'none', background: 'none', cursor: 'pointer',
-              fontFamily: 'Inter, sans-serif', fontSize: '.85rem', fontWeight: tab === key ? 700 : 400,
+              fontSize: '.85rem', fontWeight: tab === key ? 700 : 400,
               color: tab === key ? 'var(--verde)' : 'var(--muted)',
               borderBottom: tab === key ? '2px solid var(--verde)' : '2px solid transparent',
               marginBottom: '-1px', transition: 'all .15s',
@@ -401,7 +401,7 @@ export default function PasesSalida() {
           {buscado && (
             <div className="card fade-up" style={{ padding: 0, overflow: 'hidden' }}>
               <div style={{ padding: '1rem 1.5rem', borderBottom: '1px solid var(--border)', display: 'flex', justifyContent: 'space-between', alignItems: 'center', flexWrap: 'wrap', gap: '.75rem' }}>
-                <span style={{ fontFamily: 'Inter, sans-serif', fontSize: '.85rem', fontWeight: 600 }}>
+                <span style={{ fontSize: '.85rem', fontWeight: 600 }}>
                   {pases.length} salidas encontradas
                 </span>
                 <button className="btn-secondary" onClick={exportarHistorial} disabled={!pases.length}>
@@ -420,8 +420,8 @@ export default function PasesSalida() {
                   <tbody>
                     {pases.map(p => (
                       <tr key={p._id}>
-                        <td style={{ fontFamily: 'DM Mono, monospace', fontWeight: 700, color: 'var(--verde-dark)' }}>#{p.folio}</td>
-                        <td style={{ fontFamily: 'DM Mono, monospace', fontSize: '.8rem', color: 'var(--muted)', whiteSpace: 'nowrap' }}>
+                        <td style={{ fontVariantNumeric: 'tabular-nums', fontWeight: 700, color: 'var(--verde-dark)' }}>#{p.folio}</td>
+                        <td style={{ fontVariantNumeric: 'tabular-nums', fontSize: '.8rem', color: 'var(--muted)', whiteSpace: 'nowrap' }}>
                           {fechaCorta(p.fecha)}
                         </td>
                         <td style={{ whiteSpace: 'nowrap' }}>{p.bodega?.nombre}</td>

@@ -203,7 +203,7 @@ export default function Riego() {
           <button key={key} type="button" onClick={() => setTab(key)}
             style={{
               display: 'flex', alignItems: 'center', gap: '.4rem', padding: '.65rem 1rem', border: 'none', background: 'none', cursor: 'pointer',
-              fontFamily: 'Inter, sans-serif', fontSize: '.85rem', fontWeight: tab === key ? 700 : 400,
+              fontSize: '.85rem', fontWeight: tab === key ? 700 : 400,
               color: tab === key ? 'var(--verde)' : 'var(--muted)',
               borderBottom: tab === key ? '2px solid var(--verde)' : '2px solid transparent', marginBottom: '-1px',
             }}>
@@ -237,7 +237,7 @@ export default function Riego() {
             )}
 
             <div className="card fade-up" style={{ padding: 0, overflow: 'hidden' }}>
-              <div style={{ padding: '1rem 1.5rem', borderBottom: '1px solid var(--border)', fontFamily: 'Inter, sans-serif', fontSize: '.85rem', fontWeight: 600 }}>
+              <div style={{ padding: '1rem 1.5rem', borderBottom: '1px solid var(--border)', fontSize: '.85rem', fontWeight: 600 }}>
                 Turnos de hoy
               </div>
               <TablaTurnos turnos={turnosHoy} esAdmin={esAdmin} conTotales
@@ -282,7 +282,7 @@ export default function Riego() {
           {buscado && (
             <div className="card fade-up" style={{ padding: 0, overflow: 'hidden' }}>
               <div style={{ padding: '1rem 1.5rem', borderBottom: '1px solid var(--border)', display: 'flex', justifyContent: 'space-between', alignItems: 'center', flexWrap: 'wrap', gap: '.75rem' }}>
-                <span style={{ fontFamily: 'Inter, sans-serif', fontSize: '.85rem', fontWeight: 600 }}>{historial.length} turnos encontrados</span>
+                <span style={{ fontSize: '.85rem', fontWeight: 600 }}>{historial.length} turnos encontrados</span>
                 <button className="btn-secondary" onClick={exportarHistorial} disabled={!historial.length}><FileDown size={15} /> Exportar Excel</button>
               </div>
               <TablaTurnos turnos={historial} esAdmin={esAdmin} conTotales
@@ -307,19 +307,19 @@ export default function Riego() {
           {resumen && (
             <>
               <div className="card fade-up" style={{ padding: 0, overflow: 'hidden' }}>
-                <div style={{ padding: '1rem 1.5rem', borderBottom: '1px solid var(--border)', fontFamily: 'Inter, sans-serif', fontSize: '.85rem', fontWeight: 600 }}>Por día y estación</div>
+                <div style={{ padding: '1rem 1.5rem', borderBottom: '1px solid var(--border)', fontSize: '.85rem', fontWeight: 600 }}>Por día y estación</div>
                 <div style={{ overflowX: 'auto' }}>
                   <table className="tbl">
                     <thead><tr><th>Fecha</th><th>Estación</th><th>Turnos</th><th>Lotes regados</th><th>Total horas</th><th>Diesel gastado (gal)</th></tr></thead>
                     <tbody>
                       {resumen.porDia.map((d, i) => (
                         <tr key={i}>
-                          <td style={{ whiteSpace: 'nowrap', fontFamily: 'DM Mono, monospace', fontSize: '.8rem' }}>{fechaCorta(d.fecha)} <span style={{ color: 'var(--muted2)', textTransform: 'capitalize' }}>{fechaCorta(d.fecha, { weekday: 'short' })}</span></td>
+                          <td style={{ whiteSpace: 'nowrap', fontVariantNumeric: 'tabular-nums', fontSize: '.8rem' }}>{fechaCorta(d.fecha)} <span style={{ color: 'var(--muted2)', textTransform: 'capitalize' }}>{fechaCorta(d.fecha, { weekday: 'short' })}</span></td>
                           <td style={{ fontWeight: 600 }}>{d.estacion}</td>
                           <td style={{ textAlign: 'center' }}>{d.turnos}</td>
                           <td style={{ fontSize: '.85rem' }}>{d.lotes.join(' · ')}{d.fertirriegos > 0 && <span className="badge badge-yellow" style={{ marginLeft: '.4rem' }}>Fertirriego: {d.fertirriegos}</span>}</td>
-                          <td style={{ fontFamily: 'DM Mono, monospace', fontWeight: 600 }}>{fmtHoras(d.horas)}</td>
-                          <td style={{ fontFamily: 'DM Mono, monospace', color: 'var(--verde)', fontWeight: 600 }}>{d.galones != null ? fmtNum(d.galones) : '—'}</td>
+                          <td style={{ fontVariantNumeric: 'tabular-nums', fontWeight: 600 }}>{fmtHoras(d.horas)}</td>
+                          <td style={{ fontVariantNumeric: 'tabular-nums', color: 'var(--verde)', fontWeight: 600 }}>{d.galones != null ? fmtNum(d.galones) : '—'}</td>
                         </tr>
                       ))}
                       {!resumen.porDia.length && <tr><td colSpan={6} style={{ textAlign: 'center', color: 'var(--muted)', padding: '1.5rem' }}>Sin turnos en ese período</td></tr>}
@@ -328,7 +328,7 @@ export default function Riego() {
                 </div>
               </div>
               <div className="card fade-up" style={{ padding: 0, overflow: 'hidden' }}>
-                <div style={{ padding: '1rem 1.5rem', borderBottom: '1px solid var(--border)', fontFamily: 'Inter, sans-serif', fontSize: '.85rem', fontWeight: 600 }}>Por lote en el período</div>
+                <div style={{ padding: '1rem 1.5rem', borderBottom: '1px solid var(--border)', fontSize: '.85rem', fontWeight: 600 }}>Por lote en el período</div>
                 <div style={{ overflowX: 'auto' }}>
                   <table className="tbl">
                     <thead><tr><th>Estación</th><th>Lote</th><th>Turnos</th><th>Horas regadas</th><th>Fertirriegos</th><th>Productos</th><th>Último riego</th></tr></thead>
@@ -336,12 +336,12 @@ export default function Riego() {
                       {resumen.porLote.map((l, i) => (
                         <tr key={i}>
                           <td style={{ fontWeight: 600 }}>{l.estacion}</td>
-                          <td style={{ fontFamily: 'DM Mono, monospace', fontWeight: 600 }}>{l.lote}</td>
+                          <td style={{ fontVariantNumeric: 'tabular-nums', fontWeight: 600 }}>{l.lote}</td>
                           <td style={{ textAlign: 'center' }}>{l.turnos}</td>
-                          <td style={{ fontFamily: 'DM Mono, monospace' }}>{fmtHoras(l.horas)}</td>
+                          <td style={{ fontVariantNumeric: 'tabular-nums' }}>{fmtHoras(l.horas)}</td>
                           <td style={{ textAlign: 'center' }}>{l.fertirriegos || '—'}</td>
                           <td style={{ fontSize: '.8rem', color: 'var(--muted)' }}>{l.productos.join(', ') || '—'}</td>
-                          <td style={{ fontFamily: 'DM Mono, monospace', fontSize: '.8rem' }}>{fechaCorta(l.ultimaFecha)}</td>
+                          <td style={{ fontVariantNumeric: 'tabular-nums', fontSize: '.8rem' }}>{fechaCorta(l.ultimaFecha)}</td>
                         </tr>
                       ))}
                       {!resumen.porLote.length && <tr><td colSpan={7} style={{ textAlign: 'center', color: 'var(--muted)', padding: '1.5rem' }}>Sin turnos en ese período</td></tr>}

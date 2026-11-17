@@ -1,6 +1,5 @@
 // src/pages/Login.jsx
 import { useState } from 'react'
-import { LogIn } from 'lucide-react'
 
 import LOGO from '../assets/logo'
 import { useNavigate } from 'react-router-dom'
@@ -32,85 +31,54 @@ export default function Login() {
     }
   }
 
+  function cancelar() {
+    setEmail(''); setPassword(''); setError('')
+  }
+
   return (
-    <div style={{
-      minHeight: '100vh',
-      display: 'flex',
-      flexDirection: 'column',
-      background: '#f8fafc',
-    }}>
-      {/* Franja superior */}
-      <div style={{ height: 8, background: 'var(--verde)' }} />
-
-      <div style={{ flex: 1, display: 'flex', alignItems: 'center', justifyContent: 'center', padding: '1rem' }}>
-        {/* Card */}
-        <div style={{
-          width: '100%',
-          maxWidth: 400,
-          background: '#ffffff',
-          border: '1px solid #e2e8f0',
-          borderRadius: 10,
-          padding: '2.5rem 2rem',
-        }}>
-          {/* Logo + título */}
-          <div style={{ textAlign: 'center', marginBottom: '2rem' }}>
-            <img src={LOGO} alt="Sinclair" style={{ height: 84, width: 84, objectFit: 'contain', display: 'block', margin: '0 auto 1rem' }} />
-            <div style={{ fontFamily: 'Inter, sans-serif', fontSize: '1.5rem', fontWeight: 800, letterSpacing: '.06em', color: 'var(--verde)', marginBottom: '.35rem' }}>
-              SINCLAIR
-            </div>
-            <p style={{ fontSize: '.9rem', color: '#334155', fontWeight: 500 }}>Sistema de Control de Fincas</p>
+    <div style={{ minHeight: '100vh', background: '#ffffff', display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center', padding: '2rem 1rem' }}>
+      <div style={{ width: '100%', maxWidth: 400 }}>
+        {/* Logo + título */}
+        <div style={{ textAlign: 'center', marginBottom: '2.25rem' }}>
+          <img src={LOGO} alt="Sinclair" style={{ height: 96, width: 96, objectFit: 'contain', display: 'block', margin: '0 auto 1.25rem' }} />
+          <div style={{ fontSize: '2.4rem', fontWeight: 700, letterSpacing: '.12em', color: 'var(--verde)', lineHeight: 1.1 }}>
+            SINCLAIR
           </div>
+          <div style={{ fontSize: '.85rem', color: 'var(--muted)', letterSpacing: '.3em', textTransform: 'uppercase', marginTop: '.6rem' }}>
+            Sistema de Control de Fincas
+          </div>
+        </div>
 
-        <form onSubmit={handleSubmit} style={{ display: 'flex', flexDirection: 'column', gap: '1rem' }}>
+        <form onSubmit={handleSubmit} style={{ display: 'flex', flexDirection: 'column', gap: '.9rem' }}>
           <div>
-            <label className="lbl">Email</label>
-            <input
-              className="inp"
-              type="email"
-              placeholder="admin@sinclair.com"
-              value={email}
-              onChange={e => setEmail(e.target.value)}
-              required
-            />
+            <label className="lbl">Usuario</label>
+            <input className="inp" type="email" autoComplete="username" placeholder="correo@sinclair.com"
+              value={email} onChange={e => setEmail(e.target.value)} required autoFocus />
           </div>
           <div>
             <label className="lbl">Contraseña</label>
-            <input
-              className="inp"
-              type="password"
-              placeholder="••••••••"
-              value={password}
-              onChange={e => setPassword(e.target.value)}
-              required
-            />
+            <input className="inp" type="password" autoComplete="current-password"
+              value={password} onChange={e => setPassword(e.target.value)} required />
           </div>
 
           {error && (
-            <div style={{
-              background: '#fef2f2',
-              border: '1px solid #fecaca',
-              borderRadius: 8,
-              padding: '.6rem .9rem',
-              fontSize: '.85rem',
-              color: '#dc2626',
-            }}>
+            <div style={{ background: '#fdecea', border: '1px solid #f5c2c0', borderRadius: 4, padding: '.55rem .8rem', fontSize: '.875rem', color: 'var(--danger)' }}>
               {error}
             </div>
           )}
 
-          <button
-            className="btn-primary"
-            type="submit"
-            disabled={cargando}
-            style={{ width: '100%', justifyContent: 'center', marginTop: '.5rem', padding: '.8rem' }}
-          >
-            {cargando ? <span className="spinner" /> : <><LogIn size={16} /> Ingresar</>}
-          </button>
+          <div style={{ display: 'flex', gap: '.6rem', justifyContent: 'center', marginTop: '.75rem' }}>
+            <button className="btn-primary" type="submit" disabled={cargando} style={{ minWidth: 120, justifyContent: 'center' }}>
+              {cargando ? <span className="spinner" style={{ borderTopColor: '#fff' }} /> : 'Acceder'}
+            </button>
+            <button className="btn-secondary" type="button" onClick={cancelar} style={{ minWidth: 120, justifyContent: 'center' }}>
+              Cancelar
+            </button>
+          </div>
         </form>
 
-          <div style={{ marginTop: '1.5rem', textAlign: 'center', fontSize: '.75rem', color: 'var(--muted)' }}>
-            Sinclair Reliable Producers © 2026
-          </div>
+        <div style={{ marginTop: '3rem', textAlign: 'center', fontSize: '.85rem', color: 'var(--text2)' }}>
+          © {new Date().getFullYear()} Sinclair Import Group
         </div>
       </div>
     </div>

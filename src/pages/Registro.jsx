@@ -254,7 +254,7 @@ export default function Registro() {
                     border: modo === m ? '1px solid rgba(34,197,94,.3)' : '1px solid var(--border)',
                     background: modo === m ? 'rgba(34,197,94,.08)' : 'transparent',
                     color: modo === m ? 'var(--verde)' : 'var(--muted)',
-                    fontFamily: 'Inter, sans-serif',
+                    fontFamily: 'inherit',
                     fontSize: '.78rem',
                     fontWeight: modo === m ? 600 : 400,
                     cursor: 'pointer',
@@ -302,7 +302,7 @@ export default function Registro() {
               {/* Estado inferior */}
               <div style={{ position: 'absolute', bottom: '.5rem', left: '50%', transform: 'translateX(-50%)',
                 background: 'rgba(0,0,0,.75)', padding: '.25rem .9rem', borderRadius: 20,
-                fontSize: '.75rem', fontFamily: 'DM Mono, monospace', whiteSpace: 'nowrap',
+                fontSize: '.75rem', fontVariantNumeric: 'tabular-nums', whiteSpace: 'nowrap',
                 color: persona != null ? '#4ade80' : stream ? 'rgba(255,255,255,.8)' : 'var(--muted)' }}>
                 {persona != null ? `${persona.nombres} ${persona.apellidos}` : stream ? 'Centra el rostro en el óvalo' : 'Sin cámara'}
               </div>
@@ -312,8 +312,8 @@ export default function Registro() {
               <button className="btn-secondary" style={{ flex: 1 }} onClick={activarCamara}>Activar cámara</button>
               <button className="btn-primary" style={{ flex: 1, justifyContent: 'center' }} onClick={reconocer} disabled={!stream || !modelosCargados}>Reconocer</button>
             </div>
-            {cargandoModelos && <div style={{ fontSize: '.78rem', color: 'var(--muted)', fontFamily: 'DM Mono, monospace' }}>⟳ Cargando modelos de IA...</div>}
-            {modelosCargados && <div style={{ fontSize: '.78rem', color: 'var(--verde)', fontFamily: 'DM Mono, monospace' }}>{descriptoresBD.length} descriptores cargados</div>}
+            {cargandoModelos && <div style={{ fontSize: '.78rem', color: 'var(--muted)', fontVariantNumeric: 'tabular-nums' }}>⟳ Cargando modelos de IA...</div>}
+            {modelosCargados && <div style={{ fontSize: '.78rem', color: 'var(--verde)', fontVariantNumeric: 'tabular-nums' }}>{descriptoresBD.length} descriptores cargados</div>}
           </div>
 
           {/* Búsqueda por código */}
@@ -355,7 +355,7 @@ export default function Registro() {
                   <div style={{ fontWeight: 600, fontSize: '1rem', marginBottom: '.25rem' }}>
                     {persona.nombres} {persona.apellidos}
                   </div>
-                  <div style={{ fontFamily: 'DM Mono, monospace', fontSize: '.8rem', color: 'var(--verde)', marginBottom: '.2rem' }}>
+                  <div style={{ fontVariantNumeric: 'tabular-nums', fontSize: '.8rem', color: 'var(--verde)', marginBottom: '.2rem' }}>
                     {persona.codigoEmpleado || 'Sin código'}
                   </div>
                   <div style={{ fontSize: '.8rem', color: 'var(--muted)' }}>{persona.cargo}</div>
@@ -373,7 +373,7 @@ export default function Registro() {
 
         {/* ── Columna derecha: planilla ── */}
         <div className="card fade-up" style={{ display: 'flex', flexDirection: 'column', gap: '1rem' }}>
-          <h3 style={{ fontFamily: 'Inter, sans-serif', fontSize: '.85rem', color: 'var(--muted)', letterSpacing: '.08em', textTransform: 'uppercase' }}>
+          <h3 style={{ fontSize: '.85rem', color: 'var(--muted)', letterSpacing: '.08em', textTransform: 'uppercase' }}>
             Datos de Planilla
           </h3>
 
@@ -435,13 +435,13 @@ export default function Registro() {
                       onMouseEnter={e => e.currentTarget.style.background = 'rgba(255,255,255,.05)'}
                       onMouseLeave={e => e.currentTarget.style.background = laborId === l._id ? 'rgba(34,197,94,.08)' : 'transparent'}
                     >
-                      <span style={{ fontFamily: 'DM Mono, monospace', fontSize: '.75rem', color: 'var(--verde)' }}>
+                      <span style={{ fontVariantNumeric: 'tabular-nums', fontSize: '.75rem', color: 'var(--verde)' }}>
                         {l.codigo}
                       </span>
                       <span style={{ margin: '0 .4rem', color: 'var(--muted)' }}>—</span>
                       <span style={{ fontSize: '.85rem' }}>{l.nombre}</span>
                       {l.valorDiario
-                        ? <span style={{ float: 'right', fontSize: '.75rem', color: 'var(--muted)', fontFamily: 'DM Mono, monospace' }}>L{l.valorDiario}/día</span>
+                        ? <span style={{ float: 'right', fontSize: '.75rem', color: 'var(--muted)', fontVariantNumeric: 'tabular-nums' }}>L{l.valorDiario}/día</span>
                         : <span style={{ float: 'right', fontSize: '.75rem', color: 'var(--muted)' }}>valor libre</span>
                       }
                     </div>
@@ -467,7 +467,7 @@ export default function Registro() {
                   {laborSel.pideDias ? 'Salario (Lps)' : 'Monto a pagar (Lps)'} *
                 </label>
                 {laborSel.pideDias && laborSel.valorDiario && (
-                  <span style={{ fontSize: '.72rem', color: 'var(--muted)', fontFamily: 'DM Mono, monospace' }}>
+                  <span style={{ fontSize: '.72rem', color: 'var(--muted)', fontVariantNumeric: 'tabular-nums' }}>
                     Referencia: L {(dias * laborSel.valorDiario).toFixed(2)}
                   </span>
                 )}

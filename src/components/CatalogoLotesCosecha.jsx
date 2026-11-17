@@ -112,7 +112,7 @@ export default function CatalogoLotesCosecha({ onCambio }) {
   return (
     <div style={{ display: 'flex', flexDirection: 'column', gap: '1.25rem' }}>
       <div className="card">
-        <h3 style={{ fontFamily: 'Inter, sans-serif', fontSize: '.85rem', color: 'var(--muted)', marginBottom: '1rem', textTransform: 'uppercase', letterSpacing: '.06em' }}>
+        <h3 style={{ fontSize: '.85rem', color: 'var(--muted)', marginBottom: '1rem', textTransform: 'uppercase', letterSpacing: '.06em' }}>
           Agregar lote de cosecha (lote nuevo)
         </h3>
         <div style={{ display: 'flex', flexDirection: 'column', gap: '.85rem', maxWidth: 560 }}>
@@ -152,7 +152,7 @@ export default function CatalogoLotesCosecha({ onCambio }) {
       </div>
 
       <div className="card" style={{ padding: 0, overflow: 'hidden' }}>
-        <div style={{ padding: '1rem 1.5rem', borderBottom: '1px solid var(--border)', fontFamily: 'Inter, sans-serif', fontSize: '.85rem', fontWeight: 600 }}>
+        <div style={{ padding: '1rem 1.5rem', borderBottom: '1px solid var(--border)', fontSize: '.85rem', fontWeight: 600 }}>
           Catálogo de lotes de cosecha
         </div>
         {cargando ? (
@@ -172,13 +172,13 @@ export default function CatalogoLotesCosecha({ onCambio }) {
                       {infoCiclos[l._id]?.de > 1 ? `${infoCiclos[l._id].n} de ${infoCiclos[l._id].de}` : '1'}
                     </td>
                     <td style={{ fontSize: '.82rem', color: 'var(--muted)' }}>{l.variedad || '—'}</td>
-                    <td style={{ fontFamily: 'DM Mono, monospace', fontSize: '.8rem', color: 'var(--muted)' }}>
+                    <td style={{ fontVariantNumeric: 'tabular-nums', fontSize: '.8rem', color: 'var(--muted)' }}>
                       {fechaCorta(l.fechaCalentamiento)}
                     </td>
-                    <td style={{ fontFamily: 'DM Mono, monospace', fontSize: '.8rem', color: 'var(--muted)' }}>
+                    <td style={{ fontVariantNumeric: 'tabular-nums', fontSize: '.8rem', color: 'var(--muted)' }}>
                       {l.fechaCierre ? fechaCorta(l.fechaCierre) : '—'}
                     </td>
-                    <td style={{ fontFamily: 'DM Mono, monospace', fontSize: '.82rem' }}>{l.area}</td>
+                    <td style={{ fontVariantNumeric: 'tabular-nums', fontSize: '.82rem' }}>{l.area}</td>
                     <td>
                       <button type="button" onClick={() => toggleActivo(l)}
                         className={`badge ${l.activo ? 'badge-green' : 'badge-gray'}`}
@@ -214,7 +214,7 @@ export default function CatalogoLotesCosecha({ onCambio }) {
           style={{ position: 'fixed', inset: 0, background: 'rgba(0,0,0,.75)', zIndex: 100, display: 'flex', alignItems: 'center', justifyContent: 'center', padding: '1rem' }}>
           <div style={{ background: 'var(--card)', border: '1px solid var(--border)', borderRadius: 14, padding: '1.5rem', width: '100%', maxWidth: 460, maxHeight: 'calc(100dvh - 2rem)', overflowY: 'auto', animation: 'fadeUp .25s ease' }}>
             <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '1rem' }}>
-              <h3 style={{ fontFamily: 'Inter, sans-serif', fontSize: '1rem', fontWeight: 700 }}>
+              <h3 style={{ fontSize: '1rem', fontWeight: 700 }}>
                 Nuevo ciclo — {modalCiclo.lote.finca} lote {modalCiclo.lote.lote}
               </h3>
               <button className="btn-ghost" onClick={() => setModalCiclo(null)} style={{ padding: '.3rem .6rem' }}><X size={18} /></button>
@@ -260,7 +260,7 @@ export default function CatalogoLotesCosecha({ onCambio }) {
           style={{ position: 'fixed', inset: 0, background: 'rgba(0,0,0,.75)', zIndex: 100, display: 'flex', alignItems: 'center', justifyContent: 'center', padding: '1rem' }}>
           <div style={{ background: 'var(--card)', border: '1px solid var(--border)', borderRadius: 14, padding: '1.5rem', width: '100%', maxWidth: 460, maxHeight: 'calc(100dvh - 2rem)', overflowY: 'auto' }}>
             <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '1rem' }}>
-              <h3 style={{ fontFamily: 'Inter, sans-serif', fontSize: '1rem', fontWeight: 700 }}>
+              <h3 style={{ fontSize: '1rem', fontWeight: 700 }}>
                 Editar ciclo — {modalEditar.lote.finca} lote {modalEditar.lote.lote}
               </h3>
               <button className="btn-ghost" onClick={() => setModalEditar(null)} style={{ padding: '.3rem .6rem' }}><X size={18} /></button>

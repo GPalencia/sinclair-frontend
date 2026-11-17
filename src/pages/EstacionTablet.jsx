@@ -22,7 +22,7 @@ import { LUGARES_CARGA, nombreLugar, lugarSugerido } from '../utils/lugarCarga'
 const LLAVE_ENCARGADO = 'sinclair_encargado_bomba'
 
 const CATEGORIAS = [
-  { key: 'frecuentes',    label: 'Frecuentes',    color: '#16a34a' },
+  { key: 'frecuentes',    label: 'Frecuentes',    color: '#1f7a33' },
   { key: 'vehiculos',     label: 'Vehículos',     color: '#2563eb' },
   { key: 'tractores',     label: 'Tractores',     color: '#ca8a04' },
   { key: 'riego',         label: 'Riego',         color: '#0891b2' },
@@ -296,7 +296,7 @@ export default function EstacionTablet() {
           {inventario && (
             <div className="pos-existencia">
               <span style={{ fontSize: '.7rem', opacity: .85 }}>EXISTENCIA</span>
-              <span style={{ fontFamily: 'DM Mono, monospace', fontWeight: 800, fontSize: '1.15rem' }}>
+              <span style={{ fontVariantNumeric: 'tabular-nums', fontWeight: 800, fontSize: '1.15rem' }}>
                 {fmt(inventario.existenciaActualGalones, 1)} gal
               </span>
             </div>
@@ -371,7 +371,7 @@ export default function EstacionTablet() {
                     }}
                   >
                     <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', gap: '.4rem' }}>
-                      <span style={{ fontFamily: 'DM Mono, monospace', fontSize: '.78rem', color: '#64748b', fontWeight: 600 }}>{m.codigo}</span>
+                      <span style={{ fontVariantNumeric: 'tabular-nums', fontSize: '.78rem', color: '#64748b', fontWeight: 600 }}>{m.codigo}</span>
                       {medidor && <span className="pos-medidor">{medidor}</span>}
                     </div>
                     <div className="pos-tile-nombre">{m.unidadDestino}</div>
@@ -386,7 +386,7 @@ export default function EstacionTablet() {
         <div className="pos-panel" ref={panelRef}>
           {!seleccionada ? (
             <div style={{ textAlign: 'center', padding: '2.5rem 1rem', color: 'var(--muted)' }}>
-              <Fuel size={46} color="#16a34a" style={{ marginBottom: '.75rem' }} />
+              <Fuel size={46} color="#1f7a33" style={{ marginBottom: '.75rem' }} />
               <div style={{ fontSize: '1.15rem', fontWeight: 700, color: 'var(--text)' }}>Toca una unidad para empezar</div>
               <div style={{ fontSize: '.88rem', marginTop: '.3rem' }}>Después escribe los galones y toca Despachar</div>
             </div>
@@ -395,7 +395,7 @@ export default function EstacionTablet() {
               {/* Unidad elegida */}
               <div style={{ display: 'flex', alignItems: 'flex-start', justifyContent: 'space-between', gap: '.5rem', borderLeft: `6px solid ${colorSel}`, paddingLeft: '.75rem' }}>
                 <div style={{ minWidth: 0 }}>
-                  <div style={{ fontFamily: 'DM Mono, monospace', fontSize: '.8rem', color: '#64748b', fontWeight: 700 }}>
+                  <div style={{ fontVariantNumeric: 'tabular-nums', fontSize: '.8rem', color: '#64748b', fontWeight: 700 }}>
                     {seleccionada.codigo} · {seleccionada.tipo}
                   </div>
                   <div style={{ fontSize: '1.15rem', fontWeight: 800, lineHeight: 1.2 }}>{seleccionada.unidadDestino}</div>
@@ -492,16 +492,16 @@ export default function EstacionTablet() {
               <div style={{ padding: '1rem', textAlign: 'center', color: 'var(--muted)' }}>Todavía no hay despachos hoy.</div>
             ) : hoyLista.map(d => (
               <div key={d._id} className="pos-hoy-fila">
-                <span style={{ fontFamily: 'DM Mono, monospace', fontWeight: 700, color: '#64748b', minWidth: 52 }}>{d.maquinaria?.codigo}</span>
+                <span style={{ fontVariantNumeric: 'tabular-nums', fontWeight: 700, color: '#64748b', minWidth: 52 }}>{d.maquinaria?.codigo}</span>
                 <span style={{ flex: 1, minWidth: 0, overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>{d.maquinaria?.unidadDestino}</span>
-                <span style={{ fontFamily: 'DM Mono, monospace', fontWeight: 800 }}>{fmt(d.cantidadDieselGalones)} gal</span>
+                <span style={{ fontVariantNumeric: 'tabular-nums', fontWeight: 800 }}>{fmt(d.cantidadDieselGalones)} gal</span>
               </div>
             ))}
           </div>
         )}
         <button className="pos-hoy-barra" onClick={() => setVerHoy(v => !v)}>
           <span>Hoy: <b>{hoyLista.length}</b> despacho{hoyLista.length === 1 ? '' : 's'}</span>
-          <span style={{ fontFamily: 'DM Mono, monospace', fontWeight: 800 }}>{fmt(totalHoy, 1)} gal</span>
+          <span style={{ fontVariantNumeric: 'tabular-nums', fontWeight: 800 }}>{fmt(totalHoy, 1)} gal</span>
           {verHoy ? <ChevronDown size={20} /> : <ChevronUp size={20} />}
         </button>
       </div>
@@ -509,11 +509,11 @@ export default function EstacionTablet() {
       {/* ── Confirmación grande ── */}
       {exito && (
         <div className="pos-exito" onClick={() => setExito(null)}>
-          <div className="pos-exito-caja" style={{ borderColor: exito.alerta === 'Bajo rendimiento' ? '#f59e0b' : '#16a34a' }}>
-            <CheckCircle2 size={72} color="#16a34a" />
+          <div className="pos-exito-caja" style={{ borderColor: exito.alerta === 'Bajo rendimiento' ? '#f59e0b' : '#1f7a33' }}>
+            <CheckCircle2 size={72} color="#1f7a33" />
             <div style={{ fontSize: '1.4rem', fontWeight: 800, marginTop: '.4rem' }}>Despacho registrado</div>
             <div style={{ fontSize: '1rem', color: '#475569', marginTop: '.3rem' }}>{exito.codigo} · {exito.nombre}</div>
-            <div style={{ fontFamily: 'DM Mono, monospace', fontSize: '2.4rem', fontWeight: 800, color: 'var(--verde-dark)', marginTop: '.3rem' }}>
+            <div style={{ fontVariantNumeric: 'tabular-nums', fontSize: '2.4rem', fontWeight: 800, color: 'var(--verde-dark)', marginTop: '.3rem' }}>
               {fmt(exito.galones)} gal
             </div>
             {exito.alerta === 'Bajo rendimiento' && (
@@ -530,7 +530,7 @@ export default function EstacionTablet() {
 
 // Estilos propios de esta pantalla (prefijo pos-). Todo lo táctil mide >= 56px.
 const ESTILOS = `
-.pos-raiz { min-height: 100vh; background: #f1f5f9; font-family: Inter, sans-serif; padding-bottom: 4.5rem; }
+.pos-raiz { min-height: 100vh; background: #f1f5f9; font-family: inherit; padding-bottom: 4.5rem; }
 .pos-raiz button { touch-action: manipulation; -webkit-tap-highlight-color: transparent; font-family: inherit; }
 .pos-header { background: var(--verde); color: #fff; padding: .75rem 1rem; display: flex; align-items: center; justify-content: space-between; gap: .75rem; position: sticky; top: 0; z-index: 20; }
 .pos-icono { background: rgba(255,255,255,.16); border: none; color: #fff; width: 48px; height: 48px; border-radius: 12px; display: flex; align-items: center; justify-content: center; cursor: pointer; flex-shrink: 0; }
@@ -558,10 +558,10 @@ const ESTILOS = `
 .pos-panel { background: #fff; border: 1px solid #e2e8f0; border-radius: 18px; padding: 1rem; }
 .pos-campo { width: 100%; background: #f8fafc; border: 3px solid #e2e8f0; border-radius: 14px; padding: .55rem .9rem; display: flex; flex-direction: column; align-items: flex-end; cursor: pointer; min-height: 64px; }
 .pos-campo-etiqueta { align-self: flex-start; font-size: .72rem; font-weight: 800; color: #64748b; letter-spacing: .06em; }
-.pos-campo-valor { font-family: 'DM Mono', monospace; font-weight: 800; color: #0f172a; line-height: 1.1; }
+.pos-campo-valor { font-variant-numeric: tabular-nums; font-weight: 800; color: #0f172a; line-height: 1.1; }
 
 .pos-tecla { height: 64px; background: #fff; border: 2px solid #cbd5e1; border-radius: 14px; font-size: 1.7rem; font-weight: 700; color: #0f172a; cursor: pointer; display: flex; align-items: center; justify-content: center; user-select: none; }
-.pos-tecla:active { background: #dcfce7; border-color: #16a34a; }
+.pos-tecla:active { background: #dcfce7; border-color: #1f7a33; }
 .pos-tecla-limpiar { height: 50px; font-size: 1rem; color: #64748b; }
 
 .pos-despachar { height: 76px; background: var(--verde); color: #fff; border: none; border-radius: 16px; font-size: 1.3rem; font-weight: 800; display: flex; align-items: center; justify-content: center; gap: .7rem; cursor: pointer; }

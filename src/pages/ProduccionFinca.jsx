@@ -15,7 +15,7 @@ function PreviaEmpaque({ pesoNeto, cestas, rendManual, variedad }) {
   const e = calcularEmpaque({ pesoNeto, cestas, rendManual, variedad })
   if (e.rendimiento == null) return null
   const Item = ({ k, v }) => v == null ? null : (
-    <div><div style={{ fontSize: '.65rem', color: 'var(--muted)', textTransform: 'uppercase' }}>{k}</div><b style={{ fontFamily: 'DM Mono, monospace' }}>{v}</b></div>
+    <div><div style={{ fontSize: '.65rem', color: 'var(--muted)', textTransform: 'uppercase' }}>{k}</div><b style={{ fontVariantNumeric: 'tabular-nums' }}>{v}</b></div>
   )
   return (
     <div style={{ display: 'flex', gap: '1.25rem', flexWrap: 'wrap', background: 'var(--verde-light)', borderRadius: 10, padding: '.65rem .9rem' }}>
@@ -55,7 +55,7 @@ function Modal({ titulo, onClose, children }) {
     >
       <div style={{ background: 'var(--card)', border: '1px solid var(--border)', borderRadius: 14, padding: '1.75rem', width: '100%', maxWidth: 460, maxHeight: 'calc(100dvh - 2rem)', overflowY: 'auto', animation: 'fadeUp .25s ease' }}>
         <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', flexWrap: 'wrap', gap: '.75rem', marginBottom: '1.25rem' }}>
-          <h3 style={{ fontFamily: 'Inter, sans-serif', fontSize: '1rem', fontWeight: 700 }}>{titulo}</h3>
+          <h3 style={{ fontSize: '1rem', fontWeight: 700 }}>{titulo}</h3>
           <button className="btn-ghost" onClick={onClose} style={{ fontSize: '1.1rem', padding: '.3rem .6rem' }}>×</button>
         </div>
         {children}
@@ -292,7 +292,7 @@ export default function ProduccionFinca() {
             style={{
               display: 'flex', alignItems: 'center', gap: '.4rem',
               padding: '.65rem 1rem', border: 'none', background: 'none', cursor: 'pointer',
-              fontFamily: 'Inter, sans-serif', fontSize: '.85rem', fontWeight: tab === key ? 700 : 400,
+              fontSize: '.85rem', fontWeight: tab === key ? 700 : 400,
               color: tab === key ? 'var(--verde)' : 'var(--muted)',
               borderBottom: tab === key ? '2px solid var(--verde)' : '2px solid transparent',
               marginBottom: '-1px', transition: 'all .15s',
@@ -427,7 +427,7 @@ export default function ProduccionFinca() {
           {buscado && (
             <div className="card fade-up" style={{ padding: 0, overflow: 'hidden' }}>
               <div style={{ padding: '1rem 1.5rem', borderBottom: '1px solid var(--border)', display: 'flex', justifyContent: 'space-between', alignItems: 'center', flexWrap: 'wrap', gap: '.75rem' }}>
-                <span style={{ fontFamily: 'Inter, sans-serif', fontSize: '.85rem', fontWeight: 600 }}>
+                <span style={{ fontSize: '.85rem', fontWeight: 600 }}>
                   {registrosFiltrados.length} registros encontrados
                 </span>
                 <button className="btn-secondary" onClick={exportarHistorial} disabled={!registrosFiltrados.length}>
@@ -448,7 +448,7 @@ export default function ProduccionFinca() {
                   <tbody>
                     {registrosFiltrados.map(r => (
                       <tr key={r._id}>
-                        <td style={{ fontFamily: 'DM Mono, monospace', fontSize: '.8rem', color: 'var(--muted)', whiteSpace: 'nowrap' }}>
+                        <td style={{ fontVariantNumeric: 'tabular-nums', fontSize: '.8rem', color: 'var(--muted)', whiteSpace: 'nowrap' }}>
                           {fechaCorta(r.fecha)}
                         </td>
                         <td style={{ fontWeight: 500, whiteSpace: 'nowrap' }}>
@@ -459,17 +459,17 @@ export default function ProduccionFinca() {
                         <td style={{ textAlign: 'center' }}>{r.calculado?.totalPersonal ?? '—'}</td>
                         <td style={{ textAlign: 'center' }}>{r.cestas ?? '—'}</td>
                         <td style={{ textAlign: 'center' }}>{r.empaque ?? '—'}</td>
-                        <td style={{ fontFamily: 'DM Mono, monospace', fontSize: '.82rem' }}>{r.totalKilos ?? '—'}</td>
-                        <td style={{ fontFamily: 'DM Mono, monospace', fontSize: '.82rem' }}>{r.calculado?.pesoXCesta ?? '—'}</td>
-                        <td style={{ fontFamily: 'DM Mono, monospace', fontSize: '.82rem' }} title={r.calculado?.rendOrigen === 'manual' ? 'Escrito a mano (el registro no tiene peso)' : 'Peso x cesta ÷ 15.4'}>
+                        <td style={{ fontVariantNumeric: 'tabular-nums', fontSize: '.82rem' }}>{r.totalKilos ?? '—'}</td>
+                        <td style={{ fontVariantNumeric: 'tabular-nums', fontSize: '.82rem' }}>{r.calculado?.pesoXCesta ?? '—'}</td>
+                        <td style={{ fontVariantNumeric: 'tabular-nums', fontSize: '.82rem' }} title={r.calculado?.rendOrigen === 'manual' ? 'Escrito a mano (el registro no tiene peso)' : 'Peso x cesta ÷ 15.4'}>
                           {r.calculado?.rendimiento ?? '—'}{r.calculado?.rendOrigen === 'manual' && <span style={{ color: 'var(--muted2)' }}>*</span>}
                         </td>
-                        <td style={{ fontFamily: 'DM Mono, monospace', fontSize: '.82rem', fontWeight: 600 }}>{r.calculado?.cajas7kg ?? '—'}</td>
-                        <td style={{ fontFamily: 'DM Mono, monospace', fontSize: '.82rem' }}>{r.calculado?.cajas4kg ?? '—'}</td>
-                        <td style={{ fontFamily: 'DM Mono, monospace', fontSize: '.82rem' }}>{r.calculado?.cajas5kg ?? '—'}</td>
-                        <td style={{ fontFamily: 'DM Mono, monospace', fontSize: '.82rem' }}>{r.calculado?.cestasXJornal ?? '—'}</td>
-                        <td style={{ fontFamily: 'DM Mono, monospace', fontSize: '.82rem' }}>{r.calculado?.personalProyectado ?? '—'}</td>
-                        <td style={{ textAlign: 'center', fontFamily: 'DM Mono, monospace', fontSize: '.82rem' }}>{r.calculado?.diasCosecha ?? '—'}</td>
+                        <td style={{ fontVariantNumeric: 'tabular-nums', fontSize: '.82rem', fontWeight: 600 }}>{r.calculado?.cajas7kg ?? '—'}</td>
+                        <td style={{ fontVariantNumeric: 'tabular-nums', fontSize: '.82rem' }}>{r.calculado?.cajas4kg ?? '—'}</td>
+                        <td style={{ fontVariantNumeric: 'tabular-nums', fontSize: '.82rem' }}>{r.calculado?.cajas5kg ?? '—'}</td>
+                        <td style={{ fontVariantNumeric: 'tabular-nums', fontSize: '.82rem' }}>{r.calculado?.cestasXJornal ?? '—'}</td>
+                        <td style={{ fontVariantNumeric: 'tabular-nums', fontSize: '.82rem' }}>{r.calculado?.personalProyectado ?? '—'}</td>
+                        <td style={{ textAlign: 'center', fontVariantNumeric: 'tabular-nums', fontSize: '.82rem' }}>{r.calculado?.diasCosecha ?? '—'}</td>
                         <td>
                           {r.calculado?.pendiente ? (
                             <span className="badge badge-gray">Pendiente</span>
@@ -500,28 +500,28 @@ export default function ProduccionFinca() {
                         <td colSpan={5} style={{ fontSize: '.78rem', textTransform: 'uppercase', letterSpacing: '.05em', color: 'var(--muted)' }}>
                           Totales / promedios ({registrosFiltrados.length} registros)
                         </td>
-                        <td style={{ textAlign: 'center', fontFamily: 'DM Mono, monospace', fontSize: '.85rem' }}>
-                          <div style={{ fontSize: '.62rem', color: 'var(--muted)', fontFamily: 'Inter, sans-serif' }}>TOTAL</div>
+                        <td style={{ textAlign: 'center', fontVariantNumeric: 'tabular-nums', fontSize: '.85rem' }}>
+                          <div style={{ fontSize: '.62rem', color: 'var(--muted)' }}>TOTAL</div>
                           {fmtNum(resumen.cestas)}
                         </td>
                         <td />
-                        <td style={{ fontFamily: 'DM Mono, monospace', fontSize: '.85rem' }}>
-                          <div style={{ fontSize: '.62rem', color: 'var(--muted)', fontFamily: 'Inter, sans-serif' }}>PROM.</div>
+                        <td style={{ fontVariantNumeric: 'tabular-nums', fontSize: '.85rem' }}>
+                          <div style={{ fontSize: '.62rem', color: 'var(--muted)' }}>PROM.</div>
                           {fmtNum(resumen.kilos)}
                         </td>
                         <td />
-                        <td style={{ fontFamily: 'DM Mono, monospace', fontSize: '.85rem' }}>
-                          <div style={{ fontSize: '.62rem', color: 'var(--muted)', fontFamily: 'Inter, sans-serif' }}>PROM.</div>
+                        <td style={{ fontVariantNumeric: 'tabular-nums', fontSize: '.85rem' }}>
+                          <div style={{ fontSize: '.62rem', color: 'var(--muted)' }}>PROM.</div>
                           {fmtNum(resumen.rend)}
                         </td>
                         {['cajas7kg', 'cajas4kg', 'cajas5kg'].map(k => (
-                          <td key={k} style={{ fontFamily: 'DM Mono, monospace', fontSize: '.85rem' }}>
-                            <div style={{ fontSize: '.62rem', color: 'var(--muted)', fontFamily: 'Inter, sans-serif' }}>TOTAL</div>
+                          <td key={k} style={{ fontVariantNumeric: 'tabular-nums', fontSize: '.85rem' }}>
+                            <div style={{ fontSize: '.62rem', color: 'var(--muted)' }}>TOTAL</div>
                             {fmtNum(resumen[k])}
                           </td>
                         ))}
-                        <td style={{ fontFamily: 'DM Mono, monospace', fontSize: '.85rem' }}>
-                          <div style={{ fontSize: '.62rem', color: 'var(--muted)', fontFamily: 'Inter, sans-serif' }}>PROM.</div>
+                        <td style={{ fontVariantNumeric: 'tabular-nums', fontSize: '.85rem' }}>
+                          <div style={{ fontSize: '.62rem', color: 'var(--muted)' }}>PROM.</div>
                           {fmtNum(resumen.cestasPorPersona)}
                         </td>
                         <td colSpan={3} />

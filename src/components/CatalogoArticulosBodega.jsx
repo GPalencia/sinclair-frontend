@@ -58,7 +58,7 @@ export default function CatalogoArticulosBodega({ onCambio }) {
   return (
     <div style={{ display: 'flex', flexDirection: 'column', gap: '1.25rem' }}>
       <div className="card">
-        <h3 style={{ fontFamily: 'Inter, sans-serif', fontSize: '.85rem', color: 'var(--muted)', marginBottom: '1rem', textTransform: 'uppercase', letterSpacing: '.06em' }}>
+        <h3 style={{ fontSize: '.85rem', color: 'var(--muted)', marginBottom: '1rem', textTransform: 'uppercase', letterSpacing: '.06em' }}>
           Agregar artículo
         </h3>
         <div style={{ display: 'flex', gap: '1rem', flexWrap: 'wrap', alignItems: 'flex-end' }}>
@@ -92,7 +92,7 @@ export default function CatalogoArticulosBodega({ onCambio }) {
       </div>
 
       <div className="card" style={{ padding: 0, overflow: 'hidden' }}>
-        <div style={{ padding: '1rem 1.5rem', borderBottom: '1px solid var(--border)', fontFamily: 'Inter, sans-serif', fontSize: '.85rem', fontWeight: 600, display: 'flex', justifyContent: 'space-between', alignItems: 'center', gap: '1rem', flexWrap: 'wrap' }}>
+        <div style={{ padding: '1rem 1.5rem', borderBottom: '1px solid var(--border)', fontSize: '.85rem', fontWeight: 600, display: 'flex', justifyContent: 'space-between', alignItems: 'center', gap: '1rem', flexWrap: 'wrap' }}>
           <span>Catálogo de artículos <span style={{ color: 'var(--muted)', fontWeight: 400 }}>· {articulos.length} en total{coincidentes.length !== articulos.length ? `, ${coincidentes.length} coinciden` : ''}</span></span>
           <input className="inp" style={{ maxWidth: 280 }} placeholder="Buscar por código, nombre o categoría..." value={filtro} onChange={e => setFiltro(e.target.value)} />
         </div>
@@ -107,7 +107,7 @@ export default function CatalogoArticulosBodega({ onCambio }) {
               <tbody>
                 {coincidentes.slice(0, 150).map(a => (
                   <tr key={a._id}>
-                    <td style={{ fontFamily: 'DM Mono, monospace', fontSize: '.8rem', color: 'var(--muted)' }}>{a.codigo || '—'}</td>
+                    <td style={{ fontVariantNumeric: 'tabular-nums', fontSize: '.8rem', color: 'var(--muted)' }}>{a.codigo || '—'}</td>
                     <td style={{ fontWeight: 500 }}>{a.nombre}</td>
                     <td style={{ fontSize: '.8rem', color: 'var(--muted)' }}>{a.categoria || '—'}</td>
                     <td style={{ fontSize: '.82rem', color: 'var(--muted)' }}>{a.unidadMedida}</td>

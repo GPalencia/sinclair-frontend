@@ -1,10 +1,12 @@
 // src/components/Layout.jsx
 import { useState } from 'react'
 import {
-  ChevronDown, ClipboardList, ClipboardPen, Droplets, Fuel, LayoutDashboard, LogOut,
+  ChevronDown, CircleUser, ClipboardList, ClipboardPen, Droplets, Fuel, LayoutDashboard, LogOut,
   Menu, PackageCheck, Shovel, Sprout, UserCog, Warehouse, X
 } from 'lucide-react'
 import { MODULOS, puedeVerModulo } from '../config/modulos'
+
+const ROLES = { admin: 'Administrador', supervisor: 'Supervisor', jefe: 'Jefe', guardia: 'Caseta', usuario: 'Usuario' }
 
 const ICONOS = { ClipboardList, Sprout, Shovel, Warehouse, Fuel, PackageCheck, Droplets, ClipboardPen }
 
@@ -12,12 +14,11 @@ const estiloItem = (isActive) => ({
   display: 'flex',
   alignItems: 'center',
   gap: '.75rem',
-  padding: '.65rem .9rem',
-  borderRadius: 9,
-  fontFamily: 'Inter, sans-serif',
-  fontSize: '.85rem',
+  padding: '.6rem .85rem',
+  borderRadius: 4,
+  fontSize: '.92rem',
   fontWeight: isActive ? 600 : 400,
-  color: isActive ? 'var(--verde-dark)' : 'rgba(255,255,255,.9)',
+  color: isActive ? 'var(--verde-dark)' : '#ffffff',
   background: isActive ? '#ffffff' : 'transparent',
   border: 'none',
   textDecoration: 'none',
@@ -60,8 +61,8 @@ export default function Layout({ children }) {
 
       {/* ── Sidebar ── */}
       <aside style={{
-        width: 220,
-        background: 'var(--verde)',
+        width: 232,
+        background: 'var(--sidebar-bg)',
         borderRight: 'none',
         display: 'flex',
         flexDirection: 'column',
@@ -74,14 +75,13 @@ export default function Layout({ children }) {
         className="md-sidebar"
       >
         {/* Logo */}
-        <div style={{ padding: '1.25rem 1.25rem .75rem', borderBottom: '1px solid rgba(255,255,255,.2)', display: 'flex', alignItems: 'center', gap: '.75rem' }}>
-          <img src={LOGO} alt="Sinclair" style={{ height: 42, width: 42, objectFit: 'contain' }} />
+        <div style={{ padding: '1rem 1.1rem', borderBottom: '1px solid rgba(255,255,255,.18)', display: 'flex', alignItems: 'center', gap: '.7rem' }}>
+          <span style={{ width: 40, height: 40, borderRadius: '50%', background: '#ffffff', display: 'inline-flex', alignItems: 'center', justifyContent: 'center', flexShrink: 0 }}>
+            <img src={LOGO} alt="Sinclair" style={{ height: 34, width: 34, objectFit: 'contain' }} />
+          </span>
           <div>
-            <div style={{ fontFamily: 'Inter, sans-serif', fontSize: '.95rem', fontWeight: 800, letterSpacing: '.04em' }}>
-              <span style={{ color: '#ffffff' }}>SINCLAIR</span>
-              <span style={{ color: 'rgba(255,255,255,.75)', fontSize: '.7rem', fontWeight: 400 }}> /APP</span>
-            </div>
-            <div style={{ fontSize: '.68rem', color: 'rgba(255,255,255,.75)' }}>Reliable Producers</div>
+            <div style={{ fontSize: '1.05rem', fontWeight: 700, letterSpacing: '.05em', color: '#ffffff' }}>SINCLAIR</div>
+            <div style={{ fontSize: '.68rem', color: 'rgba(255,255,255,.8)', letterSpacing: '.06em', textTransform: 'uppercase' }}>Control de Fincas</div>
           </div>
         </div>
 
@@ -121,12 +121,11 @@ export default function Layout({ children }) {
                       to={to}
                       onClick={() => setOpen(false)}
                       style={({ isActive }) => ({
-                        padding: '.5rem .75rem',
-                        borderRadius: 7,
-                        fontFamily: 'Inter, sans-serif',
-                        fontSize: '.8rem',
+                        padding: '.45rem .75rem',
+                        borderRadius: 4,
+                        fontSize: '.86rem',
                         fontWeight: isActive ? 600 : 400,
-                        color: isActive ? 'var(--verde-dark)' : 'rgba(255,255,255,.8)',
+                        color: isActive ? 'var(--verde-dark)' : 'rgba(255,255,255,.88)',
                         background: isActive ? '#ffffff' : 'transparent',
                         textDecoration: 'none',
                         transition: 'all .18s',
@@ -160,27 +159,14 @@ export default function Layout({ children }) {
           )}
         </nav>
 
-        {/* Usuario */}
-        <div style={{ padding: '1rem', borderTop: '1px solid rgba(255,255,255,.2)' }}>
-          <div style={{ fontSize: '.78rem', color: 'rgba(255,255,255,.75)', marginBottom: '.5rem', fontFamily: 'DM Mono, monospace' }}>
-            {usuario?.email}
-          </div>
-          <button
-            onClick={handleLogout}
-            style={{ width: '100%', justifyContent: 'center', alignItems: 'center', flexDirection: 'row', fontSize: '.82rem', color: '#ffffff', background: 'rgba(255,255,255,.12)', border: 'none', borderRadius: 6, padding: '.5rem .75rem', cursor: 'pointer', display: 'flex', gap: '.4rem' }}
-          >
-            <span style={{ display: "inline-flex", alignItems: "center", gap: ".4rem", justifyContent: "center" }}><LogOut size={14} /> Cerrar sesión</span>
-          </button>
-        </div>
-
         {/* About */}
         <div style={{
           padding: '.85rem 1rem',
           borderTop: '1px solid rgba(255,255,255,.2)',
           background: 'rgba(0,0,0,.1)',
         }}>
-          <div style={{ fontSize: '.7rem', fontWeight: 600, color: '#ffffff', fontFamily: 'Inter, sans-serif', letterSpacing: '.04em', marginBottom: '.3rem' }}>
-            SINCLAIR/APP v1.0 · {__BUILD__}
+          <div style={{ fontSize: '.7rem', fontWeight: 600, color: '#ffffff', letterSpacing: '.04em', marginBottom: '.3rem' }}>
+            Versión 1.0 · {__BUILD__}
           </div>
           <div style={{ fontSize: '.68rem', color: 'rgba(255,255,255,.75)', lineHeight: 1.5 }}>
             Desarrollado por<br />
@@ -188,8 +174,7 @@ export default function Layout({ children }) {
             Coordinador de Sistemas
           </div>
           <div style={{ fontSize: '.65rem', color: 'rgba(255,255,255,.6)', marginTop: '.4rem', borderTop: '1px solid rgba(255,255,255,.15)', paddingTop: '.4rem' }}>
-            © {new Date().getFullYear()} Sinclair Reliable Producers.<br />
-            Todos los derechos reservados.
+            © {new Date().getFullYear()} Sinclair Import Group
           </div>
         </div>
       </aside>
@@ -217,16 +202,35 @@ export default function Layout({ children }) {
             {open ? <X size={20} /> : <Menu size={20} />}
           </button>
           <div style={{ display: 'flex', alignItems: 'center', gap: '.5rem' }}>
-            <img src={LOGO} alt="Sinclair" style={{ height: 28, width: 28, objectFit: 'contain' }} />
-            <span style={{ fontFamily: 'Inter, sans-serif', fontWeight: 700, fontSize: '.9rem', color: '#ffffff' }}>SINCLAIR/APP</span>
+            <span style={{ width: 30, height: 30, borderRadius: '50%', background: '#ffffff', display: 'inline-flex', alignItems: 'center', justifyContent: 'center' }}>
+              <img src={LOGO} alt="Sinclair" style={{ height: 25, width: 25, objectFit: 'contain' }} />
+            </span>
+            <span style={{ fontWeight: 700, fontSize: '.95rem', letterSpacing: '.05em', color: '#ffffff' }}>SINCLAIR</span>
           </div>
-          <div style={{ fontSize: '.8rem', color: 'rgba(255,255,255,.85)', fontFamily: 'DM Mono, monospace', fontWeight: 500 }}>
-            {usuario?.nombre?.split(' ')[0]}
-          </div>
+          <button onClick={handleLogout} title="Cerrar sesión"
+            style={{ padding: '.4rem .6rem', background: 'transparent', border: 'none', color: '#ffffff', cursor: 'pointer', display: 'inline-flex', alignItems: 'center', gap: '.35rem', fontSize: '.85rem' }}>
+            {usuario?.nombre?.split(' ')[0]} <LogOut size={16} />
+          </button>
         </header>
 
+        {/* Barra superior (escritorio): usuario y cerrar sesión */}
+        <div className="barra-sup" style={{
+          display: 'none', alignItems: 'center', justifyContent: 'flex-end', gap: '1.25rem',
+          padding: '0 1.5rem', height: 52, background: '#ffffff', borderBottom: '1px solid var(--border)',
+          position: 'sticky', top: 0, zIndex: 30,
+        }}>
+          <span style={{ display: 'inline-flex', alignItems: 'center', gap: '.45rem', fontSize: '.9rem', color: 'var(--text)' }}>
+            <CircleUser size={18} color="var(--verde)" />
+            {usuario?.nombre}
+            <span style={{ color: 'var(--muted)' }}>· {ROLES[usuario?.rol] || usuario?.rol}</span>
+          </span>
+          <button className="btn-secondary" onClick={handleLogout} style={{ minHeight: 0, padding: '.3rem .75rem', fontSize: '.85rem' }}>
+            <LogOut size={14} /> Cerrar sesión
+          </button>
+        </div>
+
         {/* Página */}
-        <main style={{ flex: 1, minWidth: 0, padding: '1.5rem', maxWidth: 1100, width: '100%', margin: '0 auto' }}>
+        <main style={{ flex: 1, minWidth: 0, padding: '1.25rem 1.5rem 2rem', maxWidth: 1280, width: '100%', margin: '0 auto' }}>
           {children}
         </main>
       </div>
@@ -240,9 +244,10 @@ export default function Layout({ children }) {
             height: 100vh !important;
           }
           .main-content {
-            margin-left: 220px !important;
+            margin-left: 0 !important;
           }
           header { display: none !important; }
+          .barra-sup { display: flex !important; }
         }
       `}</style>
     </div>

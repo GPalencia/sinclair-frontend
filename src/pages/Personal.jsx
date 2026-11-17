@@ -83,10 +83,10 @@ function ModalContrato({ persona, onCerrar, onGuardado }) {
         {/* Header */}
         <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', flexWrap: 'wrap', gap: '.75rem', marginBottom: '1.25rem' }}>
           <div>
-            <h3 style={{ fontFamily: 'Inter, sans-serif', fontSize: '1rem', fontWeight: 700 }}>
+            <h3 style={{ fontSize: '1rem', fontWeight: 700 }}>
               Contrato — {persona.nombres} {persona.apellidos}
             </h3>
-            <span style={{ fontFamily: 'DM Mono, monospace', fontSize: '.75rem', color: 'var(--verde)' }}>
+            <span style={{ fontVariantNumeric: 'tabular-nums', fontSize: '.75rem', color: 'var(--verde)' }}>
               {persona.codigoEmpleado || 'Sin código'}
             </span>
           </div>
@@ -101,7 +101,7 @@ function ModalContrato({ persona, onCerrar, onGuardado }) {
               border: tab === t ? '1px solid rgba(34,197,94,.3)' : '1px solid var(--border)',
               background: tab === t ? 'rgba(34,197,94,.08)' : 'transparent',
               color: tab === t ? 'var(--verde)' : 'var(--muted)',
-              fontFamily: 'Inter, sans-serif', fontSize: '.8rem', fontWeight: tab === t ? 600 : 400
+              fontSize: '.8rem', fontWeight: tab === t ? 600 : 400
             }}>{label}</button>
           ))}
         </div>
@@ -126,7 +126,7 @@ function ModalContrato({ persona, onCerrar, onGuardado }) {
             <div style={{ padding: '.65rem 1rem', background: 'var(--surface)',
               borderRadius: 8, display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
               <span style={{ fontSize: '.82rem', color: 'var(--muted)' }}>Fecha de vencimiento</span>
-              <span style={{ fontFamily: 'DM Mono, monospace', fontSize: '.9rem',
+              <span style={{ fontVariantNumeric: 'tabular-nums', fontSize: '.9rem',
                 fontWeight: 600, color: 'var(--verde)' }}>{fechaFinPreview}</span>
             </div>
 
@@ -176,7 +176,7 @@ function ModalContrato({ persona, onCerrar, onGuardado }) {
                     </span>
                     <span className={`badge ${cls}`}>{label}</span>
                   </div>
-                  <div style={{ fontFamily: 'DM Mono, monospace', fontSize: '.76rem', color: 'var(--muted)', lineHeight: 1.8 }}>
+                  <div style={{ fontVariantNumeric: 'tabular-nums', fontSize: '.76rem', color: 'var(--muted)', lineHeight: 1.8 }}>
                     <span>Inicio: {fechaCorta(c.fechaInicio)}</span>
                     <span style={{ margin: '0 .6rem' }}>→</span>
                     <span>Fin: {fechaCorta(c.fechaFin)}</span>
@@ -256,7 +256,7 @@ function ModalEditar({ persona, onCerrar, onGuardado }) {
         maxHeight: '90vh', overflowY: 'auto' }}>
 
         <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', flexWrap: 'wrap', gap: '.75rem', marginBottom: '1.25rem' }}>
-          <h3 style={{ fontFamily: 'Inter, sans-serif', fontSize: '1rem', fontWeight: 700 }}>
+          <h3 style={{ fontSize: '1rem', fontWeight: 700 }}>
             Editar — {persona.nombres} {persona.apellidos}
           </h3>
           <button className="btn-ghost" onClick={onCerrar} style={{ fontSize: '1.1rem' }}>×</button>
@@ -418,13 +418,13 @@ function ModalFaceId({ persona, onCerrar, onGuardado }) {
         {/* Header */}
         <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', flexWrap: 'wrap', gap: '.75rem', marginBottom: '1rem' }}>
           <div>
-            <h3 style={{ fontFamily: 'Inter, sans-serif', fontSize: '1rem', fontWeight: 700 }}>
+            <h3 style={{ fontSize: '1rem', fontWeight: 700 }}>
               Asignar Face ID
             </h3>
             <p style={{ fontSize: '.82rem', color: 'var(--muted)' }}>
               {persona.nombres} {persona.apellidos}
               {persona.codigoEmpleado && (
-                <span style={{ fontFamily: 'DM Mono, monospace', color: 'var(--verde)', marginLeft: '.5rem' }}>
+                <span style={{ fontVariantNumeric: 'tabular-nums', color: 'var(--verde)', marginLeft: '.5rem' }}>
                   {persona.codigoEmpleado}
                 </span>
               )}
@@ -436,7 +436,7 @@ function ModalFaceId({ persona, onCerrar, onGuardado }) {
         {/* Badge si ya tiene Face ID */}
         {persona.faceDescriptor && (
           <div style={{ marginBottom: '1rem', padding: '.6rem .9rem', background: 'rgba(34,197,94,.1)',
-            border: '1px solid rgba(34,197,94,.3)', borderRadius: 8, fontSize: '.8rem', color: '#16a34a' }}>
+            border: '1px solid rgba(34,197,94,.3)', borderRadius: 8, fontSize: '.8rem', color: '#1f7a33' }}>
             Este empleado ya tiene Face ID registrado. Puedes reemplazarlo capturando uno nuevo.
           </div>
         )}
@@ -480,7 +480,7 @@ function ModalFaceId({ persona, onCerrar, onGuardado }) {
           {stream && (
             <div style={{ position: 'absolute', bottom: '.6rem', left: '50%', transform: 'translateX(-50%)',
               background: 'rgba(0,0,0,.75)', padding: '.25rem .9rem', borderRadius: 20,
-              fontSize: '.75rem', fontFamily: 'DM Mono, monospace', whiteSpace: 'nowrap',
+              fontSize: '.75rem', fontVariantNumeric: 'tabular-nums', whiteSpace: 'nowrap',
               color: descriptor ? '#4ade80' : capturando ? '#fbbf24' : 'rgba(255,255,255,.8)' }}>
               {descriptor ? 'Descriptor capturado' : capturando ? 'Procesando...' : 'Centra tu rostro'}
             </div>
@@ -635,18 +635,18 @@ export default function Personal() {
                 ) : filtrado.map(p => (
                   <tr key={p._id}>
                     <td>
-                      <span style={{ fontFamily: 'DM Mono, monospace', fontSize: '.82rem', color: 'var(--verde)' }}>
+                      <span style={{ fontVariantNumeric: 'tabular-nums', fontSize: '.82rem', color: 'var(--verde)' }}>
                         {p.codigoEmpleado || '—'}
                       </span>
                     </td>
                     <td style={{ fontWeight: 500 }}>{p.nombres} {p.apellidos}</td>
-                    <td style={{ fontFamily: 'DM Mono, monospace', fontSize: '.8rem', color: 'var(--muted)' }}>
+                    <td style={{ fontVariantNumeric: 'tabular-nums', fontSize: '.8rem', color: 'var(--muted)' }}>
                       {p.numeroIdentidad || '—'}
                     </td>
                     <td>
                       <span className="badge badge-gray">{p.cargo}</span>
                     </td>
-                    <td style={{ fontFamily: 'DM Mono, monospace', fontSize: '.8rem', color: 'var(--muted)' }}>
+                    <td style={{ fontVariantNumeric: 'tabular-nums', fontSize: '.8rem', color: 'var(--muted)' }}>
                       {p.FechaIngreso
                         ? fechaCorta(p.FechaIngreso, { day: '2-digit', month: '2-digit', year: 'numeric' })
                         : '—'}
@@ -692,7 +692,7 @@ export default function Personal() {
                           className="btn-ghost"
                           style={{
                             padding: '.4rem .5rem',
-                            color: p.faceDescriptor ? '#16a34a' : '#d97706'
+                            color: p.faceDescriptor ? '#1f7a33' : '#d97706'
                           }}
                           onClick={() => setAsignandoFace(p)}
                           title={p.faceDescriptor ? 'Actualizar Face ID' : 'Asignar Face ID'}

@@ -117,7 +117,7 @@ export default function EntradasDiesel({ onCambio }) {
   return (
     <div style={{ display: 'flex', flexDirection: 'column', gap: '1.25rem' }}>
       <div className="card">
-        <h3 style={{ fontFamily: 'Inter, sans-serif', fontSize: '.85rem', color: 'var(--muted)', marginBottom: '1rem', textTransform: 'uppercase', letterSpacing: '.06em' }}>
+        <h3 style={{ fontSize: '.85rem', color: 'var(--muted)', marginBottom: '1rem', textTransform: 'uppercase', letterSpacing: '.06em' }}>
           {editando ? `Editar entrada ${editando.factura ? `· Factura ${editando.factura}` : ''}` : 'Registrar entrada de diesel'}
         </h3>
         {editando && (
@@ -203,7 +203,7 @@ export default function EntradasDiesel({ onCambio }) {
       </div>
 
       <div className="card" style={{ padding: 0, overflow: 'hidden' }}>
-        <div style={{ padding: '1rem 1.5rem', borderBottom: '1px solid var(--border)', fontFamily: 'Inter, sans-serif', fontSize: '.85rem', fontWeight: 600 }}>
+        <div style={{ padding: '1rem 1.5rem', borderBottom: '1px solid var(--border)', fontSize: '.85rem', fontWeight: 600 }}>
           Entradas de diesel
         </div>
         {cargando ? (
@@ -217,16 +217,16 @@ export default function EntradasDiesel({ onCambio }) {
               <tbody>
                 {entradas.map(e => (
                   <tr key={e._id}>
-                    <td style={{ fontFamily: 'DM Mono, monospace', fontSize: '.8rem', color: 'var(--muted)', whiteSpace: 'nowrap' }}>
+                    <td style={{ fontVariantNumeric: 'tabular-nums', fontSize: '.8rem', color: 'var(--muted)', whiteSpace: 'nowrap' }}>
                       {fechaCorta(e.fecha)}
                     </td>
                     <td style={{ fontWeight: 500 }}>{e.proveedor || '—'}</td>
                     <td style={{ fontSize: '.82rem', color: 'var(--muted)' }}>{e.numeroOrden || '—'}</td>
                     <td style={{ fontSize: '.82rem', color: 'var(--muted)' }}>{e.factura || '—'}</td>
-                    <td style={{ fontFamily: 'DM Mono, monospace', fontSize: '.82rem', textAlign: 'right' }}>{e.cantidadGalones}</td>
-                    <td style={{ fontFamily: 'DM Mono, monospace', fontSize: '.82rem', textAlign: 'right' }}>{e.precioUnitarioBruto}</td>
-                    <td style={{ fontFamily: 'DM Mono, monospace', fontSize: '.82rem', textAlign: 'right' }}>{e.descuentoPorGalon}</td>
-                    <td style={{ fontFamily: 'DM Mono, monospace', fontSize: '.82rem', textAlign: 'right', whiteSpace: 'nowrap' }}>
+                    <td style={{ fontVariantNumeric: 'tabular-nums', fontSize: '.82rem', textAlign: 'right' }}>{e.cantidadGalones}</td>
+                    <td style={{ fontVariantNumeric: 'tabular-nums', fontSize: '.82rem', textAlign: 'right' }}>{e.precioUnitarioBruto}</td>
+                    <td style={{ fontVariantNumeric: 'tabular-nums', fontSize: '.82rem', textAlign: 'right' }}>{e.descuentoPorGalon}</td>
+                    <td style={{ fontVariantNumeric: 'tabular-nums', fontSize: '.82rem', textAlign: 'right', whiteSpace: 'nowrap' }}>
                       {fmtL(e.costoTotal)}
                       {(() => {
                         const calc = costoCalculado(e.cantidadGalones, e.precioUnitarioBruto, e.descuentoPorGalon)
@@ -236,7 +236,7 @@ export default function EntradasDiesel({ onCambio }) {
                       })()}
                     </td>
                     <td style={{ textAlign: 'right' }}>
-                      <span style={{ fontFamily: 'DM Mono, monospace', fontSize: '.82rem', fontWeight: 600 }}>
+                      <span style={{ fontVariantNumeric: 'tabular-nums', fontSize: '.82rem', fontWeight: 600 }}>
                         {e.galonesRestantes}
                       </span>
                       {e.cerrada && (
@@ -284,13 +284,13 @@ export default function EntradasDiesel({ onCambio }) {
           style={{ position: 'fixed', inset: 0, background: 'rgba(0,0,0,.75)', zIndex: 100, display: 'flex', alignItems: 'center', justifyContent: 'center', padding: '1rem' }}
         >
           <div style={{ background: 'var(--card)', border: '1px solid var(--border)', borderRadius: 14, padding: '1.75rem', width: '100%', maxWidth: 460, maxHeight: 'calc(100dvh - 2rem)', overflowY: 'auto', animation: 'fadeUp .25s ease' }}>
-            <h3 style={{ fontFamily: 'Inter, sans-serif', fontSize: '1rem', fontWeight: 700, marginBottom: '.75rem' }}>Cerrar entrada</h3>
+            <h3 style={{ fontSize: '1rem', fontWeight: 700, marginBottom: '.75rem' }}>Cerrar entrada</h3>
             <p style={{ fontSize: '.85rem', color: 'var(--muted)', marginBottom: '1rem', lineHeight: 1.5 }}>
               {cerrando.proveedor || 'Entrada'} {cerrando.factura ? `· ${cerrando.factura}` : ''} · {fechaCorta(cerrando.fecha)}
             </p>
             <div style={{ background: 'var(--bg)', border: '1px solid var(--border)', borderRadius: 10, padding: '.9rem 1rem', marginBottom: '1rem' }}>
               <div style={{ fontSize: '.75rem', color: 'var(--muted)', textTransform: 'uppercase', letterSpacing: '.05em' }}>Se darán de baja</div>
-              <div style={{ fontSize: '1.4rem', fontWeight: 700, fontFamily: 'DM Mono, monospace', color: 'var(--danger)' }}>{cerrando.galonesRestantes} gal</div>
+              <div style={{ fontSize: '1.4rem', fontWeight: 700, fontVariantNumeric: 'tabular-nums', color: 'var(--danger)' }}>{cerrando.galonesRestantes} gal</div>
             </div>
             <p style={{ fontSize: '.8rem', color: 'var(--muted)', marginBottom: '1rem', lineHeight: 1.5 }}>
               Esos galones salen de la existencia y ya no se asignarán a despachos. Los despachos anteriores y sus costos no cambian.

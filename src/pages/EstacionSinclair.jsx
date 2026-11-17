@@ -176,28 +176,28 @@ export default function EstacionSinclair() {
       {inventario && (
         <div className="fade-up" style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(160px, 1fr))', gap: '1rem' }}>
           <div className="card">
-            <div style={{ fontSize: '.75rem', color: 'var(--muted)', fontFamily: 'Inter, sans-serif', textTransform: 'uppercase', letterSpacing: '.05em' }}>Entradas totales</div>
-            <div style={{ fontSize: '1.3rem', fontWeight: 700, fontFamily: 'DM Mono, monospace', marginTop: '.3rem' }}>{inventario.totalEntradasGalones} gal</div>
+            <div style={{ fontSize: '.75rem', color: 'var(--muted)', textTransform: 'uppercase', letterSpacing: '.05em' }}>Entradas totales</div>
+            <div style={{ fontSize: '1.3rem', fontWeight: 700, fontVariantNumeric: 'tabular-nums', marginTop: '.3rem' }}>{inventario.totalEntradasGalones} gal</div>
           </div>
           <div className="card">
-            <div style={{ fontSize: '.75rem', color: 'var(--muted)', fontFamily: 'Inter, sans-serif', textTransform: 'uppercase', letterSpacing: '.05em' }}>Despachos totales</div>
-            <div style={{ fontSize: '1.3rem', fontWeight: 700, fontFamily: 'DM Mono, monospace', marginTop: '.3rem' }}>{inventario.totalDespachosGalones} gal</div>
+            <div style={{ fontSize: '.75rem', color: 'var(--muted)', textTransform: 'uppercase', letterSpacing: '.05em' }}>Despachos totales</div>
+            <div style={{ fontSize: '1.3rem', fontWeight: 700, fontVariantNumeric: 'tabular-nums', marginTop: '.3rem' }}>{inventario.totalDespachosGalones} gal</div>
           </div>
           {inventario.totalBajasGalones > 0 && (
             <div className="card">
-              <div style={{ fontSize: '.75rem', color: 'var(--muted)', fontFamily: 'Inter, sans-serif', textTransform: 'uppercase', letterSpacing: '.05em' }}>Dados de baja</div>
-              <div style={{ fontSize: '1.3rem', fontWeight: 700, fontFamily: 'DM Mono, monospace', marginTop: '.3rem' }}>{inventario.totalBajasGalones} gal</div>
+              <div style={{ fontSize: '.75rem', color: 'var(--muted)', textTransform: 'uppercase', letterSpacing: '.05em' }}>Dados de baja</div>
+              <div style={{ fontSize: '1.3rem', fontWeight: 700, fontVariantNumeric: 'tabular-nums', marginTop: '.3rem' }}>{inventario.totalBajasGalones} gal</div>
             </div>
           )}
           {inventario.totalExternosGalones > 0 && (
             <div className="card" title="Cargado en gasolineras externas: no entra ni sale del tanque">
-              <div style={{ fontSize: '.75rem', color: 'var(--muted)', fontFamily: 'Inter, sans-serif', textTransform: 'uppercase', letterSpacing: '.05em' }}>Cargas externas</div>
-              <div style={{ fontSize: '1.3rem', fontWeight: 700, fontFamily: 'DM Mono, monospace', marginTop: '.3rem' }}>{inventario.totalExternosGalones} gal</div>
+              <div style={{ fontSize: '.75rem', color: 'var(--muted)', textTransform: 'uppercase', letterSpacing: '.05em' }}>Cargas externas</div>
+              <div style={{ fontSize: '1.3rem', fontWeight: 700, fontVariantNumeric: 'tabular-nums', marginTop: '.3rem' }}>{inventario.totalExternosGalones} gal</div>
             </div>
           )}
           <div className="card">
-            <div style={{ fontSize: '.75rem', color: 'var(--muted)', fontFamily: 'Inter, sans-serif', textTransform: 'uppercase', letterSpacing: '.05em' }}>Existencia actual</div>
-            <div style={{ fontSize: '1.3rem', fontWeight: 700, fontFamily: 'DM Mono, monospace', marginTop: '.3rem', color: 'var(--verde)' }}>{inventario.existenciaActualGalones} gal</div>
+            <div style={{ fontSize: '.75rem', color: 'var(--muted)', textTransform: 'uppercase', letterSpacing: '.05em' }}>Existencia actual</div>
+            <div style={{ fontSize: '1.3rem', fontWeight: 700, fontVariantNumeric: 'tabular-nums', marginTop: '.3rem', color: 'var(--verde)' }}>{inventario.existenciaActualGalones} gal</div>
           </div>
         </div>
       )}
@@ -209,7 +209,7 @@ export default function EstacionSinclair() {
             style={{
               display: 'flex', alignItems: 'center', gap: '.4rem',
               padding: '.65rem 1rem', border: 'none', background: 'none', cursor: 'pointer',
-              fontFamily: 'Inter, sans-serif', fontSize: '.85rem', fontWeight: tab === key ? 700 : 400,
+              fontSize: '.85rem', fontWeight: tab === key ? 700 : 400,
               color: tab === key ? 'var(--verde)' : 'var(--muted)',
               borderBottom: tab === key ? '2px solid var(--verde)' : '2px solid transparent',
               marginBottom: '-1px', transition: 'all .15s',
@@ -368,7 +368,7 @@ export default function EstacionSinclair() {
           {buscado && (
             <div className="card fade-up" style={{ padding: 0, overflow: 'hidden' }}>
               <div style={{ padding: '1rem 1.5rem', borderBottom: '1px solid var(--border)', display: 'flex', justifyContent: 'space-between', alignItems: 'center', flexWrap: 'wrap', gap: '.75rem' }}>
-                <span style={{ fontFamily: 'Inter, sans-serif', fontSize: '.85rem', fontWeight: 600 }}>
+                <span style={{ fontSize: '.85rem', fontWeight: 600 }}>
                   {despachos.length} despachos encontrados
                 </span>
                 <button className="btn-secondary" onClick={exportarHistorial} disabled={!despachos.length}>
@@ -386,7 +386,7 @@ export default function EstacionSinclair() {
                   <tbody>
                     {despachos.map(d => (
                       <tr key={d._id}>
-                        <td style={{ fontFamily: 'DM Mono, monospace', fontSize: '.8rem', color: 'var(--muted)', whiteSpace: 'nowrap' }}>
+                        <td style={{ fontVariantNumeric: 'tabular-nums', fontSize: '.8rem', color: 'var(--muted)', whiteSpace: 'nowrap' }}>
                           {fechaCorta(d.fecha)}
                         </td>
                         <td style={{ fontWeight: 500, whiteSpace: 'nowrap' }}>
@@ -397,12 +397,12 @@ export default function EstacionSinclair() {
                           <b>{d.lugarCarga || 'EF'}</b>
                           {d.lugarCarga === 'EXT' && <div style={{ fontSize: '.72rem', color: 'var(--muted)' }}>{d.gasolinera}{d.facturaExterna ? ` · ${d.facturaExterna}` : ''}</div>}
                         </td>
-                        <td style={{ fontFamily: 'DM Mono, monospace', fontSize: '.82rem' }}>{d.cantidadDieselGalones}</td>
-                        <td style={{ fontFamily: 'DM Mono, monospace', fontSize: '.82rem' }}>{d.calculado?.precioGalon ?? '—'}</td>
-                        <td style={{ fontFamily: 'DM Mono, monospace', fontSize: '.82rem', color: 'var(--verde)', fontWeight: 600 }}>{d.calculado?.total ?? '—'}</td>
-                        <td style={{ fontFamily: 'DM Mono, monospace', fontSize: '.82rem' }}>{d.lecturaActual ?? '—'}</td>
-                        <td style={{ fontFamily: 'DM Mono, monospace', fontSize: '.82rem' }}>{d.calculado?.recorrido ?? '—'}</td>
-                        <td style={{ fontFamily: 'DM Mono, monospace', fontSize: '.82rem' }}>{d.calculado?.rendimiento ?? '—'}</td>
+                        <td style={{ fontVariantNumeric: 'tabular-nums', fontSize: '.82rem' }}>{d.cantidadDieselGalones}</td>
+                        <td style={{ fontVariantNumeric: 'tabular-nums', fontSize: '.82rem' }}>{d.calculado?.precioGalon ?? '—'}</td>
+                        <td style={{ fontVariantNumeric: 'tabular-nums', fontSize: '.82rem', color: 'var(--verde)', fontWeight: 600 }}>{d.calculado?.total ?? '—'}</td>
+                        <td style={{ fontVariantNumeric: 'tabular-nums', fontSize: '.82rem' }}>{d.lecturaActual ?? '—'}</td>
+                        <td style={{ fontVariantNumeric: 'tabular-nums', fontSize: '.82rem' }}>{d.calculado?.recorrido ?? '—'}</td>
+                        <td style={{ fontVariantNumeric: 'tabular-nums', fontSize: '.82rem' }}>{d.calculado?.rendimiento ?? '—'}</td>
                         <td>
                           <span className={`badge ${COLOR_ALERTA[d.calculado?.alerta] || 'badge-gray'}`}>
                             {d.calculado?.alerta}
@@ -414,10 +414,10 @@ export default function EstacionSinclair() {
                   {despachos.length > 0 && (
                     <tfoot>
                       <tr style={{ background: 'var(--card2)', fontWeight: 700, borderTop: '2px solid var(--border)' }}>
-                        <td colSpan={3} style={{ textAlign: 'right', fontFamily: 'Inter, sans-serif', fontSize: '.85rem' }}>
+                        <td colSpan={3} style={{ textAlign: 'right', fontSize: '.85rem' }}>
                           Total Galones
                         </td>
-                        <td style={{ fontFamily: 'DM Mono, monospace', fontSize: '.88rem', color: 'var(--verde-dark)' }}>
+                        <td style={{ fontVariantNumeric: 'tabular-nums', fontSize: '.88rem', color: 'var(--verde-dark)' }}>
                           {despachos.reduce((s, d) => s + (d.cantidadDieselGalones || 0), 0).toLocaleString('es-HN', { maximumFractionDigits: 2 })}
                         </td>
                         <td colSpan={6}></td>

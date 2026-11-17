@@ -72,7 +72,7 @@ export default function FirmarSalidaModal({ pase, onClose, onFirmado, onVerPDF }
       <div style={{ background: 'var(--card)', border: '1px solid var(--border)', borderRadius: 14, padding: '1.4rem', width: '100%', maxWidth: 760, maxHeight: 'calc(100dvh - 2rem)', overflowY: 'auto' }}>
         <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', gap: '.75rem', marginBottom: '.9rem' }}>
           <div>
-            <h3 style={{ fontFamily: 'Inter, sans-serif', fontSize: '1.1rem', fontWeight: 700 }}>Firmar entrega — Salida No. {pase.folio}</h3>
+            <h3 style={{ fontSize: '1.1rem', fontWeight: 700 }}>Firmar entrega — Salida No. {pase.folio}</h3>
             <div style={{ fontSize: '.82rem', color: 'var(--muted)', marginTop: '.15rem' }}>
               {pase.autorizadoPara}{pase.destino ? ` · ${pase.destino}` : ''} · {pase.items?.length || 0} artículo{pase.items?.length === 1 ? '' : 's'}
             </div>

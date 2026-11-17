@@ -60,13 +60,13 @@ export default function CatalogoBodegas({ onCambio }) {
   return (
     <div style={{ display: 'flex', flexDirection: 'column', gap: '1.25rem' }}>
       <div className="card">
-        <h3 style={{ fontFamily: 'Inter, sans-serif', fontSize: '.85rem', color: 'var(--muted)', marginBottom: '1rem', textTransform: 'uppercase', letterSpacing: '.06em' }}>
+        <h3 style={{ fontSize: '.85rem', color: 'var(--muted)', marginBottom: '1rem', textTransform: 'uppercase', letterSpacing: '.06em' }}>
           Agregar bodega
         </h3>
         <div style={{ display: 'flex', gap: '1rem', flexWrap: 'wrap', alignItems: 'flex-end' }}>
           <div style={{ width: 110 }}>
             <label className="lbl">Código SODISA</label>
-            <input className="inp" style={{ fontFamily: 'DM Mono, monospace' }} placeholder="01" value={codigo}
+            <input className="inp" style={{ fontVariantNumeric: 'tabular-nums' }} placeholder="01" value={codigo}
               onChange={e => setCodigo(e.target.value)} />
           </div>
           <div style={{ flex: 1, minWidth: 180 }}>
@@ -86,7 +86,7 @@ export default function CatalogoBodegas({ onCambio }) {
       </div>
 
       <div className="card" style={{ padding: 0, overflow: 'hidden' }}>
-        <div style={{ padding: '1rem 1.5rem', borderBottom: '1px solid var(--border)', fontFamily: 'Inter, sans-serif', fontSize: '.85rem', fontWeight: 600 }}>
+        <div style={{ padding: '1rem 1.5rem', borderBottom: '1px solid var(--border)', fontSize: '.85rem', fontWeight: 600 }}>
           Catálogo de bodegas
         </div>
         {cargando ? (
@@ -101,7 +101,7 @@ export default function CatalogoBodegas({ onCambio }) {
                 {bodegas.map(b => (
                   <tr key={b._id}>
                     <td style={{ width: 120 }}>
-                      <input key={b.codigo || ''} className="inp" style={{ fontFamily: 'DM Mono, monospace', padding: '.3rem .5rem', width: 90 }}
+                      <input key={b.codigo || ''} className="inp" style={{ fontVariantNumeric: 'tabular-nums', padding: '.3rem .5rem', width: 90 }}
                         placeholder="—" defaultValue={b.codigo || ''} onBlur={e => guardarCodigo(b, e.target.value)}
                         onKeyDown={e => e.key === 'Enter' && e.currentTarget.blur()} />
                     </td>

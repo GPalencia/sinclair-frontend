@@ -9,18 +9,18 @@ import {
 } from 'recharts'
 import { fechaCorta, fechaDiaMes, hoyLocal, haceDiasLocal } from '../utils/fecha'
 
-const COLORES_PIE = ['#22c55e','#3b82f6','#f59e0b','#ef4444','#8b5cf6','#06b6d4','#f97316','#ec4899']
+const COLORES_PIE = ['#1f7a33','#3b82f6','#f59e0b','#ef4444','#8b5cf6','#06b6d4','#f97316','#ec4899']
 
 function StatCard({ label, valor, sub, color = 'var(--verde)', icono }) {
   return (
     <div className="card fade-up" style={{ display: 'flex', flexDirection: 'column', gap: '.5rem' }}>
       <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start' }}>
-        <span style={{ fontSize: '.78rem', color: 'var(--muted)', fontFamily: 'Inter, sans-serif', letterSpacing: '.06em', textTransform: 'uppercase' }}>
+        <span style={{ fontSize: '.78rem', color: 'var(--muted)', letterSpacing: '.06em', textTransform: 'uppercase' }}>
           {label}
         </span>
         <span style={{ color, opacity: .85, display: 'flex' }}>{icono}</span>
       </div>
-      <div style={{ fontFamily: 'Inter, sans-serif', fontWeight: 700, fontSize: '1.6rem', color }}>
+      <div style={{ fontWeight: 700, fontSize: '1.6rem', color }}>
         {valor}
       </div>
       {sub && <div style={{ fontSize: '.78rem', color: 'var(--muted)' }}>{sub}</div>}
@@ -34,7 +34,7 @@ const CustomTooltip = ({ active, payload, label }) => {
     <div style={{ background: 'var(--card2)', border: '1px solid var(--border2)', borderRadius: 8, padding: '.75rem 1rem', fontSize: '.82rem' }}>
       <div style={{ color: 'var(--muted)', marginBottom: '.25rem' }}>{label}</div>
       {payload.map((p, i) => (
-        <div key={i} style={{ color: p.color, fontFamily: 'DM Mono, monospace' }}>
+        <div key={i} style={{ color: p.color, fontVariantNumeric: 'tabular-nums' }}>
           {p.name}: L {Number(p.value).toLocaleString('es-HN', { minimumFractionDigits: 2 })}
         </div>
       ))}
@@ -122,7 +122,7 @@ export default function Dashboard() {
       {/* Datos generales — resumen entre todos los módulos de campo */}
       {general && (
         <div className="fade-up">
-          <h3 style={{ fontSize: '.78rem', color: 'var(--muted)', fontFamily: 'Inter, sans-serif', letterSpacing: '.06em', textTransform: 'uppercase', marginBottom: '.6rem' }}>
+          <h3 style={{ fontSize: '.78rem', color: 'var(--muted)', letterSpacing: '.06em', textTransform: 'uppercase', marginBottom: '.6rem' }}>
             Datos Generales
           </h3>
           <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(180px, 1fr))', gap: '1rem' }}>
@@ -196,8 +196,8 @@ export default function Dashboard() {
               <AreaChart data={historial}>
                 <defs>
                   <linearGradient id="gradVerde" x1="0" y1="0" x2="0" y2="1">
-                    <stop offset="5%"  stopColor="#22c55e" stopOpacity={0.3} />
-                    <stop offset="95%" stopColor="#22c55e" stopOpacity={0} />
+                    <stop offset="5%"  stopColor="#1f7a33" stopOpacity={0.3} />
+                    <stop offset="95%" stopColor="#1f7a33" stopOpacity={0} />
                   </linearGradient>
                 </defs>
                 <CartesianGrid strokeDasharray="3 3" stroke="var(--border)" />
@@ -205,7 +205,7 @@ export default function Dashboard() {
                 <YAxis tick={{ fill: 'var(--muted)', fontSize: 11 }} axisLine={false} tickLine={false}
                   tickFormatter={v => `L${(v/1000).toFixed(0)}k`} />
                 <Tooltip content={<CustomTooltip />} />
-                <Area type="monotone" dataKey="salarios" name="Salarios" stroke="#22c55e" strokeWidth={2} fill="url(#gradVerde)" />
+                <Area type="monotone" dataKey="salarios" name="Salarios" stroke="#1f7a33" strokeWidth={2} fill="url(#gradVerde)" />
               </AreaChart>
             </ResponsiveContainer>
           ) : (
@@ -280,13 +280,13 @@ export default function Dashboard() {
                   <span style={{ fontWeight: 500, fontSize: '.88rem' }}>
                     {c.personal?.nombres} {c.personal?.apellidos}
                   </span>
-                  <span style={{ fontFamily: 'DM Mono, monospace', fontSize: '.75rem',
+                  <span style={{ fontVariantNumeric: 'tabular-nums', fontSize: '.75rem',
                     color: 'var(--verde)', marginLeft: '.6rem' }}>
                     {c.personal?.codigoEmpleado || ''}
                   </span>
                 </div>
                 <div style={{ display: 'flex', alignItems: 'center', gap: '.75rem' }}>
-                  <span style={{ fontFamily: 'DM Mono, monospace', fontSize: '.78rem', color: 'var(--muted)' }}>
+                  <span style={{ fontVariantNumeric: 'tabular-nums', fontSize: '.78rem', color: 'var(--muted)' }}>
                     Vence: {fechaCorta(c.fechaFin)}
                   </span>
                   <span className={`badge ${c.diasRestantes <= 5 ? 'badge-red' : 'badge-gray'}`}>
@@ -324,18 +324,18 @@ export default function Dashboard() {
                       {r.personal?.nombres} {r.personal?.apellidos}
                     </td>
                     <td>
-                      <span style={{ fontFamily: 'DM Mono, monospace', fontSize: '.8rem', color: 'var(--muted)' }}>
+                      <span style={{ fontVariantNumeric: 'tabular-nums', fontSize: '.8rem', color: 'var(--muted)' }}>
                         {r.codigoEmpleado || '—'}
                       </span>
                     </td>
                     <td style={{ fontSize: '.82rem' }}>{r.labor?.nombre || '—'}</td>
                     <td style={{ fontSize: '.82rem', color: 'var(--muted)' }}>{r.centroCosto?.nombre || '—'}</td>
                     <td>
-                      <span style={{ fontFamily: 'DM Mono, monospace', color: 'var(--verde)', fontSize: '.85rem' }}>
+                      <span style={{ fontVariantNumeric: 'tabular-nums', color: 'var(--verde)', fontSize: '.85rem' }}>
                         L {(r.salario || 0).toFixed(2)}
                       </span>
                     </td>
-                    <td style={{ fontSize: '.78rem', color: 'var(--muted)', fontFamily: 'DM Mono, monospace' }}>
+                    <td style={{ fontSize: '.78rem', color: 'var(--muted)', fontVariantNumeric: 'tabular-nums' }}>
                       {new Date(r.createdAt).toLocaleTimeString('es-HN', { hour: '2-digit', minute: '2-digit' })}
                     </td>
                   </tr>

@@ -62,7 +62,7 @@ function ModalRevisar({ sol, articulos, centros, guardando, onGuardar, onClose }
       style={{ position: 'fixed', inset: 0, background: 'rgba(0,0,0,.75)', zIndex: 100, display: 'flex', alignItems: 'center', justifyContent: 'center', padding: '1rem' }}>
       <div style={{ background: 'var(--card)', border: '1px solid var(--border)', borderRadius: 14, padding: '1.5rem', width: '100%', maxWidth: 820, maxHeight: 'calc(100dvh - 2rem)', overflowY: 'auto' }}>
         <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '.5rem' }}>
-          <h3 style={{ fontFamily: 'Inter, sans-serif', fontSize: '1.05rem', fontWeight: 700 }}>Revisar requisición {fmtReq(sol.folio)}</h3>
+          <h3 style={{ fontSize: '1.05rem', fontWeight: 700 }}>Revisar requisición {fmtReq(sol.folio)}</h3>
           <button className="btn-ghost" onClick={onClose} style={{ padding: '.3rem .6rem' }}><X size={18} /></button>
         </div>
         <p style={{ fontSize: '.82rem', color: 'var(--muted)', marginBottom: '1rem' }}>

@@ -54,7 +54,7 @@ export default function CatalogoDepartamentos() {
           <div style={{ display: 'flex', gap: '.75rem', flexWrap: 'wrap', alignItems: 'flex-end' }}>
             <div style={{ width: 120 }}>
               <label className="lbl">Código SODISA</label>
-              <input className="inp" style={{ fontFamily: 'DM Mono, monospace' }} placeholder="009" value={codigo} onChange={e => setCodigo(e.target.value)} />
+              <input className="inp" style={{ fontVariantNumeric: 'tabular-nums' }} placeholder="009" value={codigo} onChange={e => setCodigo(e.target.value)} />
             </div>
             <div style={{ flex: 1, minWidth: 220 }}>
               <label className="lbl">Nuevo departamento</label>
@@ -76,10 +76,10 @@ export default function CatalogoDepartamentos() {
               <tr key={d._id}>
                 <td style={{ width: 130 }}>
                   {esAdmin ? (
-                    <input key={d.codigo || ''} className="inp" style={{ fontFamily: 'DM Mono, monospace', padding: '.3rem .5rem', width: 90 }} placeholder="—"
+                    <input key={d.codigo || ''} className="inp" style={{ fontVariantNumeric: 'tabular-nums', padding: '.3rem .5rem', width: 90 }} placeholder="—"
                       defaultValue={d.codigo || ''} onKeyDown={e => e.key === 'Enter' && e.currentTarget.blur()}
                       onBlur={e => { if ((d.codigo || '') !== e.target.value.trim()) actualizar(d, { codigo: e.target.value.trim() }) }} />
-                  ) : <span style={{ fontFamily: 'DM Mono, monospace' }}>{d.codigo || '—'}</span>}
+                  ) : <span style={{ fontVariantNumeric: 'tabular-nums' }}>{d.codigo || '—'}</span>}
                 </td>
                 <td style={{ fontWeight: 500 }}>
                   {editando?.id === d._id ? (

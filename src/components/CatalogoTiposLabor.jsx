@@ -15,7 +15,7 @@ function Modal({ titulo, onClose, children }) {
     >
       <div style={{ background: 'var(--card)', border: '1px solid var(--border)', borderRadius: 14, padding: '1.75rem', width: '100%', maxWidth: 460, maxHeight: 'calc(100dvh - 2rem)', overflowY: 'auto', animation: 'fadeUp .25s ease' }}>
         <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', flexWrap: 'wrap', gap: '.75rem', marginBottom: '1.25rem' }}>
-          <h3 style={{ fontFamily: 'Inter, sans-serif', fontSize: '1rem', fontWeight: 700 }}>{titulo}</h3>
+          <h3 style={{ fontSize: '1rem', fontWeight: 700 }}>{titulo}</h3>
           <button className="btn-ghost" onClick={onClose} style={{ fontSize: '1.1rem', padding: '.3rem .6rem' }}>×</button>
         </div>
         {children}
@@ -101,7 +101,7 @@ export default function CatalogoTiposLabor({ onCambio }) {
   return (
     <div style={{ display: 'flex', flexDirection: 'column', gap: '1.25rem' }}>
       <div className="card">
-        <h3 style={{ fontFamily: 'Inter, sans-serif', fontSize: '.85rem', color: 'var(--muted)', marginBottom: '1rem', textTransform: 'uppercase', letterSpacing: '.06em' }}>
+        <h3 style={{ fontSize: '.85rem', color: 'var(--muted)', marginBottom: '1rem', textTransform: 'uppercase', letterSpacing: '.06em' }}>
           Agregar tipo de labor
         </h3>
         <div style={{ display: 'flex', flexDirection: 'column', gap: '.85rem', maxWidth: 560 }}>
@@ -134,7 +134,7 @@ export default function CatalogoTiposLabor({ onCambio }) {
       </div>
 
       <div className="card" style={{ padding: 0, overflow: 'hidden' }}>
-        <div style={{ padding: '1rem 1.5rem', borderBottom: '1px solid var(--border)', fontFamily: 'Inter, sans-serif', fontSize: '.85rem', fontWeight: 600 }}>
+        <div style={{ padding: '1rem 1.5rem', borderBottom: '1px solid var(--border)', fontSize: '.85rem', fontWeight: 600 }}>
           Catálogo de tipos de labor
         </div>
         {cargando ? (
@@ -151,7 +151,7 @@ export default function CatalogoTiposLabor({ onCambio }) {
                     <td style={{ fontWeight: 500 }}>{t.nombre}</td>
                     <td>{t.requiereVariedad ? 'Sí' : '—'}</td>
                     <td>{t.requiereLibrasSemilla ? 'Sí' : '—'}</td>
-                    <td style={{ fontFamily: 'DM Mono, monospace', fontSize: '.82rem' }}>{t.objetivoPersonalPorMz ?? '—'}</td>
+                    <td style={{ fontVariantNumeric: 'tabular-nums', fontSize: '.82rem' }}>{t.objetivoPersonalPorMz ?? '—'}</td>
                     <td>
                       <button type="button" onClick={() => toggleActivo(t)}
                         className={`badge ${t.activo ? 'badge-green' : 'badge-gray'}`}

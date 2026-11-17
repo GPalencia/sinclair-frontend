@@ -59,7 +59,7 @@ export default function NuevoEmpleado() {
 
       {/* Formulario */}
       <div className="card fade-up">
-        <h3 style={{ fontFamily: 'Inter, sans-serif', fontSize: '.9rem', color: 'var(--muted)',
+        <h3 style={{ fontSize: '.9rem', color: 'var(--muted)',
           marginBottom: '1.25rem', letterSpacing: '.08em', textTransform: 'uppercase' }}>
           Datos del Empleado
         </h3>
@@ -90,7 +90,7 @@ export default function NuevoEmpleado() {
               placeholder="FG002705"
               value={form.codigoEmpleado}
               onChange={e => set('codigoEmpleado', e.target.value.toUpperCase())}
-              style={{ fontFamily: 'DM Mono, monospace', letterSpacing: '.05em' }}
+              style={{ fontVariantNumeric: 'tabular-nums', letterSpacing: '.05em' }}
             />
           </div>
           <div>

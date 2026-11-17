@@ -77,7 +77,7 @@ export default function CatalogoEstacionesRiego({ estaciones, onCambio, puedeEdi
   return (
     <div className="card fade-up" style={{ padding: 0, overflow: 'hidden' }}>
       <div style={{ padding: '1rem 1.5rem', borderBottom: '1px solid var(--border)', display: 'flex', justifyContent: 'space-between', alignItems: 'center', gap: '.75rem', flexWrap: 'wrap' }}>
-        <span style={{ fontFamily: 'Inter, sans-serif', fontSize: '.85rem', fontWeight: 600 }}>Estaciones y sus lotes</span>
+        <span style={{ fontSize: '.85rem', fontWeight: 600 }}>Estaciones y sus lotes</span>
         {puedeEditar && <button className="btn-primary" onClick={abrirNueva}><Plus size={15} /> Nueva estación</button>}
       </div>
       <div style={{ overflowX: 'auto' }}>
@@ -88,7 +88,7 @@ export default function CatalogoEstacionesRiego({ estaciones, onCambio, puedeEdi
               <tr key={e._id}>
                 <td>{e.finca}</td>
                 <td style={{ fontWeight: 600 }}>{e.nombre}</td>
-                <td style={{ fontFamily: 'DM Mono, monospace', fontSize: '.82rem' }}>{e.rpmHabitual ?? '—'}</td>
+                <td style={{ fontVariantNumeric: 'tabular-nums', fontSize: '.82rem' }}>{e.rpmHabitual ?? '—'}</td>
                 <td style={{ fontSize: '.85rem' }}>{e.lotes.length ? e.lotes.map(l => l.codigo).join(' · ') : <span style={{ color: 'var(--muted)' }}>sin lotes</span>}</td>
                 <td><span className={`badge ${e.activo ? 'badge-green' : 'badge-gray'}`}>{e.activo ? 'Activa' : 'Inactiva'}</span></td>
                 <td>{puedeEditar && <button className="btn-ghost" style={{ padding: '.35rem .6rem' }} onClick={() => abrirEditar(e)} title="Editar"><Pencil size={14} /></button>}</td>
@@ -104,7 +104,7 @@ export default function CatalogoEstacionesRiego({ estaciones, onCambio, puedeEdi
           style={{ position: 'fixed', inset: 0, background: 'rgba(0,0,0,.75)', zIndex: 100, display: 'flex', alignItems: 'center', justifyContent: 'center', padding: '1rem' }}>
           <div style={{ background: 'var(--card)', border: '1px solid var(--border)', borderRadius: 14, padding: '1.5rem', width: '100%', maxWidth: 460, maxHeight: 'calc(100dvh - 2rem)', overflowY: 'auto', animation: 'fadeUp .25s ease' }}>
             <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '1.1rem' }}>
-              <h3 style={{ fontFamily: 'Inter, sans-serif', fontSize: '1rem', fontWeight: 700 }}>{modal.id ? 'Editar estación' : 'Nueva estación'}</h3>
+              <h3 style={{ fontSize: '1rem', fontWeight: 700 }}>{modal.id ? 'Editar estación' : 'Nueva estación'}</h3>
               <button className="btn-ghost" onClick={() => setModal(null)} style={{ padding: '.3rem .6rem' }}><X size={18} /></button>
             </div>
             <div style={{ display: 'flex', flexDirection: 'column', gap: '1rem' }}>
